@@ -1,0 +1,34 @@
+#content {
+    h1 {
+        margin-top: 0;
+    }
+
+    .post-meta {
+        margin: 2em 0;
+        font-size: 0.9em;
+        font-weight: 600;
+        background-color: $meta-light;
+        padding: 0.5em 1em;
+        border-top: 3px solid $meta-color;
+        color: $meta-color;
+    }
+
+    footer {
+        margin: 2em 0;
+        font-size: 0.75em;
+        background-color: $meta-light;
+        padding: 0.5em 1em;
+        border-top: 3px solid $meta-color;
+        color: $meta-color;
+    }
+
+    header .reading-time {
+        text-align: right;
+    }
+
+    /* Non-phone and tablet layout wider than 1200px */
+    /* This is necessary because #sidebar has a max-width of 300px above, which is fine until the sidebar starts trying to be wider—then the left margin in #content gets wider and wider and wider. So, when the width of more than 1200px (which is the screen width where 25% starts to be greater than 300px), I specify that #content has a left margin of exactly 300px */
+    @media (min-width: $wider-screen) {
+        margin-left: 300px !important;
+    }
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="{{ .Site.Language.Lang }}">
+
+    {{ with .Site.Params.author -}}<meta name="author" content="{{ . }}">{{ end }}
+    <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}{{ end -}}">
+    {{ with .Params.tags }}<meta name="keywords" content="{{ delimit . ", "}}">{{- end }}
+    {{ hugo.Generator }}
+
+    <title>{{- block "title" . -}}{{- .Site.Title -}}{{- end -}}</title>
+
+    {{ with .Permalink }}<link rel="canonical" href="{{ . }}">{{- end }}
+    <link rel="alternate" type="application/atom+xml" title="Blog Posts" href="{{ .Site.BaseURL | safeHTML }}atom.xml">
+    <link rel="alternate" type="application/json" title="JSON Feed" href="{{ .Site.BaseURL | safeHTML }}feed.json">
+
+    <link rel="openid2.provider" href="https://www.google.com/accounts/o8/ud?source=profiles">
+    <link rel="openid2.local_id" href="https://www.google.com/profiles/andrewheiss">
+
+    {{ partial "twitter_cards.html" . }}
+    {{ partial "opengraph.html" . }}
+    {{ template "_internal/schema.html" . }}
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+
+    {{- $pure := resources.Get "css/pure-min.css" }}
+    {{- $pure_grids := resources.Get "css/grids-responsive-min.css" }}
+    {{- $style := slice $pure $pure_grids | resources.Concat "css/pure-and-grids-responsive.css" | resources.Minify }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+
+  {{- if .Site.IsServer }}
+    {{- $cssOpts := (dict "targetPath" "css/ath-hugo.css" "enableSourceMap" true ) }}
+    {{- $styles := resources.Get "scss/ath-hugo.scss" | resources.ExecuteAsTemplate "style.ath-hugo.css" . | toCSS $cssOpts }}
+    <link rel="stylesheet" href="{{ $styles.RelPermalink }}" media="screen">
+  {{- else }}
+    {{- $cssOpts := (dict "targetPath" "css/ath-hugo.css" ) }}
+    {{- $styles := resources.Get "scss/ath-hugo.scss" | resources.ExecuteAsTemplate "style.ath-hugo.css" . | toCSS $cssOpts | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $styles.RelPermalink }}" integrity="{{ $styles.Data.Integrity }}" crossorigin="anonymous" media="screen" />
+  {{- end }}
+
+    <script src="https://kit.fontawesome.com/f9d343c40d.js" crossorigin="anonymous"></script>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=dLX2MbQJLG">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=dLX2MbQJLG">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=dLX2MbQJLG">
+    <link rel="manifest" href="/site.webmanifest?v=dLX2MbQJLG">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg?v=dLX2MbQJLG" color="#cf4446">
+    <link rel="shortcut icon" href="/favicon.ico?v=dLX2MbQJLG">
+    <meta name="msapplication-TileColor" content="#170c3a">
+    <meta name="theme-color" content="#170c3a">
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', '{{ .Site.Params.googleanalytics }}', 'auto');
+      ga('send', 'pageview');
+    </script>
+</head>
+
+<body>
+
+    <div id="layout" class="pure-g">
+        <div id="sidebar" class="pure-u-1 pure-u-md-1-4">
+            {{ partial "sidebar.html" . }}
+        </div> <!-- End of #sidebar -->
+    
+        <div id="content" class="pure-u-1 pure-u-md-3-4">
+        {{ block "content" . }}{{ end }}
+        </div> <!-- End of #content -->
+    </div> <!-- End of #layout -->
+    
+    <div id="footer">
+        {{ partial "footer.html" . }}
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,154 @@
+.research {
+    h1 {
+        margin-bottom: 0.5em;
+    }
+
+    .back-to-top {
+        font-size: 0.6em;
+    }
+}
+
+.publication-toc, .research-page #TableOfContents {
+    margin: 2em 0;
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            display: inline-block;
+            white-space: nowrap;
+            padding: 0em 0.5em 0.5em 0;
+            background-color: $link-hover-color;
+            padding: 0.2em 0.4em;
+            border: 1 solid transparent;
+            border-radius: 0.25rem;
+            font-size: 1em;
+            margin: 0 0.2em 0.4em 0;
+
+            a {
+                color: #FFFFFF;
+            }
+        }
+    }
+}
+
+.project-list {
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 2em;
+
+        li.project {
+            margin-bottom: 2em;
+
+            p {
+                margin: 0;
+            }
+        }
+    }
+
+    .project-content {
+        .status {
+            font-size: 1rem;
+            font-weight: 250;
+            padding: 0.2em;
+            margin-right: 0.5em;
+        }
+    }
+
+    ul.project-links {
+        margin-bottom: 0;
+    }
+
+    .project-details {
+        margin-top: 0.8em;
+        background-color: lighten($link-color, 40%);
+        font-size: 0.9rem;
+        border: 1 solid transparent;
+        border-radius: 0.25rem;
+
+        @media (max-width: $ipad-or-smaller) {
+            font-size: 0.8rem;
+        }
+
+        .project-link {
+            display: inline-block;
+            white-space: nowrap;
+            padding: 0.5em 0.5em 0.5em 1em;
+        }
+
+        .details {
+            background-color: $link-color;
+            padding-right: 1.5em;
+            border-right: 1 solid transparent;
+            border-radius: 0.25rem;
+
+            a {
+                color: #FFFFFF;
+            }
+        }
+    }
+
+    h2 {
+        margin-top: 0;
+        padding-bottom: 0.1em;
+        margin-bottom: 0.3em;
+        font-size: 2rem;
+        border-bottom: #000000 solid 2px;
+    }
+}
+
+.research-page {
+    h1 {
+        font-size: 2.6rem;
+        line-height: 1.2;
+        margin-bottom: 1em;
+    }
+
+    h2 {
+        font-size: 2.1rem;
+    }
+
+    h3 {
+        font-size: 1.7rem;
+    }
+
+    .project-details {
+        background-color: lighten($link-color, 40%);
+        border: 1 solid transparent;
+        border-radius: 0.25rem;
+        padding: 0.75em;
+
+        ul.project-links {
+            padding: 0;
+            margin: 0.75em 0 0;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        @media (max-width: $ipad-or-smaller) {
+            font-size: 0.8rem;
+        }
+
+        .project-link {
+            display: inline-block;
+            white-space: nowrap;
+            padding: 0.5em 1em 0em 0em;
+        }
+
+        .details {
+            background-color: $link-color;
+            padding-right: 1.5em;
+            border-right: 1 solid transparent;
+            border-radius: 0.25rem;
+
+            a {
+                color: #FFFFFF;
+            }
+        }
+    }
+}

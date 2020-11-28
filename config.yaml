@@ -1,0 +1,144 @@
+baseURL: https://www.andrewheiss.com/
+title: Andrew Heiss
+theme: ah-hugo
+languageCode: en
+paginate: 20
+disqusShortname: andrewheisscom
+ignoreFiles: ["\\.Rmd$", "\\.Rmarkdown$", "_cache$", "\\.knit\\.md$", "\\.utf8\\.md$"]
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    codeFences: true
+    guessSyntax: true
+    style: "monokai"
+disableKinds: ["RSS"]
+
+permalinks:
+  blog: "/blog/:year/:month/:day/:slug/"
+  tags: "/blog/tags/:slug/"  # https://www.hannaliebl.com/blog/nesting-taxonomies-in-hugo/
+  year: "/blog/:slug/"
+  month: "/blog/:slug/"
+
+# Create year/month archives with taxonomies:
+# https://discourse.gohugo.io/t/how-to-generate-chronological-blog-archives-in-hugo/13491/6
+# Requires (1) taxonomy definition here, (2) permalink definition, and (3) this in each post's metadata:
+#   year: "2020"
+#   month: "2020/11"
+taxonomies:
+  tag: tags
+  research_type: research_type
+  year: year
+  month: month
+
+params:
+  author: Andrew Heiss
+  minibio: International NGOs, nonprofit management, authoritarianism, data science, and R
+  description: "Andrew Heiss is an assistant professor at Georgia State University, researching international NGOs and teaching data science & economics."
+  research_order: [journal-article, working-paper, book-chapter, review, dormant-working-paper, selected-seminar-paper, translation]
+  social:
+    twitter: andrewheiss
+    facebook: andrewheiss
+  images:
+  - profiles/twitter-card-large.png
+  feedIcon: profiles/square-bg.png
+  orcid: 0000-0002-3948-3914
+  pgp:
+    key: pgp_ath.asc.txt
+    fingerprint: 4AA2 FA83 A8B2 05A4 E30F<br /> 610D 1382 6216 9178 36AB
+  dateFormat: January 2, 2006
+  blogPostDateFormat: Monday, January 2, 2006
+  since: 2007
+  googleanalytics: "UA-527449-5"
+  github_repo: https://github.com/andrewheiss/ath-hugo
+  little_links:
+    - icon: fa fa-envelope
+      name: E-mail
+      url: "mailto:aheiss@gsu.edu"
+      weight: 1
+    - icon: fab fa-twitter
+      name: Twitter
+      url: https://twitter.com/andrewheiss
+      weight: 2
+    - icon: fab fa-github
+      name: GitHub
+      url: https://github.com/andrewheiss
+      weight: 3
+    - icon: fab fa-youtube
+      name: YouTube
+      url: https://www.youtube.com/andrewheiss
+      weight: 4
+    - icon: fab fa-stack-overflow
+      name: StackOverflow
+      url: https://stackoverflow.com/users/120898/andrew
+      weight: 5
+    - icon: fab fa-blogger
+      name: Heissatopia (family blog)
+      url: https://www.heissatopia.com
+      weight: 6
+    - icon: fab fa-facebook
+      name: Facebook
+      url: https://www.facebook.com/andrewheiss
+      weight: 7
+    - icon: fab fa-linkedin
+      name: LinkedIn
+      url: https://www.linkedin.com/in/andrewheiss
+      weight: 8
+
+menu:
+  main:
+    - name: About
+      url: /
+      weight: 1
+    - name: CV
+      url: "cv/"
+      weight: 2
+    - name: Blog
+      weight: 3
+      url: blog/
+    - name: Research
+      url: research/
+      weight: 4
+    - name: Teaching
+      url: teaching/
+      weight: 5
+    - name: Talks
+      url: talks/
+      weight: 6
+    - name: Now
+      url: now/
+      weight: 7
+    - name: Uses
+      url: uses/
+      weight: 8
+
+mediaTypes:
+  "application/atom+xml":
+    suffixes: ["xml"]
+
+outputFormats:
+  jsonfeed:
+    mediaType: "application/json"
+    baseName: "feed"
+    isPlainText: true
+  atom:
+    mediaType: "application/atom+xml"
+    baseName: "atom"
+    suffix: "xml"
+    isHTML: false
+    isPlainText: false
+    rel: "alternate"
+
+outputs:
+  home: 
+    - "html"
+    - "jsonfeed"
+    - "atom"
+  page:
+    - "html"
+
+sitemap:
+  changefreq: weekly
+  filename: sitemap.xml
+  priority: 0.5

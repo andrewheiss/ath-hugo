@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+.DS_Store
+
+blogdown/md5sum.txt
+public/*
+design-assets/*
+static/etc/*
+**/*_cache/*
+
+resources/_gen/*

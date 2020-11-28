@@ -1,0 +1,74 @@
+// Alert things
+// Adapted from Bootstrap
+.alert {
+    position: relative;
+    padding: 0.75rem 1.25rem 0.75rem 3rem;
+    margin-bottom: 1rem;
+    border: 1 solid transparent;
+    border-radius: 0.25rem;
+}
+
+.alert:before {
+    position: absolute;
+    font-family: FontAwesome;
+    left: 1rem;
+}
+
+// Headings for larger alerts
+.alert-heading {
+    // Specified to prevent conflicts of changing $headings-color
+    color: inherit;
+}
+
+// Alternate styles
+//
+// Generate contextual modifier classes for colorizing the alert.
+
+@mixin alert-variant($background, $border, $color) {
+    color: $color;
+    background: $background;
+    border-color: $border;
+
+    hr {
+        border-top-color: darken($border, 5%);
+    }
+
+    .alert-link {
+        color: darken($color, 10%);
+    }
+}
+
+@function theme-color($key: "primary") {
+    @return map-get($theme-colors, $key);
+}
+
+@function theme-color-level($color-name: "primary", $level: 0) {
+    $color: theme-color($color-name);
+    $color-base: if($level > 0, #000000, #FFFFFF);
+    $level: abs($level);
+
+    @return mix($color-base, $color, $level * $theme-color-interval);
+}
+
+$alert-bg-level: -10 !default;
+$alert-border-level: -9 !default;
+$alert-color-level: 6 !default;
+$theme-color-interval: 8% !default;
+
+@each $color, $value in $theme-colors {
+    .alert-#{$color} {
+        @include alert-variant(theme-color-level($color, $alert-bg-level), theme-color-level($color, $alert-border-level), theme-color-level($color, $alert-color-level));
+    }
+}
+
+@each $color, $value in $theme-colors {
+    .btn-#{$color} {
+        @include alert-variant(theme-color-level($color, $alert-bg-level), theme-color-level($color, $alert-border-level), theme-color-level($color, $alert-color-level));
+    }
+}
+
+@each $alert, $icon in $alert-icons {
+    .alert-#{$alert}:before {
+        content: $icon;
+    }
+}

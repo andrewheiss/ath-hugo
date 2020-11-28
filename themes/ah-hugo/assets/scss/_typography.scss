@@ -1,0 +1,248 @@
+// When setting the primary font stack, apply it to the Pure grid units along
+// with "html", "button", "input", "select", and "textarea". Pure Grids use
+// specific font stacks to ensure the greatest OS/browser compatibility.
+html, button, input, select, textarea,
+.pure-g [class *= "pure-u"] {
+    font-family: $sans-font-family;
+}
+
+html {
+	box-sizing: border-box;
+}
+
+body {
+    color: $fg-color;
+	font-family: $sans-font-family;
+	font-size: 1.2em;
+	font-weight: 350;
+    line-height: 1.5;
+    @media only screen and (max-width : 768px) {
+        font-size: 1em;
+        line-height: 1.3;
+    }
+}
+
+a {
+    color: $link-color;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.25s ease-in;
+    &:focus,
+    &:hover {
+        text-decoration: underline;
+        color: $link-hover-color;
+    }
+}
+
+p {
+    margin: 1.2rem 0 1.2rem 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: $slab-font-family;
+    font-weight: 700;
+    color: $heading-color;
+    margin: 2.5rem 0 0 0;
+    line-height: 1.3;
+    @media only screen and (max-width : 768px) {
+      line-height: 1.2;
+    }
+}
+
+h1 {
+  font-size: 3rem;
+  @media only screen and (max-width : 768px) {
+    font-size: 2.5rem;
+  }
+}
+
+h2 {
+  font-size: 2.6rem;
+  @media only screen and (max-width : 768px) {
+    font-size: 2.1rem;
+  }
+}
+
+h3 {
+  font-size: 2.2rem;
+  @media only screen and (max-width : 768px) {
+    font-size: 1.7rem;
+  }
+}
+
+h4 {
+  font-size: 1.8rem;
+  @media only screen and (max-width : 768px) {
+    font-size: 1.3rem;
+  }
+}
+
+h5 {
+  font-size: 1.4rem;
+  @media only screen and (max-width : 768px) {
+    font-size: 1rem;
+  }
+}
+
+h6 {
+  font-size: 1.1rem;
+  @media only screen and (max-width : 768px) {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+}
+
+%element_after_heading {
+    margin-top: 0.5rem;
+}
+
+@for $i from 2 through 6 {
+    h#{$i}+p,
+    h#{$i}+ol,
+    h#{$i}+ul {
+        @extend %element_after_heading;
+    }
+}
+
+h1+h2, h2+h3 {
+    margin-top: 0;
+}
+
+b, strong {
+    font-weight: 700;
+}
+
+.rtl {
+    direction: rtl;
+}
+
+.highlight > div,
+.highlight > pre {
+    margin: 0 0 2rem;
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+pre {
+    display: block;
+    font-family: $code-font-family;
+    font-size: 0.9em;
+    font-weight: 400;
+    line-height: 1.4;
+    overflow-x: auto;
+    margin: 0;
+    code {
+        display: inline-block;
+        background-color: inherit;
+        color: inherit;
+    }
+}
+
+code {
+    font-family: $code-font-family;
+    font-size: 90%;
+    font-weight: 400;
+    background-color: $inline-code-bg;
+}
+
+small, .small {
+    font-size: 0.8em;
+}
+
+blockquote {
+    border-left: solid 5px $blockquote-color;
+    padding-left: 1.5em;
+    padding-right: 3em;
+    margin-left: 1.5em;
+    margin-right: 0;
+    color: $blockquote-color;
+}
+
+// Modify pure table defaults
+.content .pure-table {
+    margin: 1em 0;
+}
+
+// Basic tables
+th, td {
+    padding: 1rem;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 2em 0;
+}
+
+table td, table th {
+    border: 1px solid $sidebar-light;
+}
+
+table tr:first-child th {
+    border-top: 0;
+}
+
+table tr:last-child td {
+    border-bottom: 0;
+}
+
+table tr td:first-child,
+table tr th:first-child {
+    border-left: 0;
+}
+
+table tr td:last-child,
+table tr th:last-child {
+    border-right: 0;
+}
+
+.caption, figcaption {
+    background-color: $blockquote-light;
+    color: $blockquote-color;
+    font-weight: 250;
+    font-size: 1rem;
+    display: table;
+    margin: 0.5em auto 0.5em auto;
+    padding: 5px;
+
+    p {
+        margin: 0;
+    }
+}
+
+.video-responsive {
+    position: relative;
+    height: 0;
+    padding-bottom: 60%;
+}
+
+.videoplayer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.cv-updated {
+    font-size: 0.9rem;
+    font-weight: 250;
+}
+
+.cv-download {
+    margin: 1em 0 2em;
+
+    .cv-button {
+        background-color: $link-color;
+        padding: 0.5em 1em;
+        border: 1 solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    a {
+        color: #FFFFFF;
+    }
+}

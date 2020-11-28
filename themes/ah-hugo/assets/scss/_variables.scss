@@ -1,0 +1,63 @@
+// Fonts
+$slab-font-family: "Roboto Slab", serif;
+$sans-font-family: "Inter", 'Lucida Grande', Helvetica, Arial, sans-serif;
+$code-font-family: 'Source Code Pro', 'Lucida Console', monospace;
+
+// Sizes
+$ipad-or-smaller: 48em;
+$iphone-or-smaller: 480px;
+$wider-screen: 1200px;
+$short-screen: 500px;
+
+// Colors
+$sidebar-color: #170C3A;
+$sidebar-light: #afafaf;
+
+$meta-color: #170C3A;
+$meta-light: #dad8f2;
+
+$text-color: #000000;
+$heading-color: #000000;
+$blockquote-color: #A52C60;
+$blockquote-light: #FFB7CD;
+$inline-code: #000000;
+$inline-code-bg: #e3e3e3;
+
+$link-color: #CF4446;
+$link-hover-color: #FB9E07;
+
+$bg-color: #FFFFFF;
+$fg-color: #212121;
+$alt-bg-color: #E0E0E0;
+$alt-fg-color: #000;
+
+
+$theme-colors: () !default;
+$theme-colors: map-merge(
+  (
+    "primary": #A52C60,
+    "secondary": #495057,
+    "success": #118230,
+    "info": #3093CF,
+    "warning": #EE6A24,
+    "danger": #CF4446,
+    "light": #ced4da,
+    "dark": #000000
+  ),
+  $theme-colors
+);
+
+$alert-icons: () !default;
+$alert-icons: map-merge(
+  (
+    "primary": "\f1ce",  // https://fontawesome.com/icons/circle-notch
+    "secondary": "\f1ce",  // https://fontawesome.com/icons/circle-notch
+    "success": "\f058",  // https://fontawesome.com/icons/check-circle
+    "info": "\f05a",  // https://fontawesome.com/icons/info-circle
+    "warning": "\f071",  // https://fontawesome.com/icons/exclamation-triangle
+    "danger": "\f05e",  // https://fontawesome.com/icons/ban
+    "light": "\f1ce",  // https://fontawesome.com/icons/circle-notch
+    "dark": "\f1ce"  // https://fontawesome.com/icons/circle-notch
+  ),
+  $alert-icons
+);

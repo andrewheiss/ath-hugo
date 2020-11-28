@@ -1,0 +1,193 @@
+all_courses:
+- academic_year: "2020–21 academic year"
+  current: true
+  courses:
+  - title: Program Evaluation for Public Service
+    description: "Combine research design, causal inference, and econometric tools to measure the effects of social programs"
+    university: Georgia State University
+    number: PMAP 8521
+    url: https://evalf20.classes.andrewheiss.com/
+    logo: evalsp20.png
+    semester:
+    - name: Fall 2020 (asynchronous online)
+      url: https://evalf20.classes.andrewheiss.com/
+    - name: Spring 2021 (asynchronous online)
+      url: https://evalsp21.classes.andrewheiss.com/
+
+  - title: Microeconomics for Public Policy
+    description: "Learn how to understand, speak, and do economics in the public sector"
+    university: Georgia State University
+    number: PMAP 8141
+    url: https://econf20.classes.andrewheiss.com/
+    logo: econw19.png
+    semester:
+    - name: Fall 2020 (asynchronous online)
+      url: https://econf20.classes.andrewheiss.com/
+    - name: Spring 2021 (asynchronous online)
+      url: https://econsp21.classes.andrewheiss.com/
+
+- academic_year: "Georgia State University (2019–now)"
+  courses:
+  - title: Data Visualization with R
+    description: "Use R, ggplot2, and the principles of graphic design to create beautiful and truthful visualizations of data"
+    university: Georgia State University
+    number: PMAP 8921
+    url: https://datavizm20.classes.andrewheiss.com/
+    logo: datavizm20.png
+    semester:
+    - name: May 2020 (asynchronous online)
+      url: https://datavizm20.classes.andrewheiss.com/
+
+  - title: Program Evaluation for Public Service
+    description: "Combine research design, causal inference, and econometric tools to measure the effects of social programs"
+    university: Georgia State University
+    number: PMAP 8521
+    url: https://evalsp20.classes.andrewheiss.com/
+    logo: evalsp20.png
+    semester:
+    - name: Spring 2020
+      url: https://evalsp20.classes.andrewheiss.com/
+    - name: Fall 2019
+      url: https://evalf19.classes.andrewheiss.com/
+
+  - title: Microeconomics for Public Policy
+    description: "Learn how to understand, speak, and do economics in the public sector"
+    university: Georgia State University
+    number: PMAP 8141
+    url: https://econs20.classes.andrewheiss.com/
+    logo: econw19.png
+    semester:
+    - name: Summer 2020 (asynchronous online)
+      url: https://econs20.classes.andrewheiss.com/
+    - name: Fall 2019
+      url: https://econf19.classes.andrewheiss.com/
+
+- academic_year: "Brigham Young University (2017–2019)"
+  courses:
+  - title: Economy, Society, and Public Policy
+    university: Brigham Young University
+    number: MPA 612
+    url: https://econw19.classes.andrewheiss.com/
+    logo: econw19.png
+    semester:
+    - name: Winter 2019
+      url: https://econw19.classes.andrewheiss.com/
+    - name: Winter 2019 (executive MPA)
+      url: https://empa-econw19.classes.andrewheiss.com/
+
+  - title: Data Science and Statistics for Public Management
+    university: Brigham Young University
+    number: MPA 630
+    url: https://statsf18.classes.andrewheiss.com/
+    logo: statsf18.png
+    semester:
+    - name: Fall 2018
+      url: https://statsf18.classes.andrewheiss.com/
+
+  - title: Data Visualization
+    university: Brigham Young University
+    number: MPA 635
+    url: https://datavizf18.classes.andrewheiss.com/
+    logo: datavizf18.png
+    semester:
+    - name: Fall 2018
+      url: https://datavizf18.classes.andrewheiss.com/
+
+  - title: Economic Decision Making for Managers
+    university: Brigham Young University
+    number: MPA 612
+    url: https://econw18.classes.andrewheiss.com/
+    logo: econw18.png
+    semester:
+    - name: Winter 2018
+      url: https://econw18.classes.andrewheiss.com/
+
+  - title: Telling Stories with Data
+    university: Brigham Young University
+    number: Bus M 491R
+    url: https://storiesf17.classes.andrewheiss.com/
+    logo: storiesf17.png
+    semester:
+    - name: Fall 2017
+      url: https://storiesf17.classes.andrewheiss.com/
+
+  - title: Data Visualization
+    university: Brigham Young University
+    number: MPA 635
+    url: https://datavizf17.classes.andrewheiss.com/
+    logo: datavizf17.png
+    semester:
+    - name: Fall 2017
+      url: https://datavizf17.classes.andrewheiss.com/
+
+- academic_year: "Past courses taught or TAed as a student"
+  courses:
+  - title: Stats in Real Life
+    university: Duke University
+    show_university: true
+    role: "**TA, as PhD student**"
+    number: PubPol 590
+    logo: teaching-generic-duke.png
+    semester:
+    - name: Fall 2014
+    - name: Spring 2014
+
+  - title: Policy Analysis
+    university: Duke University
+    show_university: true
+    role: "**TA, as PhD student**"
+    number: PubPol 803/807
+    logo: teaching-generic-duke.png
+    semester:
+    - name: Fall 2015
+    - name: Fall 2013
+
+  - title: Statistical Analysis for Public Administrators
+    university: Brigham Young University
+    show_university: true
+    role: "**TA, as MPA student**"
+    number: PMGT 630
+    logo: teaching-generic-byu.png
+    semester:
+    - name: Summer 2012
+
+  - title: International Development Field Study
+    university: Brigham Young University
+    show_university: true
+    role: "**TA, as MPA student**"
+    number: PubPol 803/807
+    logo: teaching-generic-byu.png
+    semester:
+    - name: Winter and Spring 2012
+
+  - title: Decision Modeling and Analysis
+    university: Brigham Young University
+    show_university: true
+    role: "**TA, as MPA student**"
+    number: PubPol 803/807
+    logo: teaching-generic-byu.png
+    semester:
+    - name: Winter 2012
+    - name: Fall 2011
+
+  - title: Print Publishing
+    university: Brigham Young University
+    show_university: true
+    role: "**Instructor, as undergraduate**"
+    number: CHum 260
+    logo: teaching-generic-byu.png
+    semester:
+    - name: Winter 2008
+  
+  - title: First-year Arabic
+    university: Brigham Young University
+    show_university: true
+    role: "**Instructor, as undergraduate**"
+    number: Arabic 101
+    logo: teaching-generic-byu.png
+    url: /etc/byuarabic101/
+    semester:
+    - name: Winter 2007
+      url: /etc/byuarabic101/
+    - name: Fall 2006
+      url: /etc/byuarabic101/

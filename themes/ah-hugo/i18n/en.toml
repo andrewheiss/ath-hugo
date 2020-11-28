@@ -1,0 +1,30 @@
+[tag]
+other = "tag"
+
+[posts]
+other = "posts"
+
+[year]
+other = "year"
+
+[month]
+other = "year/month"
+
+[reading_time]
+one = "1-minute read"
+other = "{{ .Count }}-minute read"
+
+[page_not_found]
+other = "Page Not Found"
+
+[page_does_not_exist]
+other = "Sorry, this page does not exist."
+
+[head_back]
+other = "You can head back to <a href=\"{{ . }}\">homepage</a>."
+
+[powered_by]
+other = "Powered by"
+
+[see_also]
+other = "See also in"

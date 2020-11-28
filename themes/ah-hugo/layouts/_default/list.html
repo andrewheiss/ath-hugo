@@ -1,0 +1,19 @@
+{{ define "title" }}
+  {{- if eq .Kind "term" -}}
+      {{- if eq .Data.Singular "year" -}}
+          {{- print "Posts from " -}}
+          {{- .Title -}} | {{ .Site.Title -}}
+      {{- else if eq .Data.Singular "month" -}}
+          {{- print "Posts from " -}}
+          {{ $temp_date := delimit (slice (replace .Title "/" "-") "01") "-" }}
+          {{ dateFormat "January 2006" (time (string $temp_date)) }} | {{ .Site.Title -}}
+      {{- else -}}
+          {{- i18n .Data.Singular | title -}}
+          {{- print ": " -}}
+          {{- .Title -}} | {{ .Site.Title -}}
+      {{- end -}}
+  {{- end -}}
+{{ end }}
+{{ define "content" }}
+  {{ partial "list.html" . }}
+{{ end }}

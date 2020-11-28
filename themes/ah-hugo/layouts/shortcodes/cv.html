@@ -1,0 +1,29 @@
+{{ if .Page.Params.cv }}
+
+<div class="cv-download">
+<p><span class="cv-button"><a target="_blank" href="{{ .Page.Params.cv.pdf }}"><i class="fas fa-file-download"></i>&ensp;Download current CV <span class="cv-updated">(updated {{ dateFormat "January 2, 2006" .Page.Params.cv.updated }})</span></a></span></p>
+</div>
+
+<style>
+    .embed-container {
+        position: relative;
+        padding-bottom: 129%;
+        height: 0;
+        overflow: hidden;
+        max-width: 100%;
+    }
+
+    .embed-container iframe,
+    .embed-container object,
+    .embed-container embed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<div class="embed-container"><iframe src="{{ .Page.Params.cv.pdf }}" style="border: 0.5px"></iframe></div>
+
+{{ end }}

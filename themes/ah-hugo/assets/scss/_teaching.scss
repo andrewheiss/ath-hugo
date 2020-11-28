@@ -1,0 +1,73 @@
+.teaching {
+    h3, .bottom-border {
+        margin-bottom: 1rem;
+        border-bottom: #000000 solid 2px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            font-size: 1.3rem;
+            margin-bottom: 2em;
+            line-height: 1.3;
+
+            p {
+                margin: 0;
+            }
+
+            .course-logo {
+                padding-right: 0.7em;
+
+                img {
+                    max-width: 100%;
+                }
+            }
+
+            .course-title {
+                margin-bottom: 0.3rem;
+                font-weight: bold;
+            }
+
+            .course-listing {
+                font-size: 0.8rem;
+                font-weight: 250;
+            }
+
+            .course-description {
+                font-size: 1rem;
+                font-weight: 250;
+                margin-bottom: 0.5rem;
+            }
+        }
+    }
+
+    ul.course-semesters {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+            display: inline-block;
+            white-space: nowrap;
+            background-color: $link-color;
+            padding: 0.2em 0.4em;
+            border: 1px solid transparent;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+            margin: 0 0.2em 0.4em 0;
+
+            &.no-link {
+                font-weight: bold;
+                background-color: #FFFFFF;
+                border: 1px solid #000000;
+            }
+
+            a {
+                color: #FFFFFF;
+            }
+        }
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "name": "Andrew Heiss",
+    "short_name": "Andrew Heiss",
+    "icons": [
+        {
+            "src": "/android-chrome-192x192.png?v=dLX2MbQJLG",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/android-chrome-512x512.png?v=dLX2MbQJLG",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#170c3a",
+    "background_color": "#170c3a",
+    "display": "standalone"
+}

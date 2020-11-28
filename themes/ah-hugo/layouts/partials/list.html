@@ -1,0 +1,35 @@
+<section class="list">
+  <h1 class="title">
+    {{- if eq .Kind "term" -}}
+        {{- if eq .Data.Singular "year" -}}
+            {{- print "Posts from " -}}
+            {{- .Title -}}
+        {{- else if eq .Data.Singular "month" -}}
+            {{- print "Posts from " -}}
+            {{ $temp_date := delimit (slice (replace .Title "/" "-") "01") "-" }}
+            {{ dateFormat "January 2006" (time (string $temp_date)) }}
+        {{- else -}}
+            {{- i18n .Data.Singular | title -}}
+            {{- print ": " -}}
+            {{- .Title -}}
+        {{- end -}}
+    {{- end -}}
+  </h1>
+
+  {{ .Content }}
+  
+  <ul>
+    {{ range .Pages }}
+    <li>
+        <div class="pure-g">
+            <div class="date pure-u-1 pure-u-md-1-4">
+                <p>{{ .Date.Format (.Site.Params.dateFormat | default "January 2, 2006" ) }}</p>
+            </div>
+            <div class="post-details pure-u-1 pure-u-md-3-4">
+                <p class="title"><a href="{{ .Params.externalLink | default .RelPermalink }}">{{ .Title }}</a></p>        
+            </div>
+        </div>
+    </li>
+    {{ end }}
+  </ul>
+</section>

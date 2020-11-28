@@ -1,0 +1,24 @@
+{
+    "version": "https://jsonfeed.org/version/1",
+    "title": {{ .Site.Title | jsonify }},
+    "home_page_url": {{ .Permalink | jsonify }},
+    "feed_url": {{ with .OutputFormats.Get "jsonfeed" -}}{{- .Permalink | jsonify -}}{{- end }},
+    "description": {{ .Site.Params.description | jsonify }},
+    "icon": {{ delimit (slice .Permalink .Site.Params.feedIcon) "" | jsonify }},
+    "items": [
+    {{- range $index, $entry := ( where .Site.RegularPages "Type" "blog" ) }}
+    {{- if $index }}, {{ end }}
+        {
+            "id": {{ .Permalink | jsonify }},
+            "url": {{ .Permalink | jsonify }},
+            "title": {{ .Title | jsonify }},
+            {{with .Params.description }}"summary": {{ . | jsonify }},{{ end }}
+            "content_html": {{ .Content | jsonify }},
+            "date_published": {{ .Date.Format "2006-01-02T15:04:05Z07:00" | jsonify }},
+            "author": {
+                "name": {{ .Site.Params.author | jsonify }}   
+            }
+        }
+    {{- end }}
+    ]
+}

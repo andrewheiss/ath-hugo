@@ -1,0 +1,71 @@
+.list {
+    h1 {
+        margin-bottom: 0.5em;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 2em;
+
+        li {
+            font-size: 1.3rem;
+            margin-bottom: 0.8em;
+            line-height: 1.2;
+
+            p {
+                margin: 0;
+            }
+
+            .date {
+                font-size: 1rem;
+                font-weight: 250;
+                padding-top: 0.2em;
+                padding-right: 1em;
+                text-align: right;
+
+                @media (max-width: $ipad-or-smaller) {
+                    text-align: left;
+                    font-size: 0.8rem;
+                }
+            }
+
+            .excerpt,
+            .description {
+                font-size: 1rem;
+                font-weight: 250;
+            }
+        }
+    }
+
+    h2 {
+        margin-top: 0;
+        padding-bottom: 0.1em;
+        margin-bottom: 0.3em;
+        font-size: 2rem;
+        border-bottom: #000000 solid 2px;
+    }
+}
+
+.taxonomy {
+    .taxonomy-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-column-gap: 1em;
+        list-style: none;
+
+        @media (max-width: $ipad-or-smaller) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .count {
+            padding-left: 1em;
+            font-weight: 250;
+            font-size: 0.9rem;
+        }
+
+        a.count {
+            color: blue;
+        }
+    }
+}

@@ -1,0 +1,66 @@
+/* TODO: Weird things happen at width=769px, like the sidebar text is centered, but is laid out on the left. All is well at 768 and 770--just this weird liminal space that nobody is ever going to hit. This weird space used to happen at 768, though, which is the iPad portrait width, so I changed all 48ems in @media queries to 48.1, here and in grids-responsive-min.css*/
+
+/* Non-phone and tablet layout */
+@media (min-width: $ipad-or-smaller) {
+    #content {
+        padding: 2em 3em;
+        margin-left: 25%;
+        max-width: 55em;
+		z-index: 5;
+	}
+
+    #sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        max-width: 300px;
+		z-index: 1;
+	}
+}
+
+
+/* Phone and tablet layout */
+@media (max-width: $ipad-or-smaller) {
+    #content {
+        padding: 2em 1.5em;
+	}
+	
+    #sidebar header {
+        text-align: center;
+    }
+    
+    #sidebar h1 {
+    	font-size: 2.8em;
+    	line-height: 1.1em;
+    	margin-bottom: 0.2em;
+    }
+    
+    #sidebar h2 {
+    	margin-bottom: 0;
+    }
+    
+    #sidebar .minibio {
+    	font-size: 1.4em;
+    }
+    
+    #sidebar nav {
+    	margin-top: 1.5em;
+    }
+    
+    .pure-img-responsive-50 {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .pure-img-responsive-75 {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+/* Phone layout */
+@media (max-width: $iphone-or-smaller) {
+    .project-details {
+        width: 100%;
+    }
+}

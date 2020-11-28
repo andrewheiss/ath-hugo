@@ -1,0 +1,33 @@
+.home {
+    .home-blurb {
+        // font-size: 1.3rem;
+    }
+
+    h3 {
+        margin-top: 0;
+
+        @media (max-width: $ipad-or-smaller) {
+            text-align: center;
+            margin: 0.7em 0;
+        }
+    }
+
+    .home-image {
+        margin-top: 0.5em;
+        padding-right: 2em;
+        
+        img {
+            border-radius: 0.25rem;
+        }
+
+        @media (max-width: $ipad-or-smaller) {
+            max-width: 50%;
+            margin: 0 auto;
+            padding-right: 0;
+
+            img {
+                border-radius: 0.5rem;
+            }
+        }
+    }
+}

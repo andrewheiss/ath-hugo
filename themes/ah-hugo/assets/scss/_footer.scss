@@ -1,0 +1,91 @@
+#footer {
+    footer {
+        background: rgba(0, 0, 0, 0.3) none;
+        padding: .8em;
+        color: $sidebar-light;
+
+        ul {
+            padding-left: 0;
+            margin: 0.5em 0 0.5em;
+            list-style: none;
+        }
+
+        li {
+            display: inline-block;
+            padding: 0 0 0 0;
+            margin-right: 0.5em;
+            line-height: 1.3;
+        }
+    }
+
+    p {
+        margin-top: 0.75rem;
+    }
+
+    a {
+        color: #fff;
+
+        &:focus,
+        &:hover {
+            text-decoration: underline;
+            color: $link-hover-color;
+        }
+    }
+
+    .copyright {
+        font-size: 0.9em;
+        margin-bottom: 0;
+
+        a {
+
+            &:focus,
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
+
+    .cc-year {
+        font-size: 0.75em;
+        position: relative;
+        bottom: 2.5px;
+    }
+
+    .colophon,
+    .pgp {
+        font-size: 0.7em;
+        margin-bottom: 0;
+    }
+
+    /* Put footer in bottom left corner if screen is wide and tall enough */
+    @media (min-height: $short-screen) and (min-width: $ipad-or-smaller) {
+        position: fixed;
+        bottom: 0;
+        width: 25%;
+        *width: 24.969%;
+        max-width: 300px;
+        z-index: 1;
+    }
+
+    /* Put footer at the bottom of the content area if screen is wide enough but too short */
+    @media (max-height: $short-screen) and (min-width: $ipad-or-smaller) {
+        width: 75%;
+        text-align: center;
+        float: right;
+
+        footer {
+            background: rgba(0, 0, 0, 0.8) none;
+            font-size: 1.05em;
+        }
+    }
+
+    /* Put footer at the bottom of the page at full width if the screen is skinny */
+    @media (max-width: $ipad-or-smaller) {
+        text-align: center;
+        
+        footer {
+            background: rgba(0, 0, 0, 0.8) none;
+            font-size: 1.2em;
+        }
+    }
+}

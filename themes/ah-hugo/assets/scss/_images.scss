@@ -1,0 +1,17 @@
+img {
+    max-width: 100%;
+}
+
+figure {
+    text-align: center;
+}
+
+.img-50 > img {
+    max-width: 50% !important;
+    height: auto;
+}
+
+.img-75 > img {
+    max-width: 75% !important;
+    height: auto;
+}

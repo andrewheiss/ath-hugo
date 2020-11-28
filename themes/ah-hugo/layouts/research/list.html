@@ -1,0 +1,53 @@
+{{ define "title" }}
+{{ title (i18n (lower .Title)) | default .Title }} | {{ .Site.Title }}
+{{ end }}
+{{ define "content" }}
+
+{{ $research_types := .Site.Taxonomies.research_type }}
+<section class="research">
+    <h1 class="title"> {{ title (i18n (lower .Title)) | default .Title }} </h1>
+
+    {{ .Content }}
+
+    <hr>
+
+    <nav class="publication-toc">
+        <ul id="publications">
+            {{ range $research_type := .Site.Params.research_order }}
+            {{ $value := index $research_types $research_type }}
+            <li><a href="#{{ $research_type | urlize }}">{{ $research_type | humanize | pluralize }}</a></li>
+            {{ end }}
+        </ul>
+    </nav>
+
+    <div class="project-list">
+    {{ range $research_type := .Site.Params.research_order }}
+    {{ $value := index $research_types $research_type }}
+    <h2 id="{{ $research_type | urlize }}">{{ $research_type | humanize | pluralize }} <a class="back-to-top" href="#publications">↩︎</a></h2>
+    <ul>
+        {{ range $value.Pages }}
+        <li class="project">
+            <div class="project-content">
+                <p>{{ if .Params.pub_status }}<span class="status btn-{{ .Params.pub_status.class }}"><i class="fas {{ .Params.pub_status.icon }}"></i> {{ .Params.pub_status.status }}</span> {{ end }}{{ .Params.citation | markdownify }}</p>
+            </div>
+            <div class="project-details">
+                <ul class="project-links">
+                    <li class="project-link details"><a href="{{ .RelPermalink }}"><i class="fas fa-info-circle"></i> Full details »</a></li>
+                    {{- $url_base := .RelPermalink }}
+                    {{- with .Params.links}}
+                    {{- range . }}
+                    <li class="project-link">
+                        <a href="{{ if .local }}{{ $url_base }}{{ end }}{{ .url }}">{{ with .icon }}<i class="{{ . }}"></i> {{ end }}{{ .name }}</a>
+                    </li>
+                    {{- end }}
+                    {{- end }}
+                </ul>
+            </div>
+        </li>
+        {{ end }}
+    </ul>
+    {{ end }}
+    </div>
+
+</section>
+{{ end }}

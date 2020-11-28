@@ -1,0 +1,56 @@
+{{ if .Site.Data.teaching }}
+<div class="teaching">
+
+{{ $flag := true }}
+{{ $url_base := .Page.RelPermalink }}
+
+{{- range .Site.Data.teaching.all_courses }}
+
+    <div class="pure-g">
+        <div class="year pure-u-1-8"></div>
+        <div class="year pure-u-7-8">
+            {{ if .current }}
+            <h2 class="bottom-border">{{ .academic_year }}</h2>
+            {{ else }}
+            {{ if eq $flag true }}
+            <h2>Past courses</h2>
+            {{ $flag = false }}
+            {{ end }}
+            
+            <h3>{{ .academic_year }}</h3>
+            {{ end }}
+        </div>
+    </div>
+    
+    <ul>
+    {{ range .courses }}
+        <li>
+            <div class="course pure-g">
+                <div class="course-logo pure-u-1-8">
+                    {{ if .logo }}{{ if .url }}<a href="{{ .url }}" target="_blank"><img src="{{ $url_base }}logos/{{ .logo }}" alt="{{ .title }}" /></a>{{ else }}<img src="{{ $url_base }}logos/{{ .logo }}" alt="{{ .title }}" />{{ end }}{{ end }}
+                </div>
+                <div class="course-details pure-u-7-8">
+                    <p class="course-title">
+                        {{ if .url }}<a href="{{ .url }}" target="_blank">{{ .title }}</a>{{ else }}{{ .title }}{{end}} <span class="course-listing">({{ if .show_university }}{{ .university }} | {{ end }}{{ with .role }}{{ . | markdownify }} | {{ end }}{{ .number }})</span>
+                    </p>
+
+                    {{ with .description }}<p class="course-description">{{ . }}</p>{{ end }}
+                    
+                    <ul class="course-semesters">
+                        {{ range .semester }}
+                        {{ if .url }}
+                        <li><a href="{{ .url }}"><i class="fas fa-university"></i> {{ .name }}</a></li>
+                        {{ else }}
+                        <li class="no-link"><i class="fas fa-university"></i> {{ .name }}</li>
+                        {{ end }}
+                        {{ end }}
+                    </ul>
+        
+                </div>
+            </div>
+        </li>
+    {{ end }}
+    </ul>
+    {{ end }}
+</div>
+{{ end }}

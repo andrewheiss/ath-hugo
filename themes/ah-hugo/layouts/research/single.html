@@ -1,0 +1,52 @@
+{{ define "title" }}
+{{ .Title }} | {{ .Site.Title }}
+{{ end }}
+{{ define "content" }}
+<section class="research-page">
+    <p class="pseudo-navigation"><a href="/research/"><i class="fas fa-arrow-circle-left"></i> Research</p></a>
+
+    <article>
+        <header>
+            <div class="page-title">
+                <h1 class="title">{{ .Title | markdownify }}</h1>
+            </div>
+
+            <div class="project-details">
+                <div class="publication-content">
+                    <p>{{ .Params.citation | markdownify }}</p>
+                </div>
+
+                <ul class="project-links">
+                    {{- $url_base := .RelPermalink }}
+                    {{- with .Params.links}}
+                    {{- range . }}
+                    <li class="project-link">
+                        <a href="{{ if .local }}{{ $url_base }}{{ end }}{{ .url }}">{{ with .icon }}<i class="{{ . }}"></i>
+                            {{ end }}{{ .name }}</a>
+                    </li>
+                    {{- end }}
+                    {{- end }}
+                </ul>
+            </div>
+
+            {{ with .Params.extra }}
+            <div class="publication-extra">
+                <p><strong>Other details:</strong> {{ . | markdownify }}</p>
+            </div>
+            {{ end }}
+
+        </header>
+
+        <div class="project-content">
+            {{ .TableOfContents }}
+
+            <hr>
+
+            {{ .Content }}
+        </div>
+
+    </article>
+
+    {{ partial "math.html" . }}
+</section>
+{{ end }}

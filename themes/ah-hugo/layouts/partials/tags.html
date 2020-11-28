@@ -1,0 +1,11 @@
+<section class="list taxonomy">
+    <h1 class="title">{{- .Title -}}</h1>
+
+    {{ .Content }}
+
+    <ul class="taxonomy-list">
+        {{ range .Site.Taxonomies.tags.ByCount }}
+        <li><a href="{{ .Page.Permalink }}" class="taxonomy-entry">{{ .Page.Title }}</a><span class="count">{{ .Count }}</span></li>
+        {{ end }}
+    </ul>
+</section>

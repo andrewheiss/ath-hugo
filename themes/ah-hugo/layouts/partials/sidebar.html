@@ -1,0 +1,16 @@
+<header>
+                <h1 class="title"><a href="/">{{ .Site.Title }}</a></h1>
+                <h2 class="minibio">{{ .Site.Params.minibio | markdownify}}</h2>
+
+                <nav id="main-nav">
+                    <ul class="nav-list">
+                        {{- with .Site.Menus.main}}
+                        {{- range sort . }}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+                        </li>
+                        {{- end }}
+                        {{- end }}
+                    </ul>
+                </nav>
+            </header>

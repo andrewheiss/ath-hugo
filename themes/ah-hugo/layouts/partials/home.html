@@ -1,0 +1,16 @@
+<section class="home page">
+    <div class="home-top pure-g">
+        <div class="home-image pure-u-1 pure-u-md-1-3">
+            <picture>
+                <source media="(max-width: 48em)" srcset="{{ .Permalink }}{{ .Params.main_photo_square }}">
+                <source media="(min-width: 48em)" srcset="{{ .Permalink }}{{ .Params.main_photo }}">
+                <img src="{{ .Permalink }}{{ .Params.main_photo }}" alt="{{ .Site.Params.author }}">
+            </picture>
+        </div>
+        <div class="home-blurb pure-u-1 pure-u-md-2-3">
+            <h3>{{ .Title | markdownify }}</h3>
+
+            {{ .Content }}
+        </div>
+    </div>
+</section>

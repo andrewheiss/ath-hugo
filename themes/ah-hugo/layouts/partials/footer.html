@@ -1,0 +1,30 @@
+<footer>
+    <ul class="links">
+        {{- with .Site.Params.little_links }}
+        {{- range sort . "weight" }}
+        <li>
+            <a href="{{ .url | safeURL }}" aria-label="{{ .name }}" {{ if .rel }}rel="{{ .rel }}" {{ end }} {{ if .target }}target="{{ .target }}" {{ end }} {{ if .type }}type="{{ .type }}" {{ end }}>
+                <i class="{{ .icon }}" aria-hidden="true"></i>
+            </a>
+        </li>
+        {{- end }}
+        {{- end }}
+    </ul>
+
+    <p class="colophon">ORCID iD: <a href="https://orcid.org/{{ .Site.Params.orcid }}">{{ .Site.Params.orcid }}</a></p>
+
+    <p class="pgp">
+        <a href="{{ .Site.BaseURL | safeHTML }}{{ .Site.Params.pgp.key }}">PGP public <i class="fas fa-key" aria-hidden="true"></i></a> &bull; PGP
+        fingerprint:<br />{{ .Site.Params.pgp.fingerprint | markdownify }}
+    </p>
+
+    <p class="copyright">
+        <a href="http://creativecommons.org/licenses/by-sa/4.0/"
+            title="Creative Commons Attribution-ShareAlike 4.0 International license"><i class="fab fa-creative-commons"></i>
+        <i class="fab fa-creative-commons-by" title="Attribution"></i>
+        <i class="fab fa-creative-commons-share" title="Share alike"></i></a>
+        <span class="cc-year">&bull; {{ .Site.Params.since }}&ndash;{{ now.Year }}</span>
+    </p>
+
+    <p class="colophon"><a href="{{ .Site.Params.github_repo }}">Code for site</a></p>
+</footer>

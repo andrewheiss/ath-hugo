@@ -1,0 +1,25 @@
+{{ printf `<?xml version="1.0" encoding="utf-8"?>` | safeHTML }} {{/* ref: https://validator.w3.org/feed/docs/atom.html */}}
+<feed xmlns="http://www.w3.org/2005/Atom"{{ with .Site.LanguageCode }} xml:lang="{{ . }}"{{ end }}>
+    <title>{{ .Site.Title | safeHTML }}</title>
+    <link href="{{ .Permalink }}" rel="alternate" />
+    <link href="{{ with .OutputFormats.Get "atom" -}}{{- .Permalink -}}{{- end }}" rel="self" />
+    <id>{{ .Permalink }}</id>
+    <updated>{{ now.Format "2006-01-02T15:04:05-07:00" | safeHTML }}</updated>
+    {{- range ( where .Site.RegularPages "Type" "blog" ) }}
+    <entry>
+        {{ printf `<title type="html"><![CDATA[%s]]></title>` .Title | safeHTML }}
+        <link href="{{ .Permalink }}" rel="alternate" />
+        <published>{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTML }}</published>
+        <updated>{{ .Lastmod.Format "2006-01-02T15:04:05-07:00" | safeHTML }}</updated>
+        <author>
+            <name>{{ .Site.Params.author | plainify }}</name>
+        </author>
+        <id>{{ .Permalink }}</id>
+        {{with .Params.description }}{{ printf `<summary type="html"><![CDATA[%s]]></summary>` . | safeHTML }}{{ end }}
+        {{ printf `<content type="html"><![CDATA[%s%s]]></content>` .Content | safeHTML }}
+        {{- with .Params.tags }}{{ range . }}
+        <category term="{{ . }}" />{{ end }}
+        {{- end }}
+    </entry>
+    {{- end }}
+</feed>

@@ -1,7 +1,8 @@
 {{ if .Page.Params.cv }}
 
 <div class="cv-download">
-<p><span class="cv-button"><a target="_blank" href="{{ .Page.Params.cv.pdf }}"><i class="fas fa-file-download"></i>&ensp;Download current CV <span class="cv-updated">(updated {{ dateFormat "January 2, 2006" .Page.Params.cv.updated }})</span></a></span></p>
+<span class="cv-button"><a target="_blank" href="{{ .Page.Params.cv.pdf }}"><i class="fas fa-file-download"></i>&ensp;Download current CV</a></span>
+<div class="cv-updated">(updated {{ dateFormat "January 2, 2006" .Page.Params.cv.updated }})</div>
 </div>
 
 <style>

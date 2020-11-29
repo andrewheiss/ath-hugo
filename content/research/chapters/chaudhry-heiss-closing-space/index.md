@@ -1,6 +1,6 @@
 ---
 title: "Who's Afraid of the Activists? Causes and Consequences of the Global Crackdown on NGOs"
-date: 2020-11-24
+date: 2020-12-31
 research_type:
 - book-chapter
 links:

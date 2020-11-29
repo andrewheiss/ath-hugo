@@ -42,40 +42,14 @@ We first [download a CSV of the WWBI data from the World Bank](https://datacatal
 ```r
 # Load libraries
 library(tidyverse)
-## ── Attaching packages ───────────────────────────────────────────────── tidyverse 1.3.0 ──
-## ✔ ggplot2 3.3.2     ✔ purrr   0.3.4
-## ✔ tibble  3.0.3     ✔ dplyr   1.0.2
-## ✔ tidyr   1.1.2     ✔ stringr 1.4.0
-## ✔ readr   1.3.1     ✔ forcats 0.5.0
-## ── Conflicts ──────────────────────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
 library(ggridges)
 library(scales)
-## 
-## Attaching package: 'scales'
-## The following object is masked from 'package:purrr':
-## 
-##     discard
-## The following object is masked from 'package:readr':
-## 
-##     col_factor
 library(infer)
 
 set.seed(1234)  # Make all random draws reproducible
 
 # https://datacatalog.worldbank.org/dataset/worldwide-bureaucracy-indicators
 wwbi <- read_csv("WWBIData.csv")
-## Parsed with column specification:
-## cols(
-##   .default = col_double(),
-##   `Country Name` = col_character(),
-##   `Country Code` = col_character(),
-##   `Indicator Name` = col_character(),
-##   `Indicator Code` = col_character(),
-##   X24 = col_logical()
-## )
-## See spec(...) for full column specifications.
 
 # Create a list of indicators we want to work with
 indicators <- c(

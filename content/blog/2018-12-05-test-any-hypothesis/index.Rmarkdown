@@ -43,7 +43,7 @@ In December 2018 (just two days ago!), the World Bank announced a new [Worldwide
 
 We first [download a CSV of the WWBI data from the World Bank](https://datacatalog.worldbank.org/dataset/worldwide-bureaucracy-indicators). In its raw form, it's kind of a mess, with a row for each indicator in each country (so Afghanistan has a row for women private sector employment, one for women public sector employment, and so on), and columns for each year. This heavily commented code will load and clean and rearrange the WWBI data into something we can analyze and plot.
 
-```{r load-clean-data, warning=FALSE, meesage=FALSE}
+```{r load-clean-data, warning=FALSE, message=FALSE}
 # Load libraries
 library(tidyverse)
 library(ggridges)

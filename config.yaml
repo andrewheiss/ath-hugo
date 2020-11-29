@@ -14,6 +14,7 @@ markup:
     guessSyntax: true
     style: "monokai"
 disableKinds: ["RSS"]
+buildFuture: true
 
 permalinks:
   blog: "/blog/:year/:month/:day/:slug/"

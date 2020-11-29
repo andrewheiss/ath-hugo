@@ -5,7 +5,7 @@ research_type:
 - book-chapter
 links:
 - name: Preprint
-  url: 2018-johnson-heiss-liberal-institutionalism.pdf
+  url: heiss-2019-ngos-authoritarianism.pdf
   local: true
   icon: far fa-file-pdf
 - name: Code

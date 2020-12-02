@@ -427,7 +427,6 @@ We can calculate each element of this fraction and then generate the inverse pro
 # dnorm() the grant amount for each person, the predicted value from a simple
 # grant ~ 1 model, and the sd of the residuals from that model
 model_num <- lm(grant ~ 1, data = grant_data)
-
 num <- dnorm(grant_data$grant,
              predict(model_num),
              sd(model_num$residuals))

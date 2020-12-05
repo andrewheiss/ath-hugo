@@ -10,9 +10,11 @@ links:
   icon: far fa-file-pdf
 - name: Preprint (HTML)
   url: closing-space.html
+  local: true
   icon: far fa-file-alt
 - name: Analysis notebook
   url: figures.html
+  local: true
   icon: fas fa-chart-bar
 - name: Complete code
   url: https://github.com/andrewheiss/Closing-space

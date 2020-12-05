@@ -1,24 +1,31 @@
 ---
-title: "Who's Afraid of the Activists? Causes and Consequences of the Global Crackdown on NGOs"
+title: "Closing Space and the Restructuring of Global Activism: Causes and Consequences of the Global Crackdown on NGOs"
 date: 2020-12-31
 research_type:
 - book-chapter
 links:
-- name: Preprint
-  url: 2019-chaudhry-heiss-closing-space.pdf
+- name: Preprint (PDF)
+  url: 2021-chaudhry-heiss-closing-space.pdf
   local: true
   icon: far fa-file-pdf
-- name: Code
+- name: Preprint (HTML)
+  url: closing-space.html
+  icon: far fa-file-alt
+- name: Analysis notebook
+  url: figures.html
+  icon: fas fa-chart-bar
+- name: Complete code
   url: https://github.com/andrewheiss/Closing-space
   icon: fab fa-github
 citation: >-
-  [Suparna Chaudhry](http://www.suparnachaudhry.com/) and **Andrew Heiss**, “Who's Afraid of the Activists? Causes and Consequences of the Global Crackdown on NGOs,” chap. 2 in *Beyond the Boomerang: New Patterns in Transcalar Advocacy*, eds. Christopher L. Pallas and Elizabeth Bloodgood (Tuscaloosa, AL: University of Alabama Press, forthcoming).
+  [Suparna Chaudhry](http://www.suparnachaudhry.com/) and **Andrew Heiss**, "Closing Space and the Restructuring of Global Activism: Causes and Consequences of the Global Crackdown on NGOs," chap. 2 in *Beyond the Boomerang: New Patterns in Transcalar Advocacy*, eds. Christopher L. Pallas and Elizabeth Bloodgood (Tuscaloosa, AL: University of Alabama Press, forthcoming).
 ---
 
-## Important links
+## Important figure
 
-- [Paper (preprint)](2019-chaudhry-heiss-closing-space.pdf)
-- [GitHub repository](https://github.com/andrewheiss/Closing-space)
+Figure 1: 2017 CIVICUS Monitor civic space ratings
+
+![Figure 1: 2017 CIVICUS Monitor civic space ratings](output/civicus_map.png)
 
 
 ## BibTeX citation
@@ -30,7 +37,7 @@ citation: >-
     Booktitle = {Beyond the Boomerang: New Patterns in Transcalar Advocacy},
     Editor = {Christopher L. Pallas and Elizabeth Bloodgood},
     Publisher = {University of Alabama Press},
-    Title = {Who's Afraid of the Activists? Causes and Consequences of the Global Crackdown on {NGOs}},
+    Title = {Closing Space and the Restructuring of Global Activism: Causes and Consequences of the Global Crackdown on {NGOs},
     Chapter = {2},
     Year = {2021}}
 ```

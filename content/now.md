@@ -1,12 +1,12 @@
 ---
 title: What I'm doing now
-date: 2020-11-16
+date: 2020-12-18
 slug: now
 description: Andrew Heiss is working on a bunch of exciting and groundbreaking projects
 math: true
 ---
 
-As of November 16, 2020, I'm spending all my time on these things:
+As of December 18, 2020, I'm spending all my time on these things:
 
 * Staying at home pretty much 24/7 because of the COVID-19 pandemic
 * Raising 5 kids (13, 11, 8.5, 5.5, 3) and trying to stay sane ([family blog](http://www.heissatopia.com/))

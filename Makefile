@@ -21,6 +21,7 @@ blog:
 research:
 	hugo new --kind research-bundle research/$(ARGS)
 
+## deploy	:	Build and upload site to andrewheiss.com with rsync
 deploy: build
 	rsync -Prvzc --exclude='.DS_Store' --exclude='.Rproj.user/' --delete $(OUTPUTDIR)/ $(SSH_TARGET)
 

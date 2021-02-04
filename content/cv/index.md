@@ -1,8 +1,8 @@
 ---
 title: Curriculum vitæ
 cv:
-  pdf: "2020-11-28_andrew-heiss-cv.pdf"
-  updated: 2020-11-28
+  pdf: "2021-02-03_andrew-heiss-cv.pdf"
+  updated: 2021-02-03
 ---
 
 {{< cv >}}

@@ -1,4 +1,19 @@
 talks:
+- title: "What does the internet say about you?"
+  date: "2021-02-05T11:00:00"
+  description: "Workshop for the Political Science Graduate Student Association, Department of Political Science, Georgia State University"
+  location: Atlanta, Georgia (via Zoom)
+  links:
+  - name: Slides
+    url: https://talks.andrewheiss.com/2021-02-05_gsu-polisci-web-presence/slides.html
+    icon: fas fa-chalkboard-teacher
+  - name: Handout page
+    url: https://talks.andrewheiss.com/2021-02-05_gsu-polisci-web-presence/
+    icon: fas fa-external-link-square-alt
+  - name: GitHub repository for talk
+    url: https://github.com/andrewheiss/2021-02-05_gsu-polisci-web-presence
+    icon: fab fa-github
+
 - title: "The US and the 2020 Election"
   date: 2020-10-29
   description: "Guest lecture for KIEN 2263 (English Academic and Professional Skills II), Centre for Language & Communication Studies, University of Turku"

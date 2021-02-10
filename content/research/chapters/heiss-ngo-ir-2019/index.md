@@ -13,6 +13,8 @@ links:
   icon: fab fa-github
 citation: >-
   **Andrew Heiss**, “NGOs and Authoritarianism,” chap. 38 in *Routledge Handbook of NGOs and International Relations*, ed. Thomas Davies (London: Routledge, 2019).
+haiku: >-
+  It’s complicated. / Dictators love NGOs, / but also they don’t.
 ---
 
 ## Abstract

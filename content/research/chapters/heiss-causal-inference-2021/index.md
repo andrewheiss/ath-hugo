@@ -16,6 +16,8 @@ links:
 - name: Code
   url: "https://github.com/andrewheiss/heiss-causal-inference"
   icon: fab fa-github
+haiku: >-
+  DAGs, inference, R! / Observational data? / Tell causal stories!
 ---
 
 ## Abstract

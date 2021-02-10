@@ -21,6 +21,8 @@ citation: >-
   [Suparna Chaudhry](http://www.suparnachaudhry.com/) and **Andrew Heiss**, “Dynamics of International Giving: How Heuristics Shape Individual Donor Preferences,” *Nonprofit and Voluntary Sector Quarterly* (forthcoming, 2021), doi: [`10.1177/0899764020971045`](https://doi.org/10.1177/0899764020971045)
 extra: >-
   Presented at the annual meeting of the International Studies Association (ISA), San Francisco, California, April 2018; and the annual meeting of ISA, Toronto, Canada, March 2019
+haiku: >-
+  In trouble abroad? / Crackdown may be heuristic— / those who give give more.
 ---
 
 &nbsp;
@@ -34,6 +36,10 @@ extra: >-
 - [Statistical analysis notebook](https://stats.andrewheiss.com/ngo-crackdowns-philanthropy/)
 - [GitHub repository](https://github.com/andrewheiss/ngo-crackdowns-philanthropy)
 - [Experiment preregistration](https://osf.io/dx973/register/565fb3678c5e4a66b5582f67)
+
+## Media coverage
+
+- ["Donors grow more generous when they support nonprofits facing hostile environments abroad,"](https://theconversation.com/donors-grow-more-generous-when-they-support-nonprofits-facing-hostile-environments-abroad-150436) *The Conversation*, December 7, 2020
 
 ## Abstract
 

@@ -30,6 +30,11 @@
             <div class="project-content">
                 <p>{{ if .Params.pub_status }}<span class="status btn-{{ .Params.pub_status.class }}"><i class="fas {{ .Params.pub_status.icon }}"></i> {{ .Params.pub_status.status }}</span> {{ end }}{{ .Params.citation | markdownify }}</p>
             </div>
+            {{ with .Params.haiku }}
+            <div class="haiku">
+                <p>{{ . }}</p>
+            </div>
+            {{ end }}
             <div class="project-details">
                 <ul class="project-links">
                     <li class="project-link details"><a href="{{ .RelPermalink }}"><i class="fas fa-info-circle"></i> Full details »</a></li>

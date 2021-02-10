@@ -13,6 +13,8 @@ links:
   icon: fas fa-scroll
 citation: >-
   **Andrew Heiss** and Tana Johnson, “Internal, Interactive, and Institutional Factors: Towards a Unified Theory of INGO Behavior,” *International Studies Review* 18, no. 3 (September 2016): 528–41, doi: [`10.1093/isr/viv014`](http://doi.org/10.1093/isr/viv014).
+haiku: >-
+  Study NGOs? / View behavior; policy / with a new framework.
 ---
 
 ## Abstract

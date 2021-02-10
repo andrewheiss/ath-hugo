@@ -41,7 +41,7 @@
         margin: 0 0 2em;
 
         li.project {
-            margin-bottom: 2em;
+            margin-bottom: 2.5em;
 
             p {
                 margin: 0;
@@ -56,6 +56,16 @@
             padding: 0.2em;
             margin-right: 0.5em;
         }
+    }
+
+    .haiku {
+        margin: 0.4rem 0 0rem;
+        font-family: $slab-font-family;
+        font-weight: 300;
+        font-style: italic;
+        text-align: right;
+        color: $darker-grey;
+        font-size: 0.85em;
     }
 
     ul.project-links {
@@ -113,6 +123,16 @@
 
     h3 {
         font-size: 1.7rem;
+    }
+
+    .haiku {
+        margin-bottom: 2.5rem;
+        font-family: $slab-font-family;
+        text-align: right;
+        font-weight: 300;
+        font-style: italic;
+        font-size: 1.2em;
+        color: $darker-grey;
     }
 
     .project-details {

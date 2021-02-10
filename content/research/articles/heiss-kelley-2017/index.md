@@ -16,8 +16,8 @@ links:
   icon: fab fa-github
 citation: >-
   **Andrew Heiss** and Judith G. Kelley, “Between a Rock and a Hard Place: International NGOs and the Dual Pressures of Donors and Host Governments,” *Journal of Politics* 79, no. 2 (April 2017): 732–41, doi: [`10.1086/691218`](http://doi.org/10.1086/691218).
-extra: >-
-  Presented at the workshop on Interest Groups, International Organizations, and Global Problem-Solving Capacity, Stockholm University, Sweden, June 2018, organized by Elizabeth Bloodgood and Lisa Dellmuth
+haiku: >-
+  Donors and targets: / institutional constraints / limit NGOs.
 ---
 
 ## Abstract

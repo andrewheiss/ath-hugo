@@ -21,6 +21,8 @@ citation: >-
   **Andrew Heiss**, “Taking Control of Regulations: How International Advocacy NGOs Shape the Regulatory Environments of their Target Countries,” *Interest Groups and Advocacy* 8, no. 3 (September 2019): 356–75, doi: [`10.1057/s41309-019-00061-0`](https://doi.org/10.1057/s41309-019-00061-0)
 extra: >-
   Presented at the workshop on Interest Groups, International Organizations, and Global Problem-Solving Capacity, Stockholm University, Sweden, June 2018, organized by Elizabeth Bloodgood and Lisa Dellmuth
+haiku: >-
+  Flexibility— / what lets NGOs reshape / host environment.
 ---
 
 ## Important links

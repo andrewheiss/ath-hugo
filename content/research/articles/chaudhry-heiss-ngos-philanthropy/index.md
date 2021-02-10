@@ -22,7 +22,7 @@ citation: >-
 extra: >-
   Presented at the annual meeting of the International Studies Association (ISA), San Francisco, California, April 2018; and the annual meeting of ISA, Toronto, Canada, March 2019
 haiku: >-
-  In trouble abroad? / Crackdown may be heuristic— / those who give give more.
+  In trouble abroad? / Crackdown may be heuristic— / those who give give more.
 ---
 
 &nbsp;

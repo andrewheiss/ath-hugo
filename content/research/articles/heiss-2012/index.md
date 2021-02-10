@@ -18,7 +18,7 @@ links:
 citation: >-
   **Andrew Heiss**, “The Failed Management of a Dying Regime: Hosni Mubarak, Egypt’s National Democratic Party, and the January 25 Revolution,” *Journal of Third World Studies* 28, no. 1 (Spring 2012): 155–171, no doi.
 haiku: >-
-  Management theory / meets political science: / Mubarak messed up.
+  Management theory / meets political science: / Mubarak messed up.
 ---
 
 ## Abstract

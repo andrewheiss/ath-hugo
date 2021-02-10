@@ -22,7 +22,7 @@ links:
 citation: >-
   [Suparna Chaudhry](http://www.suparnachaudhry.com/) and **Andrew Heiss**, "Closing Space and the Restructuring of Global Activism: Causes and Consequences of the Global Crackdown on NGOs," chap. 2 in *Beyond the Boomerang: New Patterns in Transcalar Advocacy*, eds. Christopher L. Pallas and Elizabeth Bloodgood (Tuscaloosa, AL: University of Alabama Press, forthcoming).
 haiku: >-
-  Governments threatened— / NGO regulations / shift funding; missions.
+  Governments threatened— / NGO regulations / shift funding; missions.
 ---
 
 ## Important figure

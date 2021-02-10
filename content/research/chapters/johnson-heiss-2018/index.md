@@ -14,7 +14,7 @@ links:
 citation: >-
   [Tana Johnson](https://lafollette.wisc.edu/faculty-staff/faculty/tana-johnson) and **Andrew Heiss**, “Liberal Institutionalism,” chap. 8 in *International Organization and Global Governance*, 2nd ed., ed. Thomas G. Weiss and Rorden Wilkinson (London: Routledge, 2018), 123–34, doi: [`10.4324/9781315301914`](https://doi.org/10.4324/9781315301914).
 haiku: >-
-  Stuck between “ism”s, / liberal global theory / has rich past; future.
+  Stuck between “ism”s, / liberal global theory / has rich past; future.
 ---
 
 ## Abstract

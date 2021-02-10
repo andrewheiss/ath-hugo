@@ -60,13 +60,16 @@
 
     .haiku {
         margin: 0.4rem 0 0rem;
-        padding-left: 20%;
         font-family: $slab-font-family;
         font-weight: 300;
         font-style: italic;
         text-align: right;
         color: $darker-grey;
-        font-size: 0.85em;
+        font-size: 0.9em;
+
+        @media (max-width: $ipad-or-smaller) {
+            font-size: 0.8rem;
+        }
     }
 
     ul.project-links {
@@ -127,13 +130,19 @@
     }
 
     .haiku {
-        margin-bottom: 2.5rem;
-        font-family: $slab-font-family;
+        margin: -1em 0 1.5em;
+        // padding-left: 2em;
+        // display: inline-block;
         text-align: right;
+        font-family: $slab-font-family;
         font-weight: 300;
         font-style: italic;
-        font-size: 1.2em;
+        font-size: 1em;
         color: $darker-grey;
+
+        p {
+            margin: 0;
+        }
     }
 
     .project-details {

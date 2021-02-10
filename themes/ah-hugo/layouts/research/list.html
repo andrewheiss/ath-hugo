@@ -32,7 +32,7 @@
             </div>
             {{ with .Params.haiku }}
             <div class="haiku">
-                <p>{{ . }}</p>
+                {{ replace (replace . " / " "&ensp;/&ensp;") " " "&nbsp;" | safeHTML }}
             </div>
             {{ end }}
             <div class="project-details">

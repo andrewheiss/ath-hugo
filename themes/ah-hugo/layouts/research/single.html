@@ -10,13 +10,11 @@
             <div class="page-title">
                 <h1 class="title">{{ .Title | markdownify }}</h1>
             </div>
-
             {{ with .Params.haiku }}
             <div class="haiku">
-                <p>{{ . }}</p>
+                <p>{{ replace . " / " "<br>" | safeHTML }}</p>
             </div>
             {{ end }}
-
             <div class="project-details">
                 <div class="publication-content">
                     <p>{{ .Params.citation | markdownify }}</p>

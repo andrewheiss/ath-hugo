@@ -17,7 +17,7 @@ links:
 citation: >-
   Eva Witesman and **Andrew Heiss**, “Nonprofit Collaboration and the Resurrection of Market Failure: How a Resource-Sharing Environment Can Suppress Social Objectives,” *Voluntas: International Journal of Voluntary and Nonprofit Organizations*, 2016, 1–29, doi: [`10.1007/s11266-016-9684-5`](http://doi.org/10.1007/s11266-016-9684-5).
 haiku: >-
-  When money is scarce; / when objectives are not shared— / don’t collaborate.
+  When money is scarce; / when objectives are not shared— / don’t collaborate.
 ---
 
 ## Abstract

@@ -20,7 +20,7 @@ links:
 citation: >-
   **Andrew Heiss** and Judith G. Kelley, “From the Trenches: A Global Survey of Anti-TIP NGOs and their Views of US Efforts,” *Journal of Human Trafficking* 3 (2017), doi: [`10.1080/23322705.2016.1199241`](http://doi.org/10.1080/23322705.2016.1199241).
 haiku: >-
-  Big sector survey— / NGOs like U.S. work / fighting trafficking.
+  Big sector survey— / NGOs like U.S. work / fighting trafficking.
 ---
 
 ## Abstract

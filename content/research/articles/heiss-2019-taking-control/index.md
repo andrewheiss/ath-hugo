@@ -22,7 +22,7 @@ citation: >-
 extra: >-
   Presented at the workshop on Interest Groups, International Organizations, and Global Problem-Solving Capacity, Stockholm University, Sweden, June 2018, organized by Elizabeth Bloodgood and Lisa Dellmuth
 haiku: >-
-  Flexibility— / what lets NGOs reshape / host environment.
+  Flexibility— / what lets NGOs reshape / host environment.
 ---
 
 ## Important links

@@ -1,4 +1,19 @@
 talks:
+- title: "Universal documents and reproducibility"
+  date: "2021-03-04T16:00:00"
+  description: 'Workshop for EPID 9100 (PhD/MS seminar), Department of Epidemiology & Biostatistics, University of Georgia'
+  location: Athens, Georgia (via Zoom)
+  links:
+  - name: Slides
+    url: https://talks.andrewheiss.com/2021-03-04_uga-markdown/slides/universal-writing-reproducibility.html
+    icon: fas fa-chalkboard-teacher
+  - name: Companion site
+    url: https://talks.andrewheiss.com/2021-03-04_uga-markdown/
+    icon: fas fa-external-link-square-alt
+  - name: GitHub repository for talk
+    url: https://github.com/andrewheiss/2021-03-04_uga-markdown
+    icon: fab fa-github
+
 - title: "What does the internet say about you?"
   date: "2021-02-05T11:00:00"
   description: "Workshop for the Political Science Graduate Student Association, Department of Political Science, Georgia State University"

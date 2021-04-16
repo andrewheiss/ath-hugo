@@ -7,7 +7,7 @@ clean:
 
 ## build	:	Build site with blogdown through R
 build: 
-	Rscript -e "blogdown::build_site(build_rmd = blogdown::md5sum_filter)"
+	Rscript -e "blogdown::build_site(build_rmd = blogdown::filter_md5sum)"
 
 ## serve	:	Serve site at 127.0.0.1:4321
 serve: 

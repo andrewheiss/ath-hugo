@@ -50,7 +50,11 @@ Figure 1: Relationship between institutional constraints, resource configuration
 @article{Heiss:2019,
     Author = {Andrew Heiss},
     Doi = {10.1057/s41309-019-00061-0},
-    Title = {Taking Control of Regulations: How International Advocacy {NGOs} Shape the Regulatory Environments of their Target Countries},
     Journal = {Interest Groups and Advocacy},
+    Month = {9},
+    Number = {3},
+    Pages = {356--375},
+    Title = {Taking Control of Regulations: How International Advocacy {NGOs} Shape the Regulatory Environments of their Target Countries},
+    Volume = {8},
     Year = {2019}}
 ```

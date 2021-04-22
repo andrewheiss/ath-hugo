@@ -59,7 +59,7 @@ Figures 2 & 3: Difference in likelihood of donation across crackdown and no crac
 @article{ChaudhryHeiss:2021,
     Author = {Suparna Chaudhry and Andrew Heiss},
     Doi = {10.1177/0899764020971045},
-    Title = {Dynamics of International Giving: How Heuristics Shape Individual Donor Preferences},
     Journal = {Nonprofit and Voluntary Sector Quarterly},
+    Title = {Dynamics of International Giving: How Heuristics Shape Individual Donor Preferences},
     Year = {Forthcoming}}
 ```

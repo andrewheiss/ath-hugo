@@ -12,7 +12,7 @@ links:
   url: https://github.com/andrewheiss/constraint-closure/
   icon: fab fa-github
 citation: >-
-  [Steven L. Peck](https://lifesciences.byu.edu/directory/steven-peck) and **Andrew Heiss**, "Can Constraint Closure Provide a Generalized Understanding of Community Dynamics in Ecosystems?” *Oikos* (forthcoming, 2021), doi: forthcoming
+  [Steven L. Peck](https://lifesciences.byu.edu/directory/steven-peck) and **Andrew Heiss**, "Can Constraint Closure Provide a Generalized Understanding of Community Dynamics in Ecosystems?” *Oikos* (forthcoming, 2021), doi: [`10.1111/oik.07621`](10.1111/oik.07621)
 haiku: >-
   Fitness, turnover, / stability, evenness— / all due to constraints.
 ---
@@ -40,7 +40,8 @@ Figure 4: Boxplots show ecological measures across parameter space for different
 ```bibtex
 @article{PeckHeiss:2021,
     Author = {Steven L. Peck and Andrew Heiss},
-    Title = {Can Constraint Closure Provide a Generalized Understanding of Community Dynamics in Ecosystems?},
+    Doi = {10.1111/oik.07621},
     Journal = {Oikos},
+    Title = {Can Constraint Closure Provide a Generalized Understanding of Community Dynamics in Ecosystems?},
     Year = {Forthcoming}}
 ```

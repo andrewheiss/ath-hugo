@@ -145,6 +145,10 @@ code {
     background-color: $inline-code-bg;
 }
 
+strong code {
+    font-weight: 700;
+}
+
 small, .small {
     font-size: 0.8em;
 }

@@ -6,25 +6,37 @@ all_courses:
     description: "Combine research design, causal inference, and econometric tools to measure the effects of social programs"
     university: Georgia State University
     number: PMAP 8521
-    url: https://evalf20.classes.andrewheiss.com/
+    url: https://evalsp21.classes.andrewheiss.com/
     logo: evalsp20.png
     semester:
-    - name: Fall 2020 (asynchronous online)
-      url: https://evalf20.classes.andrewheiss.com/
     - name: Spring 2021 (asynchronous online)
       url: https://evalsp21.classes.andrewheiss.com/
+    - name: Fall 2020 (asynchronous online)
+      url: https://evalf20.classes.andrewheiss.com/
+
+  - title: Data Visualization with R
+    description: "Use R, ggplot2, and the principles of graphic design to create beautiful and truthful visualizations of data"
+    university: Georgia State University
+    number: PMAP 8921
+    url: https://datavizs21.classes.andrewheiss.com/
+    logo: datavizm20.png
+    semester:
+    - name: Summer 2021 (asynchronous online)
+      url: https://datavizs21.classes.andrewheiss.com/
 
   - title: Microeconomics for Public Policy
     description: "Learn how to understand, speak, and do economics in the public sector"
     university: Georgia State University
     number: PMAP 8141
-    url: https://econf20.classes.andrewheiss.com/
+    url: https://econsp21.classes.andrewheiss.com/
     logo: econw19.png
     semester:
-    - name: Fall 2020 (asynchronous online)
-      url: https://econf20.classes.andrewheiss.com/
+    - name: Summer 2021 (asynchronous online)
+      url: https://econs21.classes.andrewheiss.com/ 
     - name: Spring 2021 (asynchronous online)
       url: https://econsp21.classes.andrewheiss.com/
+    - name: Fall 2020 (asynchronous online)
+      url: https://econf20.classes.andrewheiss.com/
 
 - academic_year: "Georgia State University (2019–now)"
   courses:

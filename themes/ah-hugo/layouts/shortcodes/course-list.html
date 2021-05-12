@@ -7,10 +7,9 @@
 {{- range .Site.Data.teaching.all_courses }}
 
     <div class="pure-g">
-        <div class="year pure-u-1-8"></div>
-        <div class="year pure-u-7-8">
+        <div class="year pure-u-1">
             {{ if .current }}
-            <h2 class="bottom-border">{{ .academic_year }}</h2>
+            <h3 class="bottom-border">{{ .academic_year }}</h3>
             {{ else }}
             {{ if eq $flag true }}
             <h2>Past courses</h2>

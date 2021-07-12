@@ -18,7 +18,7 @@ links:
   url: https://github.com/andrewheiss/ngo-crackdowns-philanthropy/tree/master/data
   icon: fas fa-table
 citation: >-
-  [Suparna Chaudhry](http://www.suparnachaudhry.com/) and **Andrew Heiss**, “Dynamics of International Giving: How Heuristics Shape Individual Donor Preferences,” *Nonprofit and Voluntary Sector Quarterly* (forthcoming, 2021), doi: [`10.1177/0899764020971045`](https://doi.org/10.1177/0899764020971045)
+  [Suparna Chaudhry](http://www.suparnachaudhry.com/) and **Andrew Heiss**, “Dynamics of International Giving: How Heuristics Shape Individual Donor Preferences,” *Nonprofit and Voluntary Sector Quarterly* 50, no. 3 (June 2021): 481–505, doi: [`10.1177/0899764020971045`](https://doi.org/10.1177/0899764020971045)
 extra: >-
   Presented at the annual meeting of the International Studies Association (ISA), San Francisco, California, April 2018; and the annual meeting of ISA, Toronto, Canada, March 2019
 haiku: >-
@@ -60,6 +60,10 @@ Figures 2 & 3: Difference in likelihood of donation across crackdown and no crac
     Author = {Suparna Chaudhry and Andrew Heiss},
     Doi = {10.1177/0899764020971045},
     Journal = {Nonprofit and Voluntary Sector Quarterly},
+    Month = {6},
+    Number = {3},
+    Pages = {481--505},
     Title = {Dynamics of International Giving: How Heuristics Shape Individual Donor Preferences},
-    Year = {Forthcoming}}
+    Volume = {50},
+    Year = {2021}}
 ```

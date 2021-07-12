@@ -1,4 +1,13 @@
 talks:
+- title: "Graphic design for public administrators"
+  date: 2021-06-29
+  description: "Workshop for the Georgia Policy Labs at the Andrew Young School of Policy Studies"
+  location: Atlanta, Georgia (via Zoom)
+  links:
+  - name: Companion site and slides
+    url: https://talks.andrewheiss.com/2021-gpl/01_graphic-design/
+    icon: fas fa-chalkboard-teacher
+
 - title: "Universal documents and reproducibility"
   date: "2021-03-04T16:00:00"
   description: 'Workshop for EPID 9100 (PhD/MS seminar), Department of Epidemiology & Biostatistics, University of Georgia'

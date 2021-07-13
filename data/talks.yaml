@@ -1,4 +1,13 @@
 talks:
+- title: "Introduction to Geographic Information Systems (GIS) data with R"
+  date: 2021-07-13
+  description: "Workshop for the Georgia Policy Labs at the Andrew Young School of Policy Studies"
+  location: Atlanta, Georgia (via Zoom)
+  links:
+  - name: Companion site and slides
+    url: https://talks.andrewheiss.com/2021-gpl/02_gis-with-r/
+    icon: fas fa-chalkboard-teacher
+
 - title: "Graphic design for public administrators"
   date: 2021-06-29
   description: "Workshop for the Georgia Policy Labs at the Andrew Young School of Policy Studies"
@@ -87,6 +96,15 @@ talks:
   - name: GitHub repository for talk
     url: https://github.com/andrewheiss/2020-09-17_umontreal-dataviz
     icon: fab fa-github
+
+- title: "Program evaluation and causal inference with R"
+  date: 2020-08-21
+  description: "Workshop for the Georgia Policy Labs at the Andrew Young School of Policy Studies"
+  location: Atlanta, Georgia (via Zoom)
+  links:
+  - name: Slides and materials
+    url: https://talks.andrewheiss.com/2020-gpl/03_causal-inference/
+    icon: fas fa-chalkboard-teacher
 
 - title: "Data visualization with R"
   date: 2020-07-20

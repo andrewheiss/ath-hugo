@@ -1,6 +1,18 @@
 all_courses:
-- academic_year: "2020–21 academic year"
+- academic_year: "2021–22 academic year"
   current: true
+  courses:
+  - title: Program Evaluation for Public Service
+    description: "Combine research design, causal inference, and econometric tools to measure the effects of social programs"
+    university: Georgia State University
+    number: PMAP 8521
+    url: https://evalf21.classes.andrewheiss.com/
+    logo: evalsp20.png
+    semester:
+    - name: Fall 2021
+      url: https://evalf21.classes.andrewheiss.com/
+
+- academic_year: "2020–21 academic year"
   courses:
   - title: Program Evaluation for Public Service
     description: "Combine research design, causal inference, and econometric tools to measure the effects of social programs"

@@ -1,4 +1,13 @@
 talks:
+- title: "Making documents, websites, and dashboards with R"
+  date: 2021-08-17
+  description: "Workshop for the Georgia Policy Labs at the Andrew Young School of Policy Studies"
+  location: Atlanta, Georgia (via Zoom)
+  links:
+  - name: Companion site and slides
+    url: https://talks.andrewheiss.com/2021-gpl/03_markdown-interactivity/
+    icon: fas fa-chalkboard-teacher
+
 - title: "Introduction to Geographic Information Systems (GIS) data with R"
   date: 2021-07-13
   description: "Workshop for the Georgia Policy Labs at the Andrew Young School of Policy Studies"

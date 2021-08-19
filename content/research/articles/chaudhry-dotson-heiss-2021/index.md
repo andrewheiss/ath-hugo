@@ -15,7 +15,7 @@ links:
   url: "#data-and-code"
   icon: fas fa-table
 citation: >-
-  [Suparna Chaudhry](http://www.suparnachaudhry.com/), [Marc Dotson](https://marriottschool.byu.edu/directory/details?id=50683), and **Andrew Heiss**, Who Cares About Crackdowns? Exploring the Role of Trust in Individual Philanthropy,” *Global Policy* 12, no. S5 (July 2021): 45–58, doi: [`10.1111/1758-5899.12984`](https://doi.org/10.1111/1758-5899.12984)
+  [Suparna Chaudhry](http://www.suparnachaudhry.com/), [Marc Dotson](https://marriottschool.byu.edu/directory/details?id=50683), and **Andrew Heiss**, "Who Cares About Crackdowns? Exploring the Role of Trust in Individual Philanthropy," *Global Policy* 12, no. S5 (July 2021): 45–58, doi: [`10.1111/1758-5899.12984`](https://doi.org/10.1111/1758-5899.12984)
 extra: >-
   Presented at a workshop for a special issue of *Global Policy* entitled “Restricting NGOs: From Pushback to Accommodation,” University of Amsterdam, The Netherlands, June 2020 (held online due to COVID-19)
 haiku: >-

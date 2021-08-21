@@ -68,7 +68,7 @@ glance(super_naive_model)
 ## # … with 2 more variables: df.residual <int>, nobs <int>
 ```
 
-This is an awful model on theoretical grounds, but whatever. A \$1 increase in GDP per capita is associated with a 0.001 increase in life expectancy, on average. Look at all those diagnostics though—AIC? BIC? LogLik? Those are important, but definitely not intuitive. The `\(R^2\)` value, on the other hand, is nice and interpretable. GDP per capita explains 46.1% of the variation in life expectancy. That’s soundbite-worthy. Students love it.
+This is an awful model on theoretical grounds, but whatever. A \$1 increase in GDP per capita is associated with a 0.001 year increase in life expectancy, on average. Look at all those diagnostics though—AIC? BIC? LogLik? Those are important, but definitely not intuitive. The `\(R^2\)` value, on the other hand, is nice and interpretable. GDP per capita explains 46.1% of the variation in life expectancy. That’s soundbite-worthy. Students love it.
 
 People also love to critique models based on it. In my program evaluation class, a model in one of my problem sets has an `\(R^2\)` of 0.02, and without fail, a majority of students dismiss it because of its low explanatory power. It only explains 2% of the variation in the outcome! It must be junk!
 
@@ -78,9 +78,9 @@ So how the heck does `\(R^2\)` work anyway? I’ve struggled teaching this, but 
 
 ## Regression as overlapping circles
 
-The earliest example I found is [Cohen and Cohen](#ref-CohenCohen:1975) ([1975](#ref-CohenCohen:1975)), who propose visualizing the shared variance between 2–3 variables as a “ballantine” graph (apparently named after [an ale logo](https://en.wikipedia.org/wiki/P._Ballantine_and_Sons_Brewing_Company)?), or what we call nowadays a Venn or Euler diagram. Others refined their approach, like [Hunt](#ref-Hunt:1986) ([1986](#ref-Hunt:1986)) who provides all sorts of fancy geometric equations to get them accurate (and provides some neat vintage computer code in the appendix), and [Ip](#ref-Ip:2001) ([2001](#ref-Ip:2001)), who shows a bunch of different examples and highlights some of the limitations of using this approach.
+The earliest example I found is [Cohen and Cohen](#ref-CohenCohen:1975) ([1975](#ref-CohenCohen:1975)), who proposed visualizing the shared variance between 2–3 variables as a “ballantine” graph (apparently named after [an ale logo](https://en.wikipedia.org/wiki/P._Ballantine_and_Sons_Brewing_Company)?), or what we call nowadays a Venn or Euler diagram. Others refined their approach, like [Hunt](#ref-Hunt:1986) ([1986](#ref-Hunt:1986)) who provides all sorts of fancy geometric equations to make them accurate (and provides some neat vintage Pascal code in the appendix!), and [Ip](#ref-Ip:2001) ([2001](#ref-Ip:2001)), who shows a bunch of different examples and highlights some of the limitations of using this approach.
 
-For this ongoing example, we’ll simulate some correlated data using [the **faux** package](https://debruine.github.io/faux/). We could use real data, but as you’ll see, these diagrams are pretty finnicky and fragile and generally need very tame data to work. Here we’ll create data with three variables that are normally distributed with these parameters:
+For this ongoing example, we’ll simulate some correlated data using [the **faux** package](https://debruine.github.io/faux/). We could use real data, but as you’ll see, these diagrams are pretty finicky and fragile and generally need very tame data to work. Here we’ll create data with three variables that are normally distributed with these parameters:
 
 -   `Y`: mean = 10, sd = 2
 -   `X1`: mean = 9, sd = 1.7
@@ -174,7 +174,7 @@ aov(Y ~ X1, data = df)
 ## Estimated effects may be unbalanced
 ```
 
-If we look at the sum of squares row, we can see that 81.98 sum-of-squares units (whatever those means) are shared between the two variables, with 317.87 not shared (or residual). To plot this overlap, we need to do a little bit of set theory math. We can’t just tell `Y` to be 399 units big—we need to subtract the shared space from both `Y` and `X1`. We’ll extract the sum of squares value from `aov()` (using `broom::tidy()` to make this easier):
+If we look at the sum of squares row, we can see that 81.98 sum-of-squares units (whatever those mean) are shared between the two variables, with 317.87 not shared (or residual). To plot this overlap, we need to do a little bit of set theory math. We can’t just tell `Y` to be 399 units big—we need to subtract the shared space from both `Y` and `X1`. We’ll extract the sum of squares value from `aov()` (using `broom::tidy()` to make this easier):
 
 ``` r
 ss_both_y_x1 <- aov(Y ~ X1, data = df) %>%
@@ -503,7 +503,7 @@ There are a few important caveats to keep in mind with these diagrams:
 
 **1: This is inefficient**
 
-Calculating each of these plot segments by hand is tedious and there will inevitably be typos and errors. Also, due to how ANOVA works, the order of the variables you specify matters *a lot*: `aov(Y ~ X1 + X2)` and `aov(Y ~ X2 + X1)` give completely different sum of squares for the joint variation of `Y`, `X1`, and `X2`. That in turn changes the sizes of the segments.
+Calculating each of these plot segments by hand is tedious and there will inevitably be typos and errors (there are probably errors in this very post!). Also, due to how ANOVA works, the order of the variables you specify matters *a lot*: `aov(Y ~ X1 + X2)` and `aov(Y ~ X2 + X1)` give completely different sum of squares for the joint variation of `Y`, `X1`, and `X2`. That in turn changes the sizes of the segments.
 
 When writing this, I spent way too much time playing with covariance matrices, partial correlation matrices, and variance-covariance matrices to see if I could calculate these areas more mathematically using the guts of regression and ANOVA, but it was too tricky. Smarter people than me will need to figure it out.
 

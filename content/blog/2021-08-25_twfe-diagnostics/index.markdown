@@ -307,8 +307,8 @@ Or without all the annotations:
 
 There are a few different ways to do fixed effects regression with clustered robust standard errors in R. In Stata you do this:
 
-``` text
-reg gross_enroll treatment i.year i.id, cluster(id)
+``` stata
+reg primary treatment i.year i.id, cluster(id)
 ```
 
 In R, you can use the standard `lm()` function, but it treats country and year as regular explanatory variables, so it includes them in the results from `summary()` or `tidy()`. If you don’t want overly long and detailed results tables, you have to filter those results out.
@@ -492,13 +492,13 @@ Treatment
 20.428
 </td>
 <td style="text-align:center;">
--0.468
+−0.468
 </td>
 <td style="text-align:center;">
--0.468
+−0.468
 </td>
 <td style="text-align:center;">
--0.468
+−0.468
 </td>
 </tr>
 <tr>
@@ -978,7 +978,7 @@ Intercept
 0.320
 </td>
 <td style="text-align:center;">
--0.202
+−0.202
 </td>
 </tr>
 <tr>
@@ -1009,7 +1009,7 @@ Residualized treatment
 23.761
 </td>
 <td style="text-align:center;">
--2.902
+−2.902
 </td>
 </tr>
 <tr>
@@ -1040,7 +1040,7 @@ Treatment group
 0.341
 </td>
 <td style="text-align:center;">
--0.189
+−0.189
 </td>
 </tr>
 <tr>
@@ -1068,7 +1068,7 @@ p = 0.690
 Treatment group × residualized treatment
 </td>
 <td style="text-align:center;">
--7.806
+−7.806
 </td>
 <td style="text-align:center;">
 5.248

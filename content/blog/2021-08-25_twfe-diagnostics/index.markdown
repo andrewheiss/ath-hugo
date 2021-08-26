@@ -388,7 +388,7 @@ glance(model_feols)
 ## 1     0.768         0.742            0.111               NA  14.7   490 4071. 4280. -1985.
 ```
 
-We can show these all in a side-by-side table using [the **modelsummary** package](https://vincentarelbundock.github.io/modelsummary/). Conveniently, `modelsummary()` also lets you [adjust standard errors on the fly](https://grantmcdermott.com/better-way-adjust-SEs/) with the `vcov` argument, so we could theoretically handle all the clustering here instead of inside `lmtest::coeftest()`, `lm_robust()`, or `feols()` and instead do that here. But since we already specified the clusters above, we’ll just use those.
+We can show these all in a side-by-side table using [the **modelsummary** package](https://vincentarelbundock.github.io/modelsummary/). Conveniently, `modelsummary()` also lets you [adjust standard errors on the fly](https://grantmcdermott.com/better-way-adjust-SEs/) with the `vcov` argument, so we could theoretically handle all the clustering here instead of inside `lmtest::coeftest()`, `lm_robust()`, or `feols()`. But since we already specified the clusters above, we’ll just use those.
 
 ``` r
 # Look at secondary schools too

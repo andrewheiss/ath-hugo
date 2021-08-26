@@ -39,7 +39,7 @@ editor_options:
     -   [TWFE estimate with residualized treatment weights](#twfe-estimate-with-residualized-treatment-weights)
 -   [Jakiela’s diagnostics](#jakielas-diagnostics)
     -   [3.1: Do treated observations receive negative weights?](#31-do-treated-observations-receive-negative-weights)
-    -   [3.1: Testing the homogeneity assumption directly](#31-testing-the-homogeneity-assumption-directly)
+    -   [3.2: Testing the homogeneity assumption directly](#32-testing-the-homogeneity-assumption-directly)
 -   [Jakiela’s robustness checks](#jakielas-robustness-checks)
     -   [Exclude later years](#exclude-later-years)
     -   [Change how many post-treatment years are kept](#change-how-many-post-treatment-years-are-kept)
@@ -364,17 +364,18 @@ glance(model_lm_robust)
 ## 1     0.768         0.742        NA      NA          14  490   stata
 ```
 
-The `feols()` function from [the **fixest** package](https://lrberge.github.io/fixest/) also works well, though it doesn’t give the exact SEs that Stata does (and I have no idea why not?!):
+The `feols()` function from [the **fixest** package](https://lrberge.github.io/fixest/) also works well, though you need to change one of the default settings to get the same SEs as Stata when you have a small sample with nested fixed effects like we have here. By default, `feols()` will nest the fixed effect errors (which is also what [Stata’s `reghdfe` package](http://scorreia.com/software/reghdfe/) does), but you can tell it to use the full set of country and year fixed effect errors with the `dof` argument (thanks to [Grant McDermott](https://grantmcdermott.com/) for pointing this out!):
 
 ``` r
 model_feols <- feols(primary ~ treatment | country + year,
                      data = fpe_primary,
-                     cluster = ~ country)
-tidy(model_feols, se = "cluster", cluster = "country")
+                     cluster = ~ country,
+                     dof = dof(fixef.K = "full"))
+tidy(model_feols)
 ## # A tibble: 1 × 5
 ##   term      estimate std.error statistic p.value
 ##   <chr>        <dbl>     <dbl>     <dbl>   <dbl>
-## 1 treatment     20.4      8.98      2.28  0.0391
+## 1 treatment     20.4      9.12      2.24  0.0418
 glance(model_feols)
 ## # A tibble: 1 × 9
 ##   r.squared adj.r.squared within.r.squared pseudo.r.squared sigma  nobs   AIC   BIC logLik
@@ -396,7 +397,8 @@ model_lm_robust_sec <- lm_robust(secondary ~ treatment,
 
 model_feols_sec <- feols(secondary ~ treatment | country + year,
                          data = fpe_secondary,
-                         cluster = ~ country)
+                         cluster = ~ country,
+                         dof = dof(fixef.K = "full"))
 
 # Define the goodness-of-fit stats to include
 gof_stuff <- tribble(
@@ -511,7 +513,7 @@ s.e. = 9.120
 s.e. = 9.120
 </td>
 <td style="text-align:center;">
-s.e. = 8.979
+s.e. = 9.120
 </td>
 <td style="text-align:center;">
 s.e. = 3.081
@@ -520,7 +522,7 @@ s.e. = 3.081
 s.e. = 3.081
 </td>
 <td style="text-align:center;">
-s.e. = 3.016
+s.e. = 3.081
 </td>
 </tr>
 <tr>
@@ -533,7 +535,7 @@ p = 0.026
 p = 0.042
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-p = 0.039
+p = 0.042
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
 p = 0.879
@@ -542,7 +544,7 @@ p = 0.879
 p = 0.881
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-p = 0.879
+p = 0.881
 </td>
 </tr>
 <tr>
@@ -642,7 +644,7 @@ Year fixed effects
 
 All these models show the same result: **eliminating primary school fees caused primary school enrollment to increase by 20.4 percentage points.** That’s astounding! Removing these fees doesn’t have any effect on secondary enrollment though.
 
-(There are some variations in p-values and standard errors because of differences in clustering and standard error calculations—`lm_robust()` is identical to Stata and what Jakiela reports in her paper. There’s probably a way to get `lm()` to show the same p-value in `modelsummary()`, and there’s *for sure* a way to get `feols()` to show the same standard error as `lm_robust()` but again, I can’t figure it out. I’ll stick with `lm_robust()` for the rest of this post.)
+(There are some variations in p-values here—`lm_robust()` and `feols(..., dof = dof(fixef.K = "full"))` are identical to Stata and what Jakiela reports in her paper. There’s probably a way to get `lm()` to show the same p-value in `modelsummary()`, but I’m not super interested in that, given that `lm_robust()` and `feols()` exist. I’ll stick with `lm_robust()` for the rest of this post.)
 
 ### TWFE estimate with residualized treatment weights
 
@@ -853,7 +855,7 @@ waffle_primary / waffle_secondary
 
 And that is indeed the case! Malawi, Ethiopia, Ghana, Uganda, and Cameroon all eliminated fees before 2000, and they start getting negative weights after 2005.
 
-### 3.1: Testing the homogeneity assumption directly
+### 3.2: Testing the homogeneity assumption directly
 
 We thus have issues with negative weighting here for early adopting countries and later country-years. However, as long as the treatment effects are homogenous—or that the elimination of school fees has the same effect across time and country—this negative weighting isn’t an issue. If treatment effects are heterogenous—especially if the effects change over time within treated countries—the TWFE estimate will be severely biased.
 

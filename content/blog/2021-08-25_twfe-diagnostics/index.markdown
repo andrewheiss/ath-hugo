@@ -332,20 +332,25 @@ glance(model_lm)
 ## # … with 2 more variables: df.residual <int>, nobs <int>
 ```
 
-These observations are clustered by country, so we should probably [cluster our standard errors to capture within-country errors](https://theeffectbook.net/ch-StatisticalAdjustment.html#your-standard-errors-are-probably-wrong). Using `lm()` doesn’t let you automatically create robust or clustered standard errors. You can use `lmtest::coeftest()` to do that after the fact, though:
+These observations are clustered by country, so we should probably [cluster our standard errors to capture within-country errors](https://theeffectbook.net/ch-StatisticalAdjustment.html#your-standard-errors-are-probably-wrong). Using `lm()` doesn’t let you automatically create robust or clustered standard errors. You can use `lmtest::coeftest()` to do that after the fact, though. We can copy Stata’s standard errors precisely if we (1) specify the variance-covariance matrix using the `vcovCl()` function from the **sandwich** library, and (2) specify the degrees of freedom to use, based on the number of countries in the data, minus 1.
 
 ``` r
+df_primary <- fpe_primary %>% distinct(country) %>% nrow()
+
 model_lm_clustered <- lmtest::coeftest(model_lm,
-                                       vcov = sandwich::vcovCL,  # This is the method Stata uses
-                                       cluster = ~country)
+                                       vcov = sandwich::vcovCL,
+                                       cluster = ~country,
+                                       df = df_primary - 1,
+                                       # Keep original model so modelsummary shows R2
+                                       save = TRUE)
 
 tidy(model_lm_clustered) %>%
   filter(!str_detect(term, "country"), !str_detect(term, "year"))
 ## # A tibble: 2 × 5
-##   term        estimate std.error statistic  p.value
-##   <chr>          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)     72.4      5.83     12.4  1.44e-30
-## 2 treatment       20.4      9.12      2.24 2.56e- 2
+##   term        estimate std.error statistic       p.value
+##   <chr>          <dbl>     <dbl>     <dbl>         <dbl>
+## 1 (Intercept)     72.4      5.83     12.4  0.00000000601
+## 2 treatment       20.4      9.12      2.24 0.0418
 ```
 
 You can also use fancier regression functions that can handle fixed effects more systematically. The `lm_robust()` function from [the **estimatr** package](https://declaredesign.org/r/estimatr/) works really well for defining special fixed effects that are automatically omitted from results tables *and* returning robust and optionally clustered standard errors:
@@ -383,12 +388,20 @@ glance(model_feols)
 ## 1     0.768         0.742            0.111               NA  14.7   490 4071. 4280. -1985.
 ```
 
-We can show these all in a side-by-side table using [the **modelsummary** package](https://vincentarelbundock.github.io/modelsummary/). Conveniently, `modelsummary()` lets you [adjust standard errors on the fly](https://grantmcdermott.com/better-way-adjust-SEs/), so we can handle the clustering for the first `lm()` model here. We could also theoretically not cluster in `lm_robust()` or `feols()` and instead do that here.
+We can show these all in a side-by-side table using [the **modelsummary** package](https://vincentarelbundock.github.io/modelsummary/). Conveniently, `modelsummary()` also lets you [adjust standard errors on the fly](https://grantmcdermott.com/better-way-adjust-SEs/) with the `vcov` argument, so we could theoretically handle all the clustering here instead of inside `lmtest::coeftest()`, `lm_robust()`, or `feols()` and instead do that here. But since we already specified the clusters above, we’ll just use those.
 
 ``` r
 # Look at secondary schools too
 model_lm_sec <- lm(secondary ~ treatment + country + factor(year),
                    data = fpe_secondary)
+
+df_secondary <- fpe_secondary %>% distinct(country) %>% nrow()
+
+model_lm_clustered_sec <- lmtest::coeftest(model_lm_sec,
+                                           vcov = sandwich::vcovCL,
+                                           cluster = ~country,
+                                           df = df_secondary - 1,
+                                           save = TRUE)
 
 model_lm_robust_sec <- lm_robust(secondary ~ treatment,
                                  fixed_effects = ~ country + year,
@@ -414,10 +427,10 @@ extra_rows <- tribble(
   "Year fixed effects", "•", "•", "•", "•", "•", "•"
 )
 
-modelsummary(list("<code>lm()</code>" = model_lm,
+modelsummary(list("<code>lm()</code>" = model_lm_clustered,
                   "<code>lm_robust()</code>" = model_lm_robust,
                   "<code>feols()</code>" = model_feols,
-                  "<code>lm()</code>" = model_lm_sec,
+                  "<code>lm()</code>" = model_lm_clustered_sec,
                   "<code>lm_robust()</code>" = model_lm_robust_sec,
                   "<code>feols()</code>" = model_feols_sec),
              coef_rename = c("treatment" = "Treatment"),
@@ -426,7 +439,6 @@ modelsummary(list("<code>lm()</code>" = model_lm,
              coef_omit = "^country|^factor|Intercept",
              gof_map = gof_stuff,
              add_rows = extra_rows,
-             vcov = list(~country, NULL, NULL, ~country, NULL, NULL),
              table.attr = "style='font-size:80%;'", escape = FALSE, output = "kableExtra") %>%
   add_header_above(c(" " = 1, "Primary enrollment" = 3, "Secondary enrollment" = 3)) %>%
   kable_styling(htmltable_class = "pure-table")
@@ -529,16 +541,16 @@ s.e. = 3.081
 <td style="text-align:left;box-shadow: 0px 1px">
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-p = 0.026
-</td>
-<td style="text-align:center;box-shadow: 0px 1px">
 p = 0.042
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
 p = 0.042
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
-p = 0.879
+p = 0.042
+</td>
+<td style="text-align:center;box-shadow: 0px 1px">
+p = 0.881
 </td>
 <td style="text-align:center;box-shadow: 0px 1px">
 p = 0.881
@@ -643,8 +655,6 @@ Year fixed effects
 </table>
 
 All these models show the same result: **eliminating primary school fees caused primary school enrollment to increase by 20.4 percentage points.** That’s astounding! Removing these fees doesn’t have any effect on secondary enrollment though.
-
-(There are some variations in p-values here—`lm_robust()` and `feols(..., dof = dof(fixef.K = "full"))` are identical to Stata and what Jakiela reports in her paper. There’s probably a way to get `lm()` to show the same p-value in `modelsummary()`, but I’m not super interested in that, given that `lm_robust()` and `feols()` exist. I’ll stick with `lm_robust()` for the rest of this post.)
 
 ### TWFE estimate with residualized treatment weights
 

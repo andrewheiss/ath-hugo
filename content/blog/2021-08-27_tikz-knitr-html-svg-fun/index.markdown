@@ -60,7 +60,7 @@ Through the magic of **knitr** and R Markdown, it's actually possible to use Tik
 
 To try this out, make a new blank .Rmd file and put this in it:
 
-*(Side note: Syntax highlighting R Markdown files is tricky because they involve so many different possible languages (YAML, Markdown, R, Python, tikz, etc.), but GitHub Gists can highlight them just fine. So all these code chunks here are actually embedded Gists. If you have JavaScript enabled, or if GitHub shuts down Gist some day, or if you otherwise can't see them, you can [see the original gists here](https://gist.github.com/andrewheiss/55f06b079cb7064f2de5b2c174546fae)), or you can see them in the GitHub repository for this website here)*
+*(Side note: Syntax highlighting R Markdown files is tricky because they involve so many different possible languages (YAML, Markdown, R, Python, tikz, etc.), but GitHub Gists can highlight them just fine. So all these code chunks here are actually embedded Gists. If you have JavaScript enabled, or if GitHub shuts down Gist some day, or if you otherwise can't see them, you can [see the original gists here](https://gist.github.com/andrewheiss/55f06b079cb7064f2de5b2c174546fae)), or you can see them in [the GitHub repository for this website here](https://github.com/andrewheiss/ath-hugo/tree/main/content/blog/2021-08-27_tikz-knitr-html-svg-fun))*
 
 
 

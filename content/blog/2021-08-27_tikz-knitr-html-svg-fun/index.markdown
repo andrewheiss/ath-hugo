@@ -20,6 +20,10 @@ editor_options:
 
 
 
+<div class="alert alert-success">An update to knitr has made it a ton easier to embed fonts in SVG files from R. <a href="#update-easier-font-embedding">Jump to the update</a> to see how.</div>
+
+---
+
 **Contents**:
 
 - [Knitting TikZ chunks to PDF](#knitting-tikz-chunks-to-pdf)
@@ -31,6 +35,7 @@ editor_options:
   - [Font issues](#font-issues)
   - [Font solutions](#font-solutions)
 - [tl;dr: Final working version](#tldr-final-working-version)
+- [UPDATE: Easier font embedding!](#update-easier-font-embedding)
 
 ---
 
@@ -230,3 +235,17 @@ When knitting to PDF, the TikZ figure will show up as a regular PDF image, as ex
 Look at that! So great! ([see full HTML file here](example-final.html)):
 
 <img src="example-final.png" width="70%" style="display: block; margin: auto;" />
+
+## UPDATE: Easier font embedding!
+
+I submitted [a pull request to **knitr**](https://github.com/yihui/knitr/pull/2039) that would allow users to specify additional arguments to `dvisvgm` from a chunk, and it was just merged in, so with the development version of **knitr** (and someday with the CRAN version, once a new version is eventually submitted), you can use the `dvisvgm.opts` option in the `engine.opts` chunk options like this:
+
+````text
+```{tikz, fig.ext="svg", engine.opts=list(dvisvgm.opts = "--font-format=woff")}
+% Stuff here
+```
+````
+
+So now there's no need for the `embed_svg_fonts()` hook function! This should work now for the complete DAG example:
+
+<script src="https://gist.github.com/andrewheiss/55f06b079cb7064f2de5b2c174546fae.js?file=example-final-new.Rmd"></script>

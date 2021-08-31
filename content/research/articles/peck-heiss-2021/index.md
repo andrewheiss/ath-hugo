@@ -8,6 +8,9 @@ links:
   url: peck-heiss-constraint-closure.pdf
   icon: far fa-file-pdf
   local: true
+- name: Final version
+  url: https://doi.org/10.1111/oik.07621
+  icon: fas fa-scroll
 - name: Code
   url: https://github.com/andrewheiss/constraint-closure/
   icon: fab fa-github

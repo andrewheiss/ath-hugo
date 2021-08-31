@@ -8,6 +8,9 @@ links:
   url: chaudhry-dotson-heiss-who-cares-crackdowns.pdf
   icon: far fa-file-pdf
   local: true
+- name: Final version
+  url: https://doi.org/10.1111/1758-5899.12984
+  icon: fas fa-scroll
 - name: Code
   url: https://github.com/andrewheiss/who-cares-about-crackdown
   icon: fab fa-github

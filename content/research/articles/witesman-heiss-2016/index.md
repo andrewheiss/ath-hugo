@@ -15,7 +15,7 @@ links:
   url: https://github.com/andrewheiss/np-collaboration
   icon: fab fa-github
 citation: >-
-  Eva Witesman and **Andrew Heiss**, “Nonprofit Collaboration and the Resurrection of Market Failure: How a Resource-Sharing Environment Can Suppress Social Objectives,” *Voluntas: International Journal of Voluntary and Nonprofit Organizations*, 2016, 1–29, doi: [`10.1007/s11266-016-9684-5`](http://doi.org/10.1007/s11266-016-9684-5).
+  Eva Witesman and **Andrew Heiss**, “Nonprofit Collaboration and the Resurrection of Market Failure: How a Resource-Sharing Environment Can Suppress Social Objectives,” *Voluntas: International Journal of Voluntary and Nonprofit Organizations* 28, no. 4 (August 2017): 1500–1528, doi: [`10.1007/s11266-016-9684-5`](http://doi.org/10.1007/s11266-016-9684-5).
 haiku: >-
   When money is scarce; / when objectives are not shared— / don’t collaborate.
 ---
@@ -39,7 +39,10 @@ Figure 1: Simulation results
     Author = {Eva Witesman and Andrew Heiss},
     Doi = {10.1007/s11266-016-9684-5},
     Journal = {Voluntas: International Journal of Voluntary and Nonprofit Organizations},
-    Pages = {1--29},
+    Month = {8},
+    Number = {4},
+    Pages = {1500--1528},
     Title = {Nonprofit Collaboration and the Resurrection of Market Failure: How a Resource-Sharing Environment Can Suppress Social Objectives},
+    Volume = {28},
     Year = {2016}}
 ```

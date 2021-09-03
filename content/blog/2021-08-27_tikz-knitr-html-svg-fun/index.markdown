@@ -22,6 +22,8 @@ editor_options:
 
 <div class="alert alert-success">An update to knitr has made it a ton easier to embed fonts in SVG files from R. <a href="#update-easier-font-embedding">Jump to the update</a> to see how.</div>
 
+<div class="alert alert-success">Also, it's possible to change TikZ fonts and not use Computer Modern for everything! <a href="#another-update-changing-fonts">Jump to the second update</a> to see how.</div>
+
 ---
 
 **Contents**:
@@ -36,6 +38,9 @@ editor_options:
   - [Font solutions](#font-solutions)
 - [tl;dr: Final working version](#tldr-final-working-version)
 - [UPDATE: Easier font embedding!](#update-easier-font-embedding)
+- [ANOTHER UPDATE: Changing fonts!](#another-update-changing-fonts)
+  - [Knitting only to PDF](#knitting-only-to-pdf)
+  - [Knitting to PDF and HTML](#knitting-to-pdf-and-html)
 
 ---
 
@@ -249,3 +254,54 @@ I submitted [a pull request to **knitr**](https://github.com/yihui/knitr/pull/20
 So now there's no need for the `embed_svg_fonts()` hook function! This should work now for the complete DAG example:
 
 <script src="https://gist.github.com/andrewheiss/55f06b079cb7064f2de5b2c174546fae.js?file=example-final-new.Rmd"></script>
+
+## ANOTHER UPDATE: Changing fonts!
+
+You're not limited to the default (and kinda ugly) Computer Modern font with TikZ chunks, but changing the font is a little tricky becuase each TikZ chunk in **knitr** is treated as a standalone LaTeX document, so you need to adjust the fonts in each chunk.
+
+### Knitting only to PDF
+
+If you're *only* interested in knitting to PDF, you can use XeTeX to embed any font you want in the diagram. When using XeTeX, you'd typically add something like this to the preamble of your document to change the document font:
+
+```latex
+\usepackage{fontspec}
+\setmainfont{Comic Sans MS}  % ew
+```
+
+Each standalone TikZ knitr chunk gets passed to [a special `tikz2pdf.tex` template](https://github.com/yihui/knitr/blob/master/inst/misc/tikz2pdf.tex). The content of the chunk is inserted in the `%% TIKZ_CODE %%` area, and there's a space in the template for preamble things at `%% EXTRA_TIKZ_PREAMBLE_CODE %%`. To get content inserted there, you can use the `extra.preamble` option in `engine.opts` like so:
+
+````text
+```{tikz, engine.opts=list(extra.preamble=c("\\usepackage{fontspec}", "\\setmainfont{Comic Sans MS}"))}
+% Stuff here
+```
+````
+
+That won't work right away though. When you knit, **knitr** uses the default `pdflatex` LaTeX engine to render each TikZ chunk, and you'll get an error because `fontspec` only works with XeTeX. You can tell **knitr** to use `xelatex` to render those chunks if you set the `tinytex.engine` option: 
+
+```r
+options(tinytex.engine = "xelatex")
+```
+
+Once you set `xelatex` as the default LaTeX engine for the document, all TikZ chunks will render correctly. Here's a complete example (note that I moved the `extra.preamble` stuff to a separate variable so that it's easier to reuse) ([see full PDF here](example-xelatex.pdf)):
+
+<script src="https://gist.github.com/andrewheiss/55f06b079cb7064f2de5b2c174546fae.js?file=example-xelatex.Rmd"></script>
+
+<img src="example-xelatex.png" width="70%" style="display: block; margin: auto;" />
+
+### Knitting to PDF and HTML
+
+This is a little trickier if you want to convert these TikZ chunks to SVG when knitting to HTML. **knitr** ignores the `tinytex.engine` option when you knit to HTML, so there's no way to tell TikZ chunks to get processed through `xelatex`. Additionally, `xelatex` does not produce .dvi files, which `dvisvgm` uses to convert to SVG. `xelatex` instead creates its own special .xdv files. In theory, newer versions of `dvisvgm` should work with XDV files, but **knitr** is hard-coded to pass DVI files to `dvisvgm`, not XDV files. So even if we could force TikZ chunks to go through `xelatex`, they wouldn't be converted to SVG. Alas.
+
+But all is not lost! It's possible to change fonts in non-XeTeX documents. Because you're limited to whatever `pdflatex` can support, you can only use specific font packages instead of whatever font you want. For instance, to use [TEX Gyre Pagella](https://ctan.org/pkg/tex-gyre-pagella), include `\usepackage{tgpagella}` in your preamble. [See this](https://www.overleaf.com/learn/latex/Font_typefaces) for a basic list of possible font packages, or [this for a pretty complete catalogue](https://tug.org/FontCatalogue/).
+
+For instance, here's how to use [Linux Libertine](https://tug.org/FontCatalogue/linuxlibertine/) for text and [Libertinus Math](https://github.com/alerque/libertinus) for math *with* embedded SVG fonts when knitting to HTML ([see full HTML file here](example-svg-libertine.html)):
+
+<script src="https://gist.github.com/andrewheiss/55f06b079cb7064f2de5b2c174546fae.js?file=example-svg-libertine.Rmd"></script>
+
+<img src="example-svg-libertine.png" width="70%" style="display: block; margin: auto;" />
+
+Or with [GFS Artemisia with Euler for math](https://tug.org/FontCatalogue/gfsartemisiaeulermath/) ([see full HTML file here](example-svg-artemisia.html)):
+
+<script src="https://gist.github.com/andrewheiss/55f06b079cb7064f2de5b2c174546fae.js?file=example-svg-artemisia.Rmd"></script>
+
+<img src="example-svg-artemisia.png" width="70%" style="display: block; margin: auto;" />

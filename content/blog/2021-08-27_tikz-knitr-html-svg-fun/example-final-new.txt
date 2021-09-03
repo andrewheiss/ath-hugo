@@ -18,7 +18,7 @@ if (knitr::is_latex_output()) {
   )
 } else {
   knitr::opts_template$set(
-    tikz_settings = list(fig.ext = "svg", fig.align = "center", embed_svg_fonts = TRUE,
+    tikz_settings = list(fig.ext = "svg", fig.align = "center",
                          engine.opts = list(dvisvgm.opts = "--font-format=woff"))
   )
 }

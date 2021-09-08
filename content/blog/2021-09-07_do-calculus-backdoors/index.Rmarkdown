@@ -233,7 +233,7 @@ $$P(y \mid \operatorname{do}(z), w) = P(y \mid z, w) \qquad \text{ if } (Y \perp
 
 Notice how the left-hand side has the interventional $\operatorname{do}(z)$, while the right-hand side has the observed $z$. As long as we meet the condition $(Y \perp Z \mid W)_{G_{\underline{Z}}}$, we can transform $\operatorname{do}(z)$ into $z$ and work only with observational data. Once again, though, what does this $(Y \perp Z \mid W)_{G_{\underline{Z}}}$ condition even mean?
 
-Here, $G_{\underline{X}}$ means "the original causal graph with all arrows out of G removed", while the $Y \perp Z \mid W$ part means "Y is independent of Z, given W" in the new modified graph. Similar to Rule 1, if the Y and Z nodes are d-separated from each other after we account for W, we can legally treat $\operatorname{do}(z)$ like $z$.
+Here, $G_{\underline{Z}}$ means "the original causal graph with all arrows out of Z removed", while the $Y \perp Z \mid W$ part means "Y is independent of Z, given W" in the new modified graph. Similar to Rule 1, if the Y and Z nodes are d-separated from each other after we account for W, we can legally treat $\operatorname{do}(z)$ like $z$.
 
 As we did with Rule 1, we'll build a couple basic DAGs: a complete one ($G$) and one with all the arrows *out of* Z deleted ($G_{\underline{Z}}$).
 
@@ -565,7 +565,7 @@ This second chunk doesn't have the outcome $y$ in it and instead refers only to 
 
 According to Rule 3, we can remove a $\operatorname{do}(\cdot)$ operator as long as it doesn't influence the outcome through any uncontrolled or unconditioned path in a modified graph. Because we're dealing with a smaller number of variables here, the math for Rule 3 is a lot simpler:
 
-$$P(z \mid {\color{#B10DC9} \operatorname{do}(x)}) = P(y \mid {\color{#B10DC9} \text{nothing!}}) \qquad \text{ if } (X \perp Z)_{G_{\overline{X}}}$$
+$$P(z \mid {\color{#B10DC9} \operatorname{do}(x)}) = P(z \mid {\color{#B10DC9} \text{nothing!}}) \qquad \text{ if } (X \perp Z)_{G_{\overline{X}}}$$
 
 Here's the simplified $G_{\overline{X}}$ graph:
 

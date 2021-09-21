@@ -1,12 +1,12 @@
 ---
 title: What I'm doing now
-date: 2021-09-07
+date: 2021-09-20
 slug: now
 description: Andrew Heiss is working on a bunch of exciting and groundbreaking projects
 math: true
 ---
 
-As of September 7, 2021, I'm spending all my time on these things:
+As of September 20, 2021, I'm spending all my time on these things:
 
 * Staying at home pretty much 24/7 because of the COVID-19 pandemic
 * Raising 5.5 kids (14, 11.5, 9, 6, 3.5, and one on the way(!)) and trying to stay sane ([family blog](http://www.heissatopia.com/))

@@ -4,7 +4,8 @@ if (file.exists("~/.Rprofile")) {
 
 # For more options, see https://bookdown.org/yihui/blogdown/global-options.html
 options(
-  blogdown.hugo.version = "0.76.5",
+#   blogdown.hugo.version = "0.76.5",
+  blogdown.hugo.version = "0.78.2",
   blogdown.use.processx = FALSE,  # Use processx instead of a background process
   # xfun.bg_process.verbose = TRUE,  # Show debugging logs
   blogdown.serve_site.startup = FALSE,  # Automatically serve the site on RStudio startup

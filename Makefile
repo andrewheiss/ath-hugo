@@ -11,15 +11,15 @@ build:
 
 ## serve	:	Serve site at 127.0.0.1:4321
 serve: 
-	hugo server --bind 127.0.0.1 -p 4321 --renderToDisk
+	Rscript -e "blogdown::serve_site(port = 4321)"
 
 ## blog	:	Create new blog post in blog/ (make blog ARGS="folder_name")
 blog:
-	hugo new --kind blog-bundle blog/$(ARGS)
+	Rscript -e 'blogdown::hugo_cmd("new --kind blog-bundle blog/$(ARGS)")'
 
 ## research:	Create new research page in research/ (make research ARGS="articles/project_name")
 research:
-	hugo new --kind research-bundle research/$(ARGS)
+	Rscript -e 'blogdown::hugo_cmd("new --kind research-bundle research/$(ARGS)")'
 
 ## deploy	:	Build and upload site to andrewheiss.com with rsync
 deploy: build

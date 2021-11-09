@@ -1751,9 +1751,12 @@ To help speed up the model (and on philosophical grounds, since we know prior in
 To do this, we first need to define the formula for our fancy complex model. I added a bunch of plausible covariates to different portions of the model, along with random effects for year and region. In real life this should all be driven by theory.
 
 ``` r
-# Scale polyarchy back down to 0-1 values to help Stan with modeling
 vdem_clean <- vdem_clean %>% 
-  mutate(polyarchy = polyarchy / 100)
+  # Scale polyarchy back down to 0-1 values to help Stan with modeling
+  mutate(polyarchy = polyarchy / 100) %>% 
+  # Make region and year factors instead of numbers
+  mutate(region = factor(region),
+         year = factor(year))
 
 # Create the model formula
 fancy_formula <- bf(
@@ -1845,7 +1848,7 @@ fancy_model <- brm(
 )
 ## Start sampling
 ## 
-## Warning: 18 of 4000 (0.0%) transitions ended with a divergence.
+## Warning: 16 of 4000 (0.0%) transitions ended with a divergence.
 ## This may indicate insufficient exploration of the posterior distribution.
 ## Possible remedies include: 
 ##   * Increasing adapt_delta closer to 1 (default is 0.8) 
@@ -1864,33 +1867,35 @@ tidy(fancy_model)
 ## # A tibble: 16 × 8
 ##    effect   component group  term                estimate std.error  conf.low conf.high
 ##    <chr>    <chr>     <chr>  <chr>                  <dbl>     <dbl>     <dbl>     <dbl>
-##  1 fixed    cond      <NA>   (Intercept)          -0.621     0.247   -1.11      -0.130 
-##  2 fixed    cond      <NA>   phi_(Intercept)       2.83      0.262    2.29       3.33  
-##  3 fixed    zi        <NA>   (Intercept)          -1.18      3.36    -6.40       6.52  
-##  4 fixed    cond      <NA>   quotaTRUE             0.433     0.0297   0.374      0.491 
-##  5 fixed    cond      <NA>   polyarchy            -0.228     0.144   -0.509      0.0553
-##  6 fixed    cond      <NA>   corruption           -0.797     0.0718  -0.937     -0.657 
-##  7 fixed    cond      <NA>   civil_liberties      -0.541     0.127   -0.784     -0.291 
-##  8 fixed    cond      <NA>   phi_quotaTRUE         0.0213    0.0761  -0.131      0.172 
-##  9 fixed    zi        <NA>   quotaTRUE            -6.93      4.45   -19.6       -2.18  
-## 10 fixed    zi        <NA>   polyarchy             0.105     0.996   -1.89       2.07  
-## 11 ran_pars cond      region sd__(Intercept)       0.506     0.238    0.243      1.14  
-## 12 ran_pars cond      year   sd__(Intercept)       0.0760    0.0288   0.0339     0.146 
-## 13 ran_pars cond      region sd__phi_(Intercept)   0.554     0.272    0.261      1.29  
-## 14 ran_pars cond      year   sd__phi_(Intercept)   0.0375    0.0317   0.00125    0.115 
-## 15 ran_pars zi        region sd__(Intercept)       8.01      5.52     1.97      22.9   
-## 16 ran_pars zi        year   sd__(Intercept)       0.201     0.171    0.00678    0.634
+##  1 fixed    cond      <NA>   (Intercept)          -0.590     0.230   -1.04      -0.125 
+##  2 fixed    cond      <NA>   phi_(Intercept)       2.84      0.251    2.31       3.32  
+##  3 fixed    zi        <NA>   (Intercept)          -1.05      3.60    -6.63       7.45  
+##  4 fixed    cond      <NA>   quotaTRUE             0.432     0.0301   0.374      0.490 
+##  5 fixed    cond      <NA>   polyarchy            -0.231     0.146   -0.516      0.0515
+##  6 fixed    cond      <NA>   corruption           -0.797     0.0716  -0.934     -0.657 
+##  7 fixed    cond      <NA>   civil_liberties      -0.538     0.132   -0.798     -0.287 
+##  8 fixed    cond      <NA>   phi_quotaTRUE         0.0225    0.0766  -0.123      0.175 
+##  9 fixed    zi        <NA>   quotaTRUE            -7.20      5.00   -22.4       -2.24  
+## 10 fixed    zi        <NA>   polyarchy             0.100     0.996   -1.90       1.99  
+## 11 ran_pars cond      region sd__(Intercept)       0.504     0.243    0.240      1.15  
+## 12 ran_pars cond      year   sd__(Intercept)       0.0759    0.0281   0.0333     0.142 
+## 13 ran_pars cond      region sd__phi_(Intercept)   0.560     0.264    0.264      1.24  
+## 14 ran_pars cond      year   sd__phi_(Intercept)   0.0370    0.0319   0.00130    0.120 
+## 15 ran_pars zi        region sd__(Intercept)       8.31      5.71     1.97      24.0   
+## 16 ran_pars zi        year   sd__(Intercept)       0.203     0.170    0.00638    0.626
 ```
 
 We can’t really interpret any of these coefficients directly, since (1) they’re on different scales (the `phi` parts are all logged; all the other parts are logits), and (2) we need to combine coefficients with intercepts in order to back-transform them into percentage point values, and doing that mathematically is tricky.
 
 We’ll focus on finding the marginal effect of `quota`, since that’s the main question we’ve been exploring throughout this post (and it was the subject of the original Tripp and Kang ([2008](#ref-TrippKang:2008)) paper). For fun, we’ll also look at `polyarchy`, since it’s a continuous variable.
 
-The combination of **tidybayes** and **emmeans** makes it really easy to get posterior predictions of the difference between quota and no quota:
+The combination of **tidybayes** and **emmeans** makes it really easy to get posterior predictions of the difference between quota and no quota. We need to set a couple extra arguments in `emmeans()`, which then get passed on to **brms**’s predicition functions. First, we have to tell it to return predictions from the expected values of the posterior (i.e. accounting for all the moving parts; regular prediction just looks at the coefficient in isolation) with `epred = TRUE` (doing this automatically returns predictions on the response scale (i.e. probabilities), so we can remove `transform = "response"`). Next we need to tell it which of the group-levelrandom effects to incorporate into the predictions with the `re_formula` argument. By default, no group-level effects are included. If we use `re_formula = NULL`, all group-level effects (i.e. year and region) will be included.
 
 ``` r
 ame_fancy_zi_quota <- fancy_model %>%
-  emmeans(~ quota, transform = "response") %>% 
+  emmeans(~ quota, 
+          epred = TRUE,
+          re_formula = NULL) %>% 
   contrast(method = "revpairwise") %>% 
   gather_emmeans_draws()
 
@@ -1898,7 +1903,7 @@ ame_fancy_zi_quota %>% median_hdi()
 ## # A tibble: 1 × 7
 ##   contrast     .value .lower .upper .width .point .interval
 ##   <chr>         <dbl>  <dbl>  <dbl>  <dbl> <chr>  <chr>    
-## 1 TRUE - FALSE 0.0722 0.0524 0.0943   0.95 median hdi
+## 1 TRUE - FALSE 0.0765 0.0673 0.0874   0.95 median hdi
 
 ggplot(ame_fancy_zi_quota, aes(x = .value)) +
   stat_halfeye(.width = c(0.8, 0.95), point_interval = "median_hdi",
@@ -1910,15 +1915,16 @@ ggplot(ame_fancy_zi_quota, aes(x = .value)) +
 
 <img src="{{< blogdown/postref >}}index_files/figure-html/plot-ame-quota-fancy-1.png" width="75%" style="display: block; margin: auto;" />
 
-After accounting for democracy, corruption, respect for civil liberties, year, and region, the proportion of women MPs in countries with a parliamentary gender quota is 7.3 percentage points higher than in countries without a quota, on average, with a 95% credible interval ranging from 5.2 to 9.1 percentage points.
+After accounting for democracy, corruption, respect for civil liberties, year, and region, the proportion of women MPs in countries with a parliamentary gender quota is 7.7 percentage points higher than in countries without a quota, on average, with a 95% credible interval ranging from 6.7 to 8.7 percentage points.
 
 For fun, we can look at how the predicted outcome changes across both `polyarchy` and `quota` simultaneously. Because we didn’t use any interaction terms, the slope will be the same across both levels of `quota`, but the plot still looks neat. Weirdly, due to the constellation of controls we included in the model, the predicted proportion of women MPs *decreases* with more democracy. But that’s not super important—if we were really only interested in the quota effect and we had included a sufficient set of variables to close backdoor paths, the coefficients for all other variables shouldn’t be interpreted ([Keele, Stevenson, and Elwert 2020](#ref-KeeleStevensonElwert:2020)). We’ll pretend that’s the case here—this code mostly just shows how you can do all sorts of neat stuff with `emmeans()`.
 
 ``` r
-ame_fancy_zi_polyarchy_quota <- fancy_model %>%
+ame_fancy_zi_polyarchy_quota <- fancy_model %>% 
   emmeans(~ quota + polyarchy,
-           at = list(polyarchy = seq(0, 1, by = 0.05)),
-           transform = "response") %>%
+          at = list(polyarchy = seq(0, 1, by = 0.1)),
+          epred = TRUE,
+          re_formula = NULL) %>% 
   gather_emmeans_draws()
 
 ggplot(ame_fancy_zi_polyarchy_quota,

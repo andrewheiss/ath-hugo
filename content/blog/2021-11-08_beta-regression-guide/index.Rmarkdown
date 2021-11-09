@@ -1296,9 +1296,12 @@ To help speed up the model (and on philosophical grounds, since we know prior in
 To do this, we first need to define the formula for our fancy complex model. I added a bunch of plausible covariates to different portions of the model, along with random effects for year and region. In real life this should all be driven by theory.
 
 ```{r final-formula}
-# Scale polyarchy back down to 0-1 values to help Stan with modeling
 vdem_clean <- vdem_clean %>% 
-  mutate(polyarchy = polyarchy / 100)
+  # Scale polyarchy back down to 0-1 values to help Stan with modeling
+  mutate(polyarchy = polyarchy / 100) %>% 
+  # Make region and year factors instead of numbers
+  mutate(region = factor(region),
+         year = factor(year))
 
 # Create the model formula
 fancy_formula <- bf(
@@ -1373,11 +1376,13 @@ We can't really interpret any of these coefficients directly, since (1) they're 
 
 We'll focus on finding the marginal effect of `quota`, since that's the main question we've been exploring throughout this post (and it was the subject of the original @TrippKang:2008 paper). For fun, we'll also look at `polyarchy`, since it's a continuous variable.
 
-The combination of **tidybayes** and **emmeans** makes it really easy to get posterior predictions of the difference between quota and no quota:
+The combination of **tidybayes** and **emmeans** makes it really easy to get posterior predictions of the difference between quota and no quota. We need to set a couple extra arguments in `emmeans()`, which then get passed on to **brms**'s predicition functions. First, we have to tell it to return predictions from the expected values of the posterior (i.e. accounting for all the moving parts; regular prediction just looks at the coefficient in isolation) with `epred = TRUE` (doing this automatically returns predictions on the response scale (i.e. probabilities), so we can remove `transform = "response"`). Next we need to tell it which of the group-levelrandom effects to incorporate into the predictions with the `re_formula` argument. By default, no group-level effects are included. If we use `re_formula = NULL`, all group-level effects (i.e. year and region) will be included.
 
 ```{r plot-ame-quota-fancy}
 ame_fancy_zi_quota <- fancy_model %>%
-  emmeans(~ quota, transform = "response") %>% 
+  emmeans(~ quota, 
+          epred = TRUE,
+          re_formula = NULL) %>% 
   contrast(method = "revpairwise") %>% 
   gather_emmeans_draws()
 
@@ -1391,15 +1396,16 @@ ggplot(ame_fancy_zi_quota, aes(x = .value)) +
   theme_clean()
 ```
 
-After accounting for democracy, corruption, respect for civil liberties, year, and region, the proportion of women MPs in countries with a parliamentary gender quota is 7.3 percentage points higher than in countries without a quota, on average, with a 95% credible interval ranging from 5.2 to 9.1 percentage points.
+After accounting for democracy, corruption, respect for civil liberties, year, and region, the proportion of women MPs in countries with a parliamentary gender quota is 7.7 percentage points higher than in countries without a quota, on average, with a 95% credible interval ranging from 6.7 to 8.7 percentage points.
 
 For fun, we can look at how the predicted outcome changes across both `polyarchy` and `quota` simultaneously. Because we didn't use any interaction terms, the slope will be the same across both levels of `quota`, but the plot still looks neat. Weirdly, due to the constellation of controls we included in the model, the predicted proportion of women MPs *decreases* with more democracy. But that's not super important—if we were really only interested in the quota effect and we had included a sufficient set of variables to close backdoor paths, the coefficients for all other variables shouldn't be interpreted [@KeeleStevensonElwert:2020]. We'll pretend that's the case here—this code mostly just shows how you can do all sorts of neat stuff with `emmeans()`.
 
-```{r plot-ame-quota-polyarchy-fancy}
-ame_fancy_zi_polyarchy_quota <- fancy_model %>%
+```{r plot-ame-quota-polyarchy-fancy, cache=TRUE}
+ame_fancy_zi_polyarchy_quota <- fancy_model %>% 
   emmeans(~ quota + polyarchy,
-           at = list(polyarchy = seq(0, 1, by = 0.05)),
-           transform = "response") %>%
+          at = list(polyarchy = seq(0, 1, by = 0.1)),
+          epred = TRUE,
+          re_formula = NULL) %>% 
   gather_emmeans_draws()
 
 ggplot(ame_fancy_zi_polyarchy_quota,

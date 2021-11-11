@@ -3,7 +3,7 @@ title: "A guide to correctly calculating posterior predictions and average margi
 date: 2021-11-10
 year: "2021"
 month: "2021/11"
-description: "How to calculate grand means, conditional group means, and hypothetical group means of posterior predictions from multlevel brms models."
+description: "How to calculate grand means, conditional group means, and hypothetical group means of posterior predictions from multilevel brms models."
 images: 
 - /blog/2021/11/10/ame-bayes-re-guide/index_files/figure-html/all-effects-combined-1.png
 tags:

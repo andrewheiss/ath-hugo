@@ -5,7 +5,7 @@ year: "2021"
 month: "2021/11"
 description: "Everything you ever wanted to know about beta regression! Use R and brms to correctly model proportion data, and learn all about the beta distribution along the way."
 images: 
-- /blog/2021/08/25/twfe-diagnostics/index_files/figure-html/show-weights-hist-1.png
+- /blog/2021/11/08/beta-regression-guide/index_files/figure-html/plot-dist-beta-shifted-1.png
 tags:
   - r
   - tidyverse

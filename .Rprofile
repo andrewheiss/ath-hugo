@@ -9,5 +9,6 @@ options(
   blogdown.use.processx = FALSE,  # Use processx instead of a background process
   # xfun.bg_process.verbose = TRUE,  # Show debugging logs
   blogdown.serve_site.startup = FALSE,  # Automatically serve the site on RStudio startup
-  blogdown.knit.on_save = FALSE  # Automatically knit Rmd on save
+  blogdown.knit.on_save = FALSE,  # Automatically knit Rmd on save
+  blogdown.knit.serve_site = FALSE  # Stop serving the site when knitting individual files
 )

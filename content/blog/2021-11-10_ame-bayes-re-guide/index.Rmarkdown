@@ -69,7 +69,7 @@ Fortunately, over the past couple days I've been part of several really long Twi
 
 ## Who this guide is for
 
-To borrow from [Solomon Kurz](https://solomonkurz.netlify.app/post/2021-09-22-sexy-up-your-logistic-regression-model-with-logit-dotplots/), here what this guide assumes you know:
+To borrow from [Solomon Kurz](https://solomonkurz.netlify.app/post/2021-09-22-sexy-up-your-logistic-regression-model-with-logit-dotplots/), here's what this guide assumes you know:
 
 - You're familiar with [R](https://www.r-project.org/) and the [tidyverse](https://www.tidyverse.org/) (particularly [dplyr](https://dplyr.tidyverse.org/) and [ggplot2](https://ggplot2.tidyverse.org/)).
 - You're familiar with [brms](https://paul-buerkner.github.io/brms/) for running Bayesian regression models. See [the vignettes here](https://paul-buerkner.github.io/brms/articles/index.html), examples like [this](https://www.rensvandeschoot.com/tutorials/brms-started/), or [resources like these](https://evalf21.classes.andrewheiss.com/resource/bayes/#resources) for an introduction.
@@ -251,7 +251,7 @@ model_basic <- brm(
 
 ## Posterior predictions
 
-Because both of these models use beta regression, the coefficients for the $\mu$ part are on the logit (log odds) scale, while the coefficients for the $\phi$ part are on the log scale. This makes them really hard to interpret when just looking at a table of coefficient estimates, like this one here:
+Because this model uses beta regression, the coefficients for the $\mu$ part are on the logit (log odds) scale, while the coefficients for the $\phi$ part are on the log scale. This makes them really hard to interpret when just looking at a table of coefficient estimates, like this one here:
 
 ```{r show-basic-results, warning=FALSE}
 tidy(model_basic)
@@ -621,7 +621,7 @@ Instead of calculating a grand mean without any group information, we can incorp
 
 To calculate this, we need to feed **brms** a new dataset that *does* include one or more regions that are already in the data, and we need to tell it to incorporate the random effects into its predictions by including `re_formula = NULL`. That feels weird, since `re_formula = NA` made it so there were no group effects, but that's the syntax. 
 
-We can also be more explicit about which group effects to include. When using `re_formula = NULL`, *all* group effects are included. If we made a model with both region and group effects, for instance, and only wanted to predict using the region effects, we could use `re_formula = ~ (1 | region)`. Or if we don't want to remember that `NULL` means "everything", we could also just use `re_formula = ~ (1 | region)` on our basic model with just regional effects. It's all the same.
+We can also be more explicit about which group effects to include. When using `re_formula = NULL`, *all* group effects are included. If we made a model with both region and year effects, for instance, and only wanted to predict using the region effects, we could use `re_formula = ~ (1 | region)`. Or if we don't want to remember that `NULL` means "everything", we could also just use `re_formula = ~ (1 | region)` on our basic model with just regional effects. It's all the same.
 
 #### Binary effect
 
@@ -753,7 +753,7 @@ In summary, we have these two general approaches:
 
 For the sake of space I'll only show marginal effects for the binary `party_autonomy` variable here. Follow the same process as all the examples above, but set `re_formula = NULL`, `allow_new_levels = TRUE`, and either `sample_new_levels = "uncertainty"` or `sample_new_levels = "gaussian"` when making the predictions.
 
-Technically there are other ways to create simulated groups or regions, like `sample_new_levels = "old_levels"`. Isabella Ghement has a [great comprehensive table summarizing them all here](https://twitter.com/isabellaghement/status/1458539033131302913). But we're not going to worry about that here
+Technically there are other ways to create simulated groups or regions, like `sample_new_levels = "old_levels"`. Isabella Ghement has a [great comprehensive table summarizing them all here](https://twitter.com/isabellaghement/status/1458539033131302913). But we're not going to worry about that here.
 
 #### Binary effect for amalgamated hypothetical region
 
@@ -791,7 +791,7 @@ knitr::include_graphics("tj-annotation.jpg")
 
 #### Binary effect for completely new hypothetical region
 
-Alternatively, we can make it so that the new fake region uses a multivariate normal distribution implied by the mode's group-level standard deviations and correlations. This creates a brand new region that would be plausible in the universe, but that is not sampled directly from the existing regions. As a result, there's no possibility of a weird bimodal blip—the overall shape of the distribution will be much smoother and consistent.
+Alternatively, we can make it so that the new fake region uses a multivariate normal distribution implied by the model's group-level standard deviations and correlations. This creates a brand new region that would be plausible in the universe, but that is not sampled directly from the existing regions. As a result, there's no possibility of a weird bimodal blip—the overall shape of the distribution will be much smoother and consistent.
 
 ```{r plot-ame-atlantis}
 ame_hypothetical_new <- model_basic %>% 

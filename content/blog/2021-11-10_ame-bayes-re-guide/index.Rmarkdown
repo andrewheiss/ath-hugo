@@ -36,7 +36,7 @@ options(digits = 3, width = 90)
 - [Who this guide is for](#who-this-guide-is-for)
 - [Example data](#example-data)
 - [Explore the data](#explore-the-data)
-- [Models](#models)
+- [Model](#model)
 - [Posterior predictions](#posterior-predictions)
   - [Draws from the posterior predictive distribution](#draws-from-the-posterior-predictive-distribution)
   - [Expected values of the posterior predictive distribution](#expected-values-of-the-posterior-predictive-distribution)
@@ -73,7 +73,13 @@ To borrow from [Solomon Kurz](https://solomonkurz.netlify.app/post/2021-09-22-se
 
 - You're familiar with [R](https://www.r-project.org/) and the [tidyverse](https://www.tidyverse.org/) (particularly [dplyr](https://dplyr.tidyverse.org/) and [ggplot2](https://ggplot2.tidyverse.org/)).
 - You're familiar with [brms](https://paul-buerkner.github.io/brms/) for running Bayesian regression models. See [the vignettes here](https://paul-buerkner.github.io/brms/articles/index.html), examples like [this](https://www.rensvandeschoot.com/tutorials/brms-started/), or [resources like these](https://evalf21.classes.andrewheiss.com/resource/bayes/#resources) for an introduction.
-- You're somewhat familiar with multilevel models. [Confusingly](https://twitter.com/chelseaparlett/status/1458461737431146500), these are also called mixed effect models, random effect models, and hierarchical models, among others! See examples like [this](https://www.tjmahr.com/plotting-partial-pooling-in-mixed-effects-models/) or [this](https://www.tjmahr.com/another-mixed-effects-model-visualization/) or [this](https://www.rensvandeschoot.com/tutorials/lme4/) or [this](https://rstudio-pubs-static.s3.amazonaws.com/63556_e35cc7e2dfb54a5bb551f3fa4b3ec4ae.html). Basically Google "lme4 example" (lme4 is what you use for frequentist, non-Bayesian multilevel models with R) or "brms multilevel example" and you'll find a bunch. For a more formal treatment, see chapter 12 in [Richard McElreath's *Statistcal Rethinking*](https://xcelab.net/rm/statistical-rethinking/) book (or [this R translation of it](https://bookdown.org/content/3890/multilevel-models.html) by Solomon Kurz).
+- You're somewhat familiar with multilevel models. [Confusingly](https://twitter.com/chelseaparlett/status/1458461737431146500), these are also called mixed effect models, random effect models, and hierarchical models, among others! They're all the same thing! (<small>image below by [Chelsea Parlett-Pelleriti](https://twitter.com/chelseaparlett/status/1458461737431146500)</small>)
+
+```{r chelsea-meme, echo=FALSE, out.width="60%", indent="    "}
+knitr::include_graphics("chelsea-meme.jpg")
+```
+
+    See examples like [this](https://www.tjmahr.com/plotting-partial-pooling-in-mixed-effects-models/) or [this](https://www.tjmahr.com/another-mixed-effects-model-visualization/) or [this](https://www.rensvandeschoot.com/tutorials/lme4/) or [this](https://rstudio-pubs-static.s3.amazonaws.com/63556_e35cc7e2dfb54a5bb551f3fa4b3ec4ae.html). Basically Google "lme4 example" (lme4 is what you use for frequentist, non-Bayesian multilevel models with R) or "brms multilevel example" and you'll find a bunch. For a more formal treatment, see chapter 12 in [Richard McElreath's *Statistcal Rethinking*](https://xcelab.net/rm/statistical-rethinking/) book (or [this R translation of it](https://bookdown.org/content/3890/multilevel-models.html) by Solomon Kurz).
 
 
 ## Example data
@@ -204,11 +210,11 @@ ggplot(vdem_2015, aes(x = civil_liberties, y = media_index)) +
 Countries with greater respect for civil liberties and human rights tend to have higher values of media freedom. There are perhaps some regional trends here too—most of the countries in Western Europe and North America are clustered in the top right corner of the plot, but all other regions are spread throughout.
 
 
-## Models
+## Model
 
 Let's make a model! We'll look just at 2015 data to estimate the effect of party autonomy (a binary variable) and civil liberties (a continuous variable) on a country's media freedom index. We'll include random effects for region, assuming that there are regional differences in this relationship (i.e. the relationship between party autonomy and media freedom looks different in Asia from Western Europe).
 
-Because `media_index` ranges from 0 to 1 but does not include 0 or 1, we'll use a beta distribution. It's [a really neat and fun distribution to work with!](https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/)), and it has extra moving parts we can play with—we can model the $\phi$ parameter (or the precision/variance of the distribution) with random effects too.
+Because `media_index` ranges from 0 to 1 but does not include 0 or 1, we'll use a beta distribution. It's [a really neat and fun distribution to work with](https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/), and it has extra moving parts we can play with—we can model the $\phi$ parameter (or the precision/variance of the distribution) with random effects too.
 
 Formally, we can define the full model like this:
 
@@ -224,9 +230,10 @@ $$
 \log(\phi_i) &= \alpha_{j[i]}\\
 \ \\
 & \text{[region-specific intercepts]} \\
-\alpha_{j} &\sim \mathcal{N}(\mu_{\alpha_j}, \sigma^2_{\alpha_j}), \text{ for } j \text{ in } 1 .. J
+\alpha_{j} &\sim \mathcal{N}(\mu_{\alpha_j}, \sigma^2_{\alpha_j}), \text{ for region } j \text{ in } 1 .. J
 \end{aligned}
 $$
+
 We'll model the $\mu$ (or mean) parameter of the beta distribution with `party_autonomy`, `civil_liberties`, and random intercepts for region, and we'll model the $\phi$ part (or precision) with just random intercepts for region (though we could use whatever, too—[see this for an explanation of what this parameter does](https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/#working-with-the-precision-parameter)).
 
 The syntax for defining random effects can get complex, depending on if the effects are nested or crossed, and if slopes get involved. [This table by Ben Bolker](https://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#model-specification) is *indispensable* for remembering how to define which kinds of effects. Here we're just adding a random intercept for region, so we'll use a `(1 | region)` term in the model code.

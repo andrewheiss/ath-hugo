@@ -12,7 +12,7 @@ links:
   url: https://doi.org/10.1007/s11266-014-9541-3
   icon: fas fa-scroll
 citation: >-
-  **Andrew Heiss**, review of Taco Brandsen, Willem Trommel, and Bram Verschuere (eds.), *Manufacturing Civil Society: Principles, Practices, and Effects, Voluntas: International Journal of Voluntary and Nonprofit Organizations* 26, no. 2 (April 2014): 728–30, doi: [`10.1007/s11266-014-9541-3`](https://doi.org/10.1007/s11266-014-9541-3).
+  **Andrew Heiss**, review of Taco Brandsen, Willem Trommel, and Bram Verschuere (eds.), *Manufacturing Civil Society: Principles, Practices, and Effects*, *Voluntas: International Journal of Voluntary and Nonprofit Organizations* 26, no. 2 (April 2014): 728–30, doi: [`10.1007/s11266-014-9541-3`](https://doi.org/10.1007/s11266-014-9541-3).
 ---
 
 ## BibTeX citation

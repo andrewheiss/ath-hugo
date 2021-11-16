@@ -20,7 +20,7 @@ links:
   url: https://github.com/andrewheiss/Closing-space
   icon: fab fa-github
 citation: >-
-  [Suparna Chaudhry](http://www.suparnachaudhry.com/) and **Andrew Heiss**, "Closing Space and the Restructuring of Global Activism: Causes and Consequences of the Global Crackdown on NGOs," chap. 2 in *Beyond the Boomerang: New Patterns in Transcalar Advocacy*, eds. Christopher L. Pallas and Elizabeth Bloodgood (Tuscaloosa, AL: University of Alabama Press, forthcoming).
+  [Suparna Chaudhry](http://www.suparnachaudhry.com/) and **Andrew Heiss**, "Closing Space and the Restructuring of Global Activism: Causes and Consequences of the Global Crackdown on NGOs," chap. 2 in *Beyond the Boomerang: New Patterns in Transcalar Advocacy*, eds. Christopher L. Pallas and Elizabeth Bloodgood (Tuscaloosa, AL: University of Alabama Press, 2022).
 haiku: >-
   Governments threatened— / NGO regulations / shift funding; missions.
 ---
@@ -35,13 +35,13 @@ Figure 1: 2017 CIVICUS Monitor civic space ratings
 ## BibTeX citation
 
 ```bibtex
-@incollection{ChaudhryHeiss:2021,
+@incollection{ChaudhryHeiss:2022,
     Address = {Tuscaloosa, AL},
     Author = {Suparna Chaudhry and Andrew Heiss},
     Booktitle = {Beyond the Boomerang: New Patterns in Transcalar Advocacy},
     Editor = {Christopher L. Pallas and Elizabeth Bloodgood},
     Publisher = {University of Alabama Press},
-    Title = {Closing Space and the Restructuring of Global Activism: Causes and Consequences of the Global Crackdown on {NGOs},
+    Title = {Closing Space and the Restructuring of Global Activism: Causes and Consequences of the Global Crackdown on {NGOs}},
     Chapter = {2},
-    Year = {2021}}
+    Year = {2022}}
 ```

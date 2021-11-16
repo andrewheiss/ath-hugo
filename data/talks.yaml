@@ -1,4 +1,17 @@
 talks:
+- title: "Introduction to the tidyverse + data visualization with ggplot2"
+  date: 2021-11-16
+  description: >-
+    Two sessions for [SEACEN's](https://www.seacen.org/) November 2021 online course on "Data Analytics for Macroeconomic Surveillance"
+  location: Kuala Lumpur, Malaysia (via Zoom)
+  links:
+  - name: Companion site, slides, and materials
+    url: https://talks.andrewheiss.com/2021-seacen/
+    icon: fas fa-chalkboard-teacher
+  - name: GitHub repository
+    url: https://github.com/andrewheiss/2021-seacen
+    icon: fab fa-github
+
 - title: "Making documents, websites, and dashboards with R"
   date: 2021-08-17
   description: "Workshop for the Georgia Policy Labs at the Andrew Young School of Policy Studies"

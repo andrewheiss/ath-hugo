@@ -1691,7 +1691,7 @@ brm(
   bf(
     outcome ~ covariates,  # The mean of the 0-1 values, or mu
     phi ~ covariates,  # The precision of the 0-1 values, or phi
-    zoi ~ covariates,  # The zero-inflated part, or alpha
+    zoi ~ covariates,  # The zero-or-one-inflated part, or alpha
     coi ~ covariates  # The one-inflated part, conditional on the 0s, or gamma
   ),
   data = whatever,

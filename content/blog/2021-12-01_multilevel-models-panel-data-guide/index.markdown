@@ -97,11 +97,10 @@ library(broom.mixed)  # Convert brms model objects to data frames
 library(emmeans)      # Calculate marginal effects in even fancier ways
 library(ggh4x)        # For nested facets in ggplot
 library(ggrepel)      # For nice non-overlapping labels in ggplot
-library(ggdist)
-library(scico)
-library(scales)
-library(patchwork)
-library(ggokabeito)
+library(ggdist)       # For distribution-related ggplot geoms
+library(scales)       # For formatting numbers with comma(), dollar(), etc.
+library(patchwork)    # For combining plots
+library(ggokabeito)   # Colorblind-friendly color palette
 
 # Make all the random draws reproducible
 set.seed(1234)
@@ -2386,7 +2385,7 @@ plot_hypo_gdp_country_year_year <- ggplot(pred_hypo_gdp_country_year_year, aes(x
     plot_hypo_gdp_country_year_year) +
   plot_annotation(title = paste0("Average marginal effect of GDP per capita", "\n",
                                  "(intercepts and slopes of both GDP per capita and year ",
-                                 "vary by country + GDP intercepts vary by year)"), 
+                                 "vary by country + intercepts and GDP slopes vary by year)"), 
                   subtitle = paste0("lifeExp ~ gdpPercap_log_z + year + ", 
                          "(1 + gdpPercap_log_z | year) + ", 
                          "(1 + gdpPercap_log_z + year | country)"),

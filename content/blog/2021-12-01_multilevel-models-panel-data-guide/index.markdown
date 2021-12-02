@@ -327,15 +327,15 @@ $$
 \text{Life expectancy} = \beta_0 + \beta_1 \text{Year} + \epsilon
 $$
 
-The year effect here is the `\(\beta_1\)` coefficient, but this global estimate doesn't account for continen- or country-specific differences, and that kind of variation is important—we don't necessarily want to combine the trends in life expectancy across Western Europe and Latin America since they're so different. 
+The year effect here is the `\(\beta_1\)` coefficient, but this global estimate doesn't account for continent- or country-specific differences, and that kind of variation is important—we don't necessarily want to combine the trends in life expectancy across Western Europe and Latin America since they're so different. 
 
-That `\(\epsilon\)` error term is doing a lot of work right now. It represents all the variation in life expectancy that's not explained by (1) the baseline global life expectancy when `year` is 0 (or 1952), and (2) by increases in `year`. All sorts of unmeasured things are hidden in that `\(\epsilon\)`, like continent-level differences that might explain some additional variation in life expectancy. We can pull that continent-specific variation out of the error term to show that it exists:
+That `\(\epsilon\)` error term is doing a lot of work. It represents all the variation in life expectancy that's not explained by (1) the baseline global life expectancy when `year` is 0 (or 1952), and by (2) increases in `year`. All sorts of unmeasured things are hidden in that `\(\epsilon\)`, like continent-level differences that might explain some additional variation in life expectancy. We can pull that continent-specific variation out of the error term to show that it exists:
 
 $$
 \text{Life expectancy} = \beta_0 + \beta_1 \text{Year} + (b_{\text{Continent}} + \epsilon)
 $$
 
-We use the Latin letter `\(b\)` instead of the Greek `\(\beta\)` to signal that it's a different kind of parameter. The `\(\beta\)` parameters are "fixed effects" (this gets *so confusing* since in the world of econometrics and political science, "fixed effects" typically refer to indicator variables, like when you control for state or country. That's *not* the case here! Fixed effects here refer to population-level parameters that apply to all the observations in the data. Random effects refer to variations or deviations within subpopulations in the data (country, year, region, etc.)). Random effects, or `\(b\)`, show the offset from specific fixed parameters. 
+We use the Latin letter `\(b\)` instead of the Greek `\(\beta\)` to signal that it's a different kind of parameter. The `\(\beta\)` parameters are "fixed effects" (this gets ***so confusing*** since in the world of econometrics and political science, "fixed effects" typically refer to indicator variables, like when you control for state or country. That's *not* the case here! Fixed effects here refer to population-level parameters that apply to all the observations in the data. Random effects refer to variations or deviations within subpopulations in the data (country, year, region, etc.)). Random effects, or `\(b\)`, show the offset from specific fixed parameters. 
 
 Right now, this continent-level offset is hidden in the unestimated error term `\(\epsilon\)`, but we can move it around and pair it with one of the fixed terms in the model: either the intercept or year. For now we'll lump it in with the intercept and say that this continent random effect shifts the intercept up and down based on continent-level differences (we'll lump it in with the year effect a little later). We can rewrite our model like this now:
 
@@ -343,7 +343,7 @@ $$
 \text{Life expectancy} = (\beta_0 + b_{0, \text{Continent}}) + \beta_1 \text{Year} + \epsilon
 $$
 
-All we've really done is take `\(b_{\text{Continent}}\)`, move it over next to the intercept term `\(\beta_0\)`, and added a 0 subscript to show that it represents the offset or deviation from `\(\beta_0\)` for each continent.
+All we've really done is take `\(b_{\text{Continent}}\)`, move it over next to the intercept term `\(\beta_0\)`, and add a 0 subscript to show that it represents the offset or deviation from `\(\beta_0\)` for each continent.
 
 If you've ever worked with regular old OLS regression with `lm()`, you might be thinking that this is basically just the same as including an indicator variable for continent. For instance, if you run a model like this…
 
@@ -441,7 +441,7 @@ tidy(model_continent_only, effects = "fixed")
 
 #### Continent-level variance
 
-The whole reason we're using a multilevel model here instead of just using indicator variables is that we can use information about the variation in continents to improve our coefficient estimates and model accuracy. Notice that there were extra new parameters in the output from `tidy()` (which we can also see if we use the `effects = "ran_pars"` argument:) (these also show up in the output from `summary()` as "Group-Level Effects")
+The whole reason we're using a multilevel model here instead of just using indicator variables is that we can use information about the variation in continents to improve our coefficient estimates and model accuracy. Notice that there were extra new parameters in the output from `tidy()`, which we can also see if we use the `effects = "ran_pars"` argument (these also show up in the output from `summary()` as "Group-Level Effects"):
 
 
 ```r
@@ -834,9 +834,9 @@ ggplot(pred_model_country_year, aes(x = year, y = .epred)) +
 
 ### Intercepts and slopes for each country + account for year-specific differences
 
-Ordinarily, the `year + (1 + year | country)` approach is sufficient for working with panel data, since population-level get their own country-specific intercepts and slopes. However, we can do a couple extra bonus things to make our model even richer. 
+Ordinarily, the `year + (1 + year | country)` approach is sufficient for working with panel data, since the population-level year effects gets their own country-specific intercepts and slopes. However, we can do a couple extra bonus things to make our model even richer. 
 
-First, we'll add extra year-specific random effects. Theoretically we'd want to do this if something happens to observations at a year-level that is completely unrelated to country-specific trends. One way to think about this is as year-based shocks to life expectancy. At around [1:50 in the video at the beginning of this post](https://www.youtube.com/watch?v=Z8t4k0Q8e8Y&t=110s), Hans Rosling slows down his animation to show the impact of World War I and the Spanish Flu epidemic on global life expectancy—tons of the country circles in his animation dropped dramatically. We might see something similar in the future with 2020–21 life expectancy levels too, given the COVID-19 pandemic. That sudden drop in life expectancy across all countries is an excellent example of a year-specific change that is arguable unrelated to trends in specific continents (kind of; despite its name, not all countries fought in WWI, and Spanish Flu didn't have the same effects in all countries, but whatever; just go with it).
+First, we'll add extra year-specific random effects. Theoretically we'd want to do this if something happens to observations at a year-level that is completely unrelated to country-specific trends. One way to think about this is as year-based shocks to life expectancy. At around [1:50 in the video at the beginning of this post](https://www.youtube.com/watch?v=Z8t4k0Q8e8Y&t=110s), Hans Rosling slows down his animation to show the impact of World War I and the Spanish Flu epidemic on global life expectancy—tons of the country circles in his animation dropped dramatically. We might see something similar in the future with 2020–21 life expectancy levels too, given the COVID-19 pandemic. That sudden drop in life expectancy across all countries is an excellent example of a year-specific change that is arguably unrelated to trends in specific continents (kind of; despite its name, not all countries fought in WWI, and Spanish Flu didn't have the same effects in all countries, but whatever; just go with it).
 
 To do this, we'll add independent year-based offsets to the intercept term, or `\(b_{0, \text{Year}}\)`:
 
@@ -1039,14 +1039,14 @@ Part of the reason the countries-nested-in-continents model takes so long to fit
 
 Bayesian sampling in Stan (through **brms**) works best and fastest when the ranges of covariates are small and centered around zero. We've been using year centered at 1952 (so that year 0 is 1952), and the max year in the data is 2007 (or 55), and even with that, we're probably pushing the envelope of what Stan likes to work with.
 
-For our main question, we want to know the relationship between GDP per capita and life expectancy. GDP per capita has a huge range with huge values. Some countries have a GDP per capita of \$1,000; some have \$40,000 or \$50,000. To make these models run quickly (and actually fit and converge), we need to shrink those values down.
+For our main question, we want to know the relationship between GDP per capita and life expectancy. GDP per capita has a huge range with huge values. Some countries have a GDP per capita of \\$1,000; some have \\$40,000 or \\$50,000. To make these models run quickly (and actually fit and converge), we need to shrink those values down.
 
 We can do this in a few different ways, each with their own benefits and quirks of interpretation, which we'll explore really quick.
 
-- **1: Divide by 1,000** (or any amount, really)
-- **2: Scale and center**
-- **3: Log**
-- **4: Log + scale and center**
+1. **Divide by 1,000** (or any amount, really)
+2. **Scale and center**
+3. **Log**
+4. **Log + scale and center**
 
 Here's what the distributions of these different scaling approaches look like. Notice how all the red GDP per capita distributions are identical. The per-1000 version is shrunken down so that most values are between 0 and 30 instead of 3 and 30,000, while the centered and scaled version ranges from ≈−0.5 and 8, with 0 in the middle of the distribution. The two logged versions are also identical—the original logged GDP per capita ranges from ≈5.5–11.5 (or `exp(5.5)` ($148) to `exp(11.5)` ($98,716)), while the centered and scaled version ranges from −2 to 3, centered at 0.
 
@@ -1646,7 +1646,7 @@ We also have a few random effects terms that we can interpret. The variance for 
 
 The `sd__gdpPercap_z` term is `\(\tau_1\)` and shows the country-specific variation in the GDP effect. This is smaller than the intercept variance, but that's because the GDP effect is a slope that measures the *marginal change* in life expectancy as wealth increases by one unit (or \$1,000 here), not life expectancy itself. (We unscaled the values for `sd__gdpPercap_z` and `sd__gdpPercap_log_z` here too, like we did their actual fixed coefficients.)
 
-Finally, we have a term that shows the correlation of the country-specific intercepts and slopes. In the regular GDP per capita model, we see a correlation of 0.2, which means that countries with lower intercepts are associated with lower GDP effects—countries that start out poor in 1952 grow slower. This correlation reverses in the logged GDP per capita model, where we have a correlation of -0.28, which implies that countries with lower intercepts are associated with bigger GDP effects—countries that start out poor in 1952 grow faster. Why the reversal? Haha I don't know. It could be because the two measures of GDP capture different things: the logged version shows changes in orders of magnitude, while the regular version shows changes in dollar amounts. Somehow that difference makes the correlation flip.
+Finally, we have a term that shows the correlation of the country-specific intercepts and slopes. In the regular GDP per capita model, we see a correlation of 0.2, which means that countries with lower intercepts are associated with lower GDP effects—countries that start out poor in 1952 grow slower. This correlation reverses in the logged GDP per capita model, where we have a correlation of -0.28, which implies that countries with lower intercepts are associated with bigger GDP effects—countries that start out poor in 1952 grow faster. Why the reversal? Haha I don't know. It could be because the two measures of GDP capture different things: the logged version shows changes in orders of magnitude, while the regular version shows changes in dollar amounts. Somehow that difference makes the correlation flip. Weird.
 
 #### Country-level random effects
 
@@ -1814,7 +1814,7 @@ model_gdp_country_year_log <- brm(
 ## Start sampling
 ```
 
-It takes twice as long to fit the model with `gdpPercap_z` than it does `gdpPercap_log_z`, and there are some serious-ish issues with model convergence and effective sample size. Normally, the R-hat values for each parameter are supposed to be as close to 1 as possible, and values above 1.05 are a bad sign that the model didn't converge. Again, we could try to fix this by using specific priors, using more iterations in the chains, or adjusting some of Stan's parameters like `adapt_delta`, but for the sake of this example, we won't.
+It takes nearly 2.5 times as long to fit the model with `gdpPercap_z` than it does `gdpPercap_log_z`, and there are some serious-ish issues with model convergence and effective sample size. Normally, the R-hat values for each parameter are supposed to be as close to 1 as possible, and values above 1.05 are a bad sign that the model didn't converge. Again, we could try to fix this by using specific priors, using more iterations in the chains, or adjusting some of Stan's parameters like `adapt_delta`, but for the sake of this example, we won't.
 
 
 ```r
@@ -2010,7 +2010,7 @@ We can consolidate these country-specific effects into a single value a couple d
 
 There are a ton of details about these different approaches for finding average marginal effects [at this post here](https://www.andrewheiss.com/blog/2021/11/10/ame-bayes-re-guide/)—go there to learn all about the nuances of doing this.
 
-Here we'll do it both ways: calculate a global grand mean and simulate a fake new country (named Atlantis).
+Here we'll do it both ways: calculate a global grand mean and simulate a fake new country (we'll call it Atlantis).
 
 
 ```r

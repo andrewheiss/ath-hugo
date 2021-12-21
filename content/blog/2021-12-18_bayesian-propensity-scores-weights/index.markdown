@@ -205,7 +205,7 @@ It worked! After going through this two-step process of (1) creating propensity 
 
 Before looking at how to do this analysis Bayesianly, it’s helpful to understand what these weights are actually doing behind the scenes. The point of these IPTWs is to create pseudo-populations of treated and untreated observations that are comparable across all the different levels of confounders. They’re essentially a way to let us fake treatment and control groups so that we can interpret the results of outcome models causally.
 
-Visualizing the propensity scores for treated and untreated people can help show what’s going on. Here are the distributions of propensity scores for these two groups: the treated group is in the top half in brown; the untreated group is in the bottom half in turquoise. (Thanks to [Lucy D’Agostino McGowan for this really neat way of looking at weight distributions](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/!)
+Visualizing the propensity scores for treated and untreated people can help show what’s going on. Here are the distributions of propensity scores for these two groups: the treated group is in the top half in brown; the untreated group is in the bottom half in turquoise. (Thanks to [Lucy D’Agostino McGowan for this really neat way of looking at weight distributions](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/)!)
 
 ``` r
 ggplot() + 
@@ -363,7 +363,7 @@ head(pred_probs_chains, c(5, 10))
 ## [5,] 0.346 0.403 0.165 0.260 0.300 0.448 0.501 0.458 0.432 0.350
 ```
 
-Each column here is a person in the dataset; each row is a draw from the posterior distribution. Note how there’s a lot of uncertainty in these propensity scores—we want to incorporate this uncertainty into our outcome model somehow. But as we’ve seen, there’s no weight parameter in our model, so there’s no way to directly add this uncertainty to the outcome model. Instead, we’ll run the outcome model a bunch of times, or `\(K\)` times. For now we’ll set `\(K\)` to 2000—we’ll create an outcome model for each of the posterior draws that we have.
+Each column here is a person in the dataset; each row is a draw from the posterior distribution. Note how there’s a lot of uncertainty in these propensity scores—we want to incorporate this uncertainty into our outcome model somehow. But as we’ve seen, there’s no weight parameter in our model, so there’s no way to directly add this uncertainty to the outcome model. Instead, we’ll run the outcome model a bunch of times, or `\(K\)` times. For now we’ll set `\(K\)` to 2,000—we’ll create an outcome model for each of the posterior draws that we have.
 
 Doing this will require a little bit of **purrr** magic. We’ll make a dataset with 2,000 ($K$) rows and put the propensity scores for all 1,752 people into their own cell to make it easier to keep track of these scores.
 

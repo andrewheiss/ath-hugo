@@ -46,7 +46,8 @@ editor_options:
     -   [Compile the Stan code](#compile-the-stan-code)
     -   [Run the model](#run-the-model)
 -   [Analyze the results](#analyze-the-results)
--   [Downsides](#downsides)
+-   [Using the results with **brms**](#using-the-results-with-brms)
+-   [Only tiny downside](#only-tiny-downside)
 -   [References](#references)
 
 ------------------------------------------------------------------------
@@ -334,7 +335,7 @@ Here’s what needs to change:
 
     ``` text
     // Modified block
-    // ADD 1 LINE; CHANGE 1 LINE
+    // ADD 2 LINES
     model {
       // likelihood including constants
       if (!prior_only) {
@@ -342,9 +343,10 @@ Here’s what needs to change:
         vector[N] mu = Intercept + Xc * b;
 
         int M = get_iter();  // get the current iteration -- ~*~THIS IS NEW~*~
+        vector[N] weights = IPW[, M];  // get the weights for this iteration -- ~*~THIS IS NEW~*~
+
         for (n in 1:N) {
-          // REPLACE weights[n] WITH IPW[n, M]  -- ~*~THIS IS DIFFERENT~*~
-          target += IPW[n, M] * (normal_lpdf(Y[n] | mu[n], sigma));
+          target += weights[n] * (normal_lpdf(Y[n] | mu[n], sigma));
         }
       }
       // priors including constants
@@ -626,9 +628,96 @@ ggplot(outcome_tidy, aes(x = ate)) +
 
 Using a gigantic ROPE of 0±7 malaria risk points, we can see that 99.2% of the posterior distribution lies outside the region of practical equivalence, which provides pretty strong evidence of a nice big ATE. This program definitely has an effect! (It’s fake data! I made sure it had an effect!)
 
-## Downsides
+## Using the results with **brms**
 
-There are a few little issues with this approach. All the sampling has to be done with **rstan**. For whatever reason, **cmdstanr** doesn’t like the iteration tracking functions and it crashes. This might be because [**cmdstanr** is pickier about C++ namespaces](https://discourse.mc-stan.org/t/custom-c-using-cmdstanr/19528/7)? I’m not sure. If it did work, the code would look something like this:
+One issue with using `rstan::sampling()` instead of **brms** is that we can’t do nice things like automatic extraction of posterior expectations or predictions, since the MCMC samples we have are a `stanfit` object and not a `stanreg` object (which is what both **rstanarm** and **brms** produce):
+
+``` r
+posterior_epred(outcome_samples)
+## Error in UseMethod("posterior_epred"): no applicable method for 'posterior_epred' applied to an object of class "stanfit"
+```
+
+However, it is possible to [create an empty **brms** object and stick the MCMC samples we made](https://github.com/paul-buerkner/brms/issues/682#issuecomment-501304142) with `rstan::sampling()` into it, which then allows us to do anything a regular **brms** model can do! This [only works when making minimal changes to the Stan code](https://discourse.mc-stan.org/t/creating-a-brmsfit-object-with-a-modified-brms-generated-stan-model/6840/2)—we can’t modify the likelihood (or the `target` part of the `model` block of the Stan code). We didn’t touch this part, though, so we can safely stick these samples into a **brms** object.
+
+To do this, we first have to create an empty model by using the `empty = TRUE` argument. We also have to create a placeholder weights column, even though we’re not actually fitting the model—**brms** will complain otherwise.
+
+We can then assign the `outcome_samples` object to the `$fit` slot of the empty model. Finally, we have to change the coefficient names to be nicer and compatible with **brms**. Note how earlier the coefficient for `net_num` was named `b[1]`, which was inconvenient. By using `brms::rename_pars()`, we can change those subscripted/indexed names into nice names again.
+
+``` r
+# Placeholder outcome model
+outcome_brms <- brm(bf(malaria_risk | weights(iptw) ~ net_num),
+    # brms needs a column for the weights, even though we're not
+    # fitting the model, so create a placeholder column of 1s
+    data = nets %>% mutate(iptw = 1),
+    empty = TRUE
+)
+
+# Add the samples from rstan::sampling() into the empty brms object and fix the
+# coefficient names (i.e. b[1] → b_net_num)
+outcome_brms$fit <- outcome_samples
+outcome_brms <- rename_pars(outcome_brms)
+```
+
+The `outcome_brms` object is now just like any regular **brms** model, and everything works with it:
+
+``` r
+# It works!
+summary(outcome_brms)
+##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: malaria_risk | weights(iptw) ~ net_num 
+##    Data: nets %>% mutate(iptw = 1) (Number of observations: 1752) 
+##   Draws: 8 chains, each with iter = 2000; warmup = 1000; thin = 1;
+##          total post-warmup draws = 8000
+## 
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept    39.50      0.47    38.57    40.43 1.00     4845     5511
+## net_num      -9.79      1.06   -11.99    -7.68 1.00     7671     6345
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma    13.78      0.22    13.35    14.24 1.00     3875     4526
+## 
+## Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+
+# Predicted values work
+epreds <- posterior_epred(outcome_brms)
+head(epreds, c(5, 10))
+##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10]
+## [1,] 30.1 39.0 39.0 30.1 39.0 39.0 30.1 39.0 39.0  39.0
+## [2,] 28.1 40.1 40.1 28.1 40.1 40.1 28.1 40.1 40.1  40.1
+## [3,] 28.9 39.4 39.4 28.9 39.4 39.4 28.9 39.4 39.4  39.4
+## [4,] 30.4 38.6 38.6 30.4 38.6 38.6 30.4 38.6 38.6  38.6
+## [5,] 30.0 38.9 38.9 30.0 38.9 38.9 30.0 38.9 38.9  38.9
+```
+
+``` r
+# posterior predictive checks work!
+pp_check(outcome_brms)
+## Using 10 posterior draws for ppc type 'dens_overlay' by default.
+```
+
+<img src="{{< blogdown/postref >}}index_files/figure-html/ppcheck-brms-1.png" width="75%" style="display: block; margin: auto;" />
+
+``` r
+# emmeans works too!
+library(emmeans)
+outcome_brms %>%
+    emtrends(~net_num, var = "net_num")
+##  net_num net_num.trend lower.HPD upper.HPD
+##        0         -9.79     -11.9     -7.64
+##        1         -9.79     -11.9     -7.64
+## 
+## Point estimate displayed: median 
+## HPD interval probability: 0.95
+```
+
+## Only tiny downside
+
+There’s just one minor issue with this approach: all the sampling has to be done with **rstan**. For whatever reason, **cmdstanr** doesn’t like the iteration tracking functions and it crashes. This might be because [**cmdstanr** is pickier about C++ namespaces](https://discourse.mc-stan.org/t/custom-c-using-cmdstanr/19528/7)? I’m not sure. If it did work, the code would look something like this:
 
 ``` r
 library(cmdstanr)
@@ -642,40 +731,7 @@ outcome_model_cmdstanr <- cmdstan_model(
 outcome_samples_cmdstanr <- outcome_model_cmdstanr$sample(data = outcome_data)
 ```
 
-One issue with using `rstan::sampling()` instead of **brms** is that we can’t do nice things like automatic extraction of posterior expectations or predictions, since the MCMC samples we have are a `stanfit` object and not a `stanreg` object (which is what both **rstanarm** and **brms** produce):
-
-``` r
-posterior_epred(outcome_samples)
-## Error in UseMethod("posterior_epred"): no applicable method for 'posterior_epred' applied to an object of class "stanfit"
-```
-
-We also can’t use things like **emmeans**, again because the results aren’t formally a regression model.
-
-``` r
-library(emmeans)
-
-outcome_samples %>% 
-  emtrends(~ `b[1]`, var = "b[1]")
-## Error in ref_grid(object = new("stanfit", model_name = "modified_stan_code", : Can't handle an object of class  "stanfit" 
-##  Use help("models", package = "emmeans") for information on supported models.
-```
-
-This makes it tricky to calculate things like instantaneous average marginal effects while incorporating the effects from random intercepts and slopes, [like in this post](https://www.andrewheiss.com/blog/2021/11/10/ame-bayes-re-guide/).
-
-It is theoretically possible to shove these MCMC results into a **brms** object and then take advantage of all the normal **brms**-esque functions and capabilities. [According to Paul Bürkner here](https://github.com/paul-buerkner/brms/issues/682#issuecomment-501304142), this roundabout process is possible:
-
-> 1.  Create a dummy brmsfit object via `dummy_brmsfit <- brm(..., chains = 0)`
-> 2.  Extract the Stan code via `stancode` and amend it
-> 3.  Extract and store the Stan data via `standata`
-> 4.  Create a dummy stanfit object via `dummy_stanfit <- rstan::stan(..., chains = 0)`. Don’t forget to pass the amended Stan code and the Stan data
-> 5.  Replace the stanfit object inside a dummy brmsfit object via `dummy_brmsfit$fit <- dummy_stanfit`
-> 6.  Actually fit the model via `update(dummy_brmsfit, recompile = FALSE)`
-
-Basically we could make an empty `brm` model, fit it separately with our own Stan code, replace the `$fit` slot with the results from `rstan::sampling()`, and update it, resulting in a regular `brmsfit` object that we could use like normal.
-
-BUT this [only works when making minimal changes to the Stan code](https://discourse.mc-stan.org/t/creating-a-brmsfit-object-with-a-modified-brms-generated-stan-model/6840/2), and it doesn’t work when tinkering with the likelihood block of the model, which we did by using `IPW[n, M]` instead of `weights[n]`. We also created a new variable `L` for the number of columns in the weights matrix. In short, we made too many changes to the underlying Stan code to be able to fit the results back into a standard brms object, which is sad :(
-
-In spite of these downsides, being able to use Bayesian models in both the treatment/design stage and the outcome/analysis stage is incredibly powerful!
+In spite of this, being able to use Bayesian models in both the treatment/design stage and the outcome/analysis stage is incredibly powerful!
 
 ## References
 

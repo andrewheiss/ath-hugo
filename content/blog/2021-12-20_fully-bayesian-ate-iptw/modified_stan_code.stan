@@ -40,7 +40,7 @@ parameters {
 transformed parameters {
 }
 
-// ADD 1 LINE; CHANGE 1 LINE
+// ADD 2 LINES
 model {
   // likelihood including constants
   if (!prior_only) {
@@ -48,9 +48,10 @@ model {
     vector[N] mu = Intercept + Xc * b;
     
     int M = get_iter();  // get the current iteration -- ~*~THIS IS NEW~*~
+    vector[N] weights = IPW[, M];  // get the weights for this iteration -- ~*~THIS IS NEW~*~
+
     for (n in 1:N) {
-      // REPLACE weights[n] WITH IPW[n, M]  -- ~*~THIS IS DIFFERENT~*~
-      target += IPW[n, M] * (normal_lpdf(Y[n] | mu[n], sigma));
+      target += weights[n] * (normal_lpdf(Y[n] | mu[n], sigma));
     }
   }
   // priors including constants

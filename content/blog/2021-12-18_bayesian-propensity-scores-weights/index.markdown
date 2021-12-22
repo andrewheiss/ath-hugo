@@ -282,7 +282,7 @@ This plot shows the original distributions for treated and untreated propensitie
 
 ### Why even do this Bayesianly?
 
-We successfully found the causal effect of -10 malaria risk points using regular frequentist regression, so why am I trying to make life more complex and do this with Bayesian methods instead? Mostly because I’m not a fan of null hypothesis frequentist testing (NHST), or the whole process of proposing a null hypothesis, generating a statistical test, finding a p-value, and seeing if the test/p-value/confidence interval provides enough evidence to reject the null hypothesis. With frequentist statistics we test for the probability of the data given a null hypothesis, or `\(P(\text{data} \mid H_0)\)`, while with Bayesian statistics, we get to test for the probability of a hypothesis given the data, or `\(P(H \mid \text{data})\)`.
+We successfully found the causal effect of -10 malaria risk points using regular frequentist regression, so why am I trying to make life more complex and do this with Bayesian methods instead? Mostly because I’m not a fan of null hypothesis signficance testing (NHST), or the whole process of proposing a null hypothesis, generating a statistical test, finding a p-value, and seeing if the test/p-value/confidence interval provides enough evidence to reject the null hypothesis. With frequentist statistics we test for the probability of the data given a null hypothesis, or `\(P(\text{data} \mid H_0)\)`, while with Bayesian statistics, we get to test for the probability of a hypothesis given the data, or `\(P(H \mid \text{data})\)`.
 
 Testing a hypothesis directly with Bayesian inference is a lot more intuitive, with Bayesian [credible intervals](https://evalf21.classes.andrewheiss.com/resource/bayes/#bayesian-credible-intervals) and inferential approaches like measuring the probability that a parameter is greater/less than 0 (i.e. [probability of direction](https://evalf21.classes.andrewheiss.com/resource/bayes/#probability-of-direction)), or measuring the proportion of a posterior that falls within a null region of practical equivalence, or [ROPE](https://evalf21.classes.andrewheiss.com/resource/bayes/#region-of-practical-equivalence-rope). [See this page for an overview of all these methods](https://evalf21.classes.andrewheiss.com/resource/bayes/#) and a comparison with frequentism, and check out [this amazing (and free!) textbook on Bayesianism in general](https://www.bayesrulesbook.com/).
 
@@ -302,7 +302,7 @@ $$
 f(\Delta \mid \boldsymbol{T}, \boldsymbol{X}, \boldsymbol{Y}) 
 $$
 
-This works well with Bayesian methods. We don’t know what `\(\Delta\)` is, so we can use Bayes theorem to estimate it given our existing data for `\(T\)`, `\(X\)`, and `\(Y\)`. To quote from Liao and Zigler ([2020](#ref-LiaoZigler:2020)),
+This works well with Bayesian methods. We don’t know what `\(\Delta\)` is, so we can use Bayes’ theorem to estimate it given our existing data for `\(T\)`, `\(X\)`, and `\(Y\)`. To quote from Liao and Zigler ([2020](#ref-LiaoZigler:2020)),
 
 > \[T\]raditional Bayeisan inference for `\(\Delta\)` would follow from specification of a likelihood for `\((\boldsymbol{T}, \boldsymbol{X}, \boldsymbol{Y})\)` conditional on unknown parameters, `\(\theta\)`, a prior distribution for `\(\theta\)`, and some function relating the data and `\(\theta\)` to the quantity `\(\Delta\)`.
 
@@ -329,7 +329,7 @@ To simplify this process more, here’s the basic process for doing this:
 3.  For each of the `\(K\)` samples, generate inverse probability weights and run an outcome model using those weights. This essentially means that we’ll be running the outcome model `malaria_risk ~ net` a bunch of times based on different weights each time.
 4.  Combine the results from the outcome model to create the final `\(\nu\)`-free ATE.
 
-This process is similar to [multiple imputation](https://www.andrewheiss.com/blog/2018/03/07/amelia-tidy-melding/) or bootstrapping: run the same model a bunch of times on slightly different data and combine the results/
+This process is similar to [multiple imputation](https://www.andrewheiss.com/blog/2018/03/07/amelia-tidy-melding/) or bootstrapping: run the same model a bunch of times on slightly different data and combine the results.
 
 Here’s what this looks like in practice. First we’ll predict net usage based on the confounders of income, temperature, and health using **brms** (with default priors and settings):
 

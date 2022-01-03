@@ -1,15 +1,15 @@
 ---
 title: What I'm doing now
-date: 2021-12-13
+date: 2022-01-03
 slug: now
 description: Andrew Heiss is working on a bunch of exciting and groundbreaking projects
 math: true
 ---
 
-As of December 13, 2021, I'm spending all my time on these things:
+As of January 3, 2022, I'm spending all my time on these things:
 
 * Staying at home pretty much 24/7 because of the COVID-19 pandemic
-* Raising 6 kids (14, 12, 9, 6, 3.5, and 1 month) and trying to stay sane ([family blog](http://www.heissatopia.com/))
+* Raising 6 kids (14, 12, 9, 6, 3.5, and 6 weeks) and trying to stay sane ([family blog](http://www.heissatopia.com/))
 * Settling into Atlanta as I start a new job as an assistant professor in the [Department of Public Management and Policy](https://aysps.gsu.edu/public-management-policy/) at the [Andrew Young School of Policy Studies](https://aysps.gsu.edu/) at [Georgia State University](https://www.gsu.edu/)
 * Teaching [data visualization](https://datavizs21.classes.andrewheiss.com/), [program evaluation](https://evalf21.classes.andrewheiss.com/), and [microeconomics](https://econsp21.classes.andrewheiss.com/) at the [Andrew Young School of Policy Studies](https://aysps.gsu.edu/) at [Georgia State University](https://www.gsu.edu/) during the 2021–22 academic year
 * Converting my dissertation into multiple articles and sending them out to journals + continuing [my research on authoritarianism and international NGOs](https://www.ingoresearch.org/)

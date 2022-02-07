@@ -8,11 +8,14 @@ links:
   url: chaudhry-heiss-ngos-repression.pdf
   local: true
   icon: far fa-file-pdf
+- name: Final version
+  url: https://doi.org/10.1080/14754835.2022.2030205
+  icon: fas fa-scroll
 - name: Code and data
   url: https://github.com/andrewheiss/cautioning-canary
   icon: fab fa-github
 citation: >-
-  [Suparna Chaudhry](http://www.suparnachaudhry.com/) and **Andrew Heiss**, "NGO Repression as a Predictor of Worsening Human Rights Abuses," *Journal of Human Rights*, forthcoming.
+  [Suparna Chaudhry](http://www.suparnachaudhry.com/) and **Andrew Heiss**, "NGO Repression as a Predictor of Worsening Human Rights Abuses," *Journal of Human Rights*, forthcoming, doi: [`10.1080/14754835.2022.2030205`](https://doi.org/10.1080/14754835.2022.2030205)
 extra: >-
   Presented at the annual meeting of the International Studies Association (ISA), online, April 2021; and at the "Human Rights on the Edge: The Future of International Human Rights Law and Practice" workshop at Arizona State University, online, April 29, 2021
 haiku: >-
@@ -47,6 +50,7 @@ Figure 7: The disconnect between Egypt’s de jure 2002 law and the widespread d
 ```bibtex
 @article{ChaudhryHeiss:2022,
     author = {Suparna Chaudhry and Andrew Heiss},
+    Doi = {10.1080/14754835.2022.2030205},
     journal = {Journal of Human Rights},
     title = {NGO Repression as a Predictor of Worsening Human Rights Abuses},
     year = {2022}}

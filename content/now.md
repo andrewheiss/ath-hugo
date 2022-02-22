@@ -1,12 +1,12 @@
 ---
 title: What I'm doing now
-date: 2022-02-07
+date: 2022-02-21
 slug: now
 description: Andrew Heiss is working on a bunch of exciting and groundbreaking projects
 math: true
 ---
 
-As of February 7, 2022, I'm spending all my time on these things:
+As of February 21, 2022, I'm spending all my time on these things:
 
 * Staying at home pretty much 24/7 because of the COVID-19 pandemic
 * Raising 6 kids (14.5, 12, 9.5, 6.5, 4, and 2 months) and trying to stay sane ([family blog](http://www.heissatopia.com/))

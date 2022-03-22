@@ -1,4 +1,19 @@
 talks:
+- title: "Putting everything out there as a researcher"
+  date: "2022-02-22T16:00:00"
+  description: 'Workshop for EPID 9100 (PhD/MS seminar), Department of Epidemiology & Biostatistics, University of Georgia'
+  location: Athens, Georgia
+  links:
+  - name: Slides
+    url: https://talks.andrewheiss.com/2022-03-22_uga-putting-everything-out-there/slides.html
+    icon: fas fa-chalkboard-teacher
+  - name: Handout page
+    url: https://talks.andrewheiss.com/2022-03-22_uga-putting-everything-out-there/
+    icon: fas fa-external-link-square-alt
+  - name: GitHub repository for talk
+    url: https://github.com/andrewheiss/talks/tree/master/2022-03-22_uga-putting-everything-out-there
+    icon: fab fa-github
+
 - title: "Introduction to the tidyverse + data visualization with ggplot2"
   date: 2021-11-16
   description: >-

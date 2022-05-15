@@ -600,7 +600,7 @@ This second chunk doesn't have the outcome $y$ in it and instead refers only to 
 According to Rule 3, we can remove a $\operatorname{do}(\cdot)$ operator as long as it doesn't influence the outcome through any uncontrolled or unconditioned path in a modified graph. Because we're dealing with a smaller number of variables here, the math for Rule 3 is a lot simpler:
 
 ```{r echo=FALSE}
-r"[P(z \mid {\color{#B10DC9} \operatorname{do}(x)}) = P(y \mid {\color{#B10DC9} \text{nothing!}}) \qquad \text{ if } (X \perp Z)_{G_{\overline{X}}}]" |> 
+r"[P(z \mid {\color{#B10DC9} \operatorname{do}(x)}) = P(z \mid {\color{#B10DC9} \text{nothing!}}) \qquad \text{ if } (X \perp Z)_{G_{\overline{X}}}]" |> 
   katex_html()
 ```
 

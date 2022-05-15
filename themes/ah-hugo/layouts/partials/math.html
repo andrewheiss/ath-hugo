@@ -1,3 +1,8 @@
+{{- if (.Params.katex) -}}
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+    data-external="1">
+{{- end -}}
+
 {{- if or (.Params.math) (.Site.Params.math) -}}
 <!-- See https://bookdown.org/yihui/blogdown/templates.html#how-to for why this math-code.js is necessary -->
 {{ $script := resources.Get "js/math-code.js" }}

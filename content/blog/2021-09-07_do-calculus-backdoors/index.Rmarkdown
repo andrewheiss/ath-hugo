@@ -14,6 +14,7 @@ tags:
   - do calculus
 slug: do-calculus-backdoors
 math: true
+katex: true
 bibliography: "../../bib/references.bib"
 csl: "../../bib/chicago-author-date.csl"
 link-citations: yes
@@ -93,6 +94,12 @@ update_geom_defaults(ggdag:::GeomDagText, list(family = "Linux Libertine O",
                                                color = "black"))
 ```
 
+```{r include=FALSE}
+# Use KaTeX for trickier math things with overline and underline, since those 
+# lines disappear at different zoom levels in different browsers
+library(katex)
+```
+
 
 ## Exploring the rules of *do*-calculus
 
@@ -126,9 +133,12 @@ I imagine this line like a wall:
 
 According to Rule 1, we can ignore any observational node if it doesn't influence the outcome through any path, or if it is d-separated from the outcome. Here's the formal definition:
 
-$$P(y \mid z, \operatorname{do}(x), w) = P(y \mid \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}}}$$
+```{r echo=FALSE}
+r"[P(y \mid z, \operatorname{do}(x), w) = P(y \mid \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}}}]" |> 
+  katex_html()
+```
 
-There are a lot of moving parts here, but remember, the focus in this equation is $z$. Our goal here is to remove or ignore $z$. Notice how $z$ exists on the left-hand side of the equation and how it is gone on the right-hand side. As long as we meet the cryptic conditions of $(Y \perp Z \mid W, X)_{G_{\overline{X}}}$, we can get rid of it. But what the heck does that even mean? 
+There are a lot of moving parts here, but remember, the focus in this equation is $z$. Our goal here is to remove or ignore $z$. Notice how $z$ exists on the left-hand side of the equation and how it is gone on the right-hand side. As long as we meet the cryptic conditions of `r katex_html(r"[(Y \perp Z \mid W, X)_{G_{\overline{X}}}]", displayMode = FALSE)`, we can get rid of it. But what the heck does that even mean? 
 
 Here, $G_{\overline{X}}$ means "the original causal graph with all arrows into X removed", while the $Y \perp Z \mid W, X$ part means "Y is independent of Z, given W and X" in the new modified graph. If the Y and Z nodes are d-separated from each other after we account for both W and X, we can get rid of Z and ignore it.
 
@@ -166,7 +176,7 @@ plot_rule1_g_x_over <- ggplot(rule1_g_x_over, aes(x = x, y = y,
   geom_dag_edges() +
   geom_dag_point(color = "grey80", size = 10) +
   geom_dag_text() +
-  labs(title = TeX("$G_\\bar{x}$"),
+  labs(title = TeX("$G_{\\bar{X}}$"),
        subtitle = "DAG with arrows *into* X deleted") +
   theme_do_calc()
 
@@ -225,13 +235,19 @@ With Rule 2, we start messing with interventions. In an experiment like a random
 
 According to Rule 2, interventions (or $do(x)$) can be treated as observations (or $x$) when the causal effect of a variable on the outcome ($X \rightarrow Y$) only influences the outcome through directed paths. The official math for this is this complicated thing:
 
-$$P(y \mid \operatorname{do}(z), \operatorname{do}(x), w) = P(y \mid z, \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}, \underline{Z}}}$$
+```{r echo=FALSE}
+r"[P(y \mid \operatorname{do}(z), \operatorname{do}(x), w) = P(y \mid z, \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}, \underline{Z}}}]" |> 
+  katex_html()
+```
 
 For me, this is super confusing, since there are two different $\operatorname{do}(\cdot)$ operators here and when I think of causal graphs, I think of single interventions. Like we did with Rule 1, we can simplify this and pretend that there's no intervention $\operatorname{do}(x)$ (we'll do the full rule in a minute, don't worry). Again, this is legal because each of these rules are focused on messing with the Z variable: ignoring it or treating it as an observation. That leaves us with this slightly simpler (though still cryptic) equation:
 
-$$P(y \mid \operatorname{do}(z), w) = P(y \mid z, w) \qquad \text{ if } (Y \perp Z \mid W)_{G_{\underline{Z}}}$$
+```{r echo=FALSE}
+r"[P(y \mid \operatorname{do}(z), w) = P(y \mid z, w) \qquad \text{ if } (Y \perp Z \mid W)_{G_{\underline{Z}}}]" |> 
+  katex_html()
+```
 
-Notice how the left-hand side has the interventional $\operatorname{do}(z)$, while the right-hand side has the observed $z$. As long as we meet the condition $(Y \perp Z \mid W)_{G_{\underline{Z}}}$, we can transform $\operatorname{do}(z)$ into $z$ and work only with observational data. Once again, though, what does this $(Y \perp Z \mid W)_{G_{\underline{Z}}}$ condition even mean?
+Notice how the left-hand side has the interventional $\operatorname{do}(z)$, while the right-hand side has the observed $z$. As long as we meet the condition `r katex_html(r"[(Y \perp Z \mid W)_{G_{\underline{Z}}}]", displayMode = FALSE)`, we can transform $\operatorname{do}(z)$ into $z$ and work only with observational data. Once again, though, what does this `r katex_html(r"[(Y \perp Z \mid W)_{G_{\underline{Z}}}]", displayMode = FALSE)` condition even mean?
 
 Here, $G_{\underline{Z}}$ means "the original causal graph with all arrows out of Z removed", while the $Y \perp Z \mid W$ part means "Y is independent of Z, given W" in the new modified graph. Similar to Rule 1, if the Y and Z nodes are d-separated from each other after we account for W, we can legally treat $\operatorname{do}(z)$ like $z$.
 
@@ -270,7 +286,7 @@ plot_rule2_g_simple_z_under <- ggplot(rule2_g_simple_z_under,
   geom_dag_edges() +
   geom_dag_point(color = "grey80", size = 10) +
   geom_dag_text() +
-  labs(title = TeX("$G_\\underline{Z}$"),
+  labs(title = TeX("$G_{\\underline{Z}}$"),
        subtitle = "DAG with arrows *out of* Z deleted") +
   theme_do_calc()
 
@@ -289,7 +305,10 @@ $$P(y \mid \operatorname{do}(z), w) = P(y \mid z, w)$$
 
 So far we've applied Rule 2 to a simplified DAG with three nodes, but what does it look like if we're using the full four-node graph that is used in the formal definition of Rule 2?
 
-$$P(y \mid \operatorname{do}(z), \operatorname{do}(x), w) = P(y \mid z, \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}, \underline{Z}}}$$
+```{r echo=FALSE}
+r"[P(y \mid \operatorname{do}(z), \operatorname{do}(x), w) = P(y \mid z, \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}, \underline{Z}}}]" |> 
+  katex_html()
+```
 
 Here's one graphical representation of a graph with the four nodes W, X, Y, and Z (but it's definitely not the only possible graph! These *do*-calculus rules don't assume any specific relationships between the nodes). Here, Y is caused by both X and Z, and we'll pretend that they're both interventions (so $\operatorname{do}(x)$ and $\operatorname{do}(z)$). X is causally linked to Z, and W confounds all three: X, Y, and Z. Graph $G$ shows the complete DAG; Graph $G_{\overline{X}, \underline{Z}}$ shows a modified DAG with all arrows *into* X deleted ($\overline{X}$) and all arrows *out of* Z deleted ($\underline{Z}$).
 
@@ -350,7 +369,10 @@ What's really neat is that Rule 2 is a generalized version of the backdoor crite
 
 Rule 3 is the trickiest of the three, conceptually. It tells us when we can completely remove a $\operatorname{do}(\cdot)$ expression rather than converting it to an observed quantity. Here it is in all its mathy glory:
 
-$$P(y \mid \operatorname{do}(z), \operatorname{do}(x), w) = P(y \mid \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}, \overline{Z(W)}}}$$
+```{r echo=FALSE}
+r"[P(y \mid \operatorname{do}(z), \operatorname{do}(x), w) = P(y \mid \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}, \overline{Z(W)}}}]" |> 
+  katex_html()
+```
 
 In simpler language, this means that we can ignore an intervention (or a $\operatorname{do}(\cdot)$ expression) if it doesn't influence the outcome through any uncontrolled path—we can remove $\operatorname{do}(z)$ if there is no causal association (or no unblocked causal paths) flowing from Z to Y.
 
@@ -464,15 +486,24 @@ Phew. Let's look back at the three main rules and add their corresponding mathy 
 
 - **Rule 1**: Decide if we can ignore an observation
 
-    $$P(y \mid z, \operatorname{do}(x), w) = P(y \mid \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}}}$$
+```{r echo=FALSE, indent="    "}
+r"[P(y \mid z, \operatorname{do}(x), w) = P(y \mid \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}}}]" |> 
+  katex_html()
+```
 
 - **Rule 2**: Decide if we can treat an intervention as an observation
 
-    $$P(y \mid \operatorname{do}(z), \operatorname{do}(x), w) = P(y \mid z, \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}, \underline{Z}}}$$
+```{r echo=FALSE, indent="    "}
+r"[P(y \mid \operatorname{do}(z), \operatorname{do}(x), w) = P(y \mid z, \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}, \underline{Z}}}]" |> 
+  katex_html()
+```
 
 - **Rule 3**: Decide if we can ignore an intervention
 
-    $$P(y \mid \operatorname{do}(z), \operatorname{do}(x), w) = P(y \mid \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}, \overline{Z(W)}}}$$
+```{r echo=FALSE, indent="    "}
+r"[P(y \mid \operatorname{do}(z), \operatorname{do}(x), w) = P(y \mid \operatorname{do}(x), w) \qquad \text{ if } (Y \perp Z \mid W, X)_{G_{\overline{X}, \overline{Z(W)}}}]" |> 
+  katex_html()
+```
 
 
 ## Deriving the backdoor adjustment formula from *do*-calculus rules
@@ -522,7 +553,10 @@ First let's get rid of the <span style="color:#FF4136;">red</span> $\color{#FF41
 
 According to Rule 2, we can treat an interventional $\operatorname{do}(\cdot)$ operator as observational if we meet specific criteria in a modified graph where we remove all arrows out of X:
 
-$$P(y \mid {\color{#FF4136} \operatorname{do}(x)}, z) = P(y \mid {\color{#FF4136} x}, z) \qquad \text{ if } (Y \perp X \mid Z)_{G_{\underline{X}}}$$
+```{r echo=FALSE}
+r"[P(y \mid {\color{#FF4136} \operatorname{do}(x)}, z) = P(y \mid {\color{#FF4136} x}, z) \qquad \text{ if } (Y \perp X \mid Z)_{G_{\underline{X}}}]" |> 
+  katex_html()
+```
 
 Here's the modified $G_{\underline{X}}$ graph:
 
@@ -540,7 +574,7 @@ plot_backdoor_g_underline_x <- ggplot(backdoor_g_underline_x,
   geom_dag_edges() +
   geom_dag_point(color = "grey80", size = 10) +
   geom_dag_text() +
-  labs(title = TeX("$G_\\underline{X}$"),
+  labs(title = TeX("$G_{\\underline{X}}$"),
        subtitle = "DAG with arrows *out of* X deleted") +
   theme_do_calc()
 
@@ -565,7 +599,10 @@ This second chunk doesn't have the outcome $y$ in it and instead refers only to 
 
 According to Rule 3, we can remove a $\operatorname{do}(\cdot)$ operator as long as it doesn't influence the outcome through any uncontrolled or unconditioned path in a modified graph. Because we're dealing with a smaller number of variables here, the math for Rule 3 is a lot simpler:
 
-$$P(z \mid {\color{#B10DC9} \operatorname{do}(x)}) = P(y \mid {\color{#B10DC9} \text{nothing!}}) \qquad \text{ if } (X \perp Z)_{G_{\overline{X}}}$$
+```{r echo=FALSE}
+r"[P(z \mid {\color{#B10DC9} \operatorname{do}(x)}) = P(y \mid {\color{#B10DC9} \text{nothing!}}) \qquad \text{ if } (X \perp Z)_{G_{\overline{X}}}]" |> 
+  katex_html()
+```
 
 Here's the simplified $G_{\overline{X}}$ graph:
 
@@ -582,7 +619,7 @@ plot_backdoor_g_overline_x <- ggplot(backdoor_g_overline_x,
   geom_dag_edges() +
   geom_dag_point(color = "grey80", size = 10) +
   geom_dag_text() +
-  labs(title = TeX("$G_\\bar{X}$"),
+  labs(title = TeX("$G_{\\bar{X}}$"),
        subtitle = "DAG with arrows *into* X deleted") +
   theme_do_calc()
 

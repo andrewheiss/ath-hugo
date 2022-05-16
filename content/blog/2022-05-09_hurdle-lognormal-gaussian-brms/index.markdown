@@ -356,7 +356,7 @@ ggplot(gapminder, aes(x = lifeExp, y = log_gdpPercap)) +
   labs(x = "Life expectancy", y = "GDP per capita (log)", color = NULL) +
   guides(color = guide_legend(override.aes = list(size = 1.5, alpha = 1))) +
   coord_cartesian(xlim = c(30, 80)) +
-  labs(title = 'OLS models <span style="color:#F012BE;"> with </span> and <span style="color:#0074D9;">without </span> zeros') +
+  labs(title = 'OLS models <span style="color:#F012BE;">with</span> and <span style="color:#0074D9;">without</span> zeros') +
   theme_nice() +
   theme(legend.position = "bottom",
         plot.title = element_markdown())
@@ -708,6 +708,7 @@ We can also deal with the hurdled parts of the model if we specify `dpar = "hu"`
 
 
 ```r
+# Logit-scale slopes
 model_gdp_hurdle_life |> 
   emtrends(~ lifeExp, var = "lifeExp", dpar = "hu",
            at = list(lifeExp = seq(30, 80, 10)))
@@ -723,28 +724,29 @@ model_gdp_hurdle_life |>
 ## HPD interval probability: 0.95
 ```
 
-There's unfortunately no easy way to automatically convert these slopes into proportions or percentage points, though, which is sad. We did the back-transformation with the regular part of the model by including `epred = TRUE`, but if we do that here, it returns the transformed slope for the non-zero model, not the hurdle model. (Which makes sense—the point of the `epred` argument is that it computes predictions of the posterior distribution's mean, so it ignores `dpar`.)
+Converting these slopes into proportions or percentage points is a little different. We did the back-transformation with the regular `mu` part of the model by including `epred = TRUE`, but if we do that here, it will return the transformed slope for the non-zero model, not the hurdle model. (Which makes sense—the point of the `epred` argument is that it computes predictions of the posterior distribution's mean, so it ignores `dpar`.) Instead, we can tell `emtrends()` to transform the results using the `regrid = "response"` argument:
 
 
 ```r
-# Sad.
+# Percentage-point-scale slopes
 model_gdp_hurdle_life |> 
-  emtrends(~ lifeExp, var = "lifeExp", dpar = "hu",
-           at = list(lifeExp = seq(30, 80, 10)),
-           epred = TRUE)
+  emtrends(~ lifeExp, var = "lifeExp", dpar = "hu", regrid = "response",
+           at = list(lifeExp = seq(30, 80, 10)))
 ##  lifeExp lifeExp.trend lower.HPD upper.HPD
-##       30            27        24        30
-##       40            74        69        79
-##       50           170       162       179
-##       60           373       354       394
-##       70           812       757       879
-##       80          1775      1612      1970
+##       30      -0.02452  -0.02790  -0.02116
+##       40      -0.02102  -0.02626  -0.01669
+##       50      -0.01194  -0.01414  -0.00964
+##       60      -0.00532  -0.00612  -0.00450
+##       70      -0.00213  -0.00264  -0.00163
+##       80      -0.00082  -0.00114  -0.00053
 ## 
 ## Point estimate displayed: median 
 ## HPD interval probability: 0.95
 ```
 
-Alas.
+
+
+The slope of the hurdle part is fairly steep and negative at low levels of life expectancy (-0.025 at 30 years), but it starts leveling out as life expectancy increases (-0.002 at 70 years).
 
 Beyond `emtrends()`, we can use `emmeans()` to calculate predicted values of GDP per capita while holding all other variables constant. This is exactly what we did with `conditional_effects()` earlier—this just makes it easier to deal with the actual data itself instead of extracting the data from the ggplot object that `conditional_effects()` creates.
 
@@ -782,7 +784,7 @@ model_gdp_hurdle_life |>
 ## HPD interval probability: 0.95
 ```
 
-When dealing with the hurdled part, there's still no way to automatically convert the resulting logit-scale predictions to percentage points, but in this case we can just use `plogis()` without any complicated math, since we're looking at the outcome, not a partial slope.
+When dealing with the hurdled part, we can convert the resulting logit-scale predictions to percentage points with `regrid = "response"`, just like we did with `emtrends()`:
 
 
 ```r
@@ -804,19 +806,18 @@ model_gdp_hurdle_life |>
 
 # Predicted proportion of zeros, percentage points
 model_gdp_hurdle_life |> 
-  emmeans(~ lifeExp, var = "lifeExp", dpar = "hu",
-          at = list(lifeExp = seq(30, 80, 10))) |> 
-  as_tibble() |> 
-  mutate(prop = plogis(emmean))
-## # A tibble: 6 × 5
-##   lifeExp emmean lower.HPD upper.HPD    prop
-##     <dbl>  <dbl>     <dbl>     <dbl>   <dbl>
-## 1      30  0.175    -0.154     0.537 0.544  
-## 2      40 -0.818    -1.02     -0.585 0.306  
-## 3      50 -1.81     -1.97     -1.63  0.140  
-## 4      60 -2.80     -3.06     -2.55  0.0572 
-## 5      70 -3.79     -4.21     -3.42  0.0221 
-## 6      80 -4.78     -5.33     -4.24  0.00830
+  emmeans(~ lifeExp, var = "lifeExp", dpar = "hu", regrid = "response",
+          at = list(lifeExp = seq(30, 80, 10)))
+##  lifeExp response lower.HPD upper.HPD
+##       30    0.544     0.464     0.633
+##       40    0.306     0.260     0.352
+##       50    0.140     0.121     0.163
+##       60    0.057     0.044     0.072
+##       70    0.022     0.014     0.031
+##       80    0.008     0.005     0.014
+## 
+## Point estimate displayed: median 
+## HPD interval probability: 0.95
 ```
 
 We can plot the results of `emmeans()` and recreate the plots that we get from `conditional_effects()`. I do this all the time in my regular research—I like being able to customize the plot fully rather than having to manipulate and readjust the pre-made `conditional_effects()` plot.
@@ -839,10 +840,9 @@ plot_emmeans1 <- model_gdp_hurdle_life |>
   theme(legend.position = "bottom")
 
 plot_emmeans2 <- model_gdp_hurdle_life |> 
-  emmeans(~ lifeExp, var = "lifeExp", dpar = "hu",
+  emmeans(~ lifeExp, var = "lifeExp", dpar = "hu", regrid = "response",
           at = list(lifeExp = seq(30, 80, 1))) |> 
   gather_emmeans_draws() |> 
-  mutate(.value = plogis(.value)) |> 
   ggplot(aes(x = lifeExp, y = .value)) +
   stat_lineribbon(size = 1, color = clrs[5]) +
   scale_fill_manual(values = colorspace::lighten(clrs[5], c(0.95, 0.7, 0.4))) +
@@ -1199,7 +1199,7 @@ ggplot(penguins, aes(x = bill_length_mm, y = body_mass_g)) +
   scale_y_continuous(labels = label_comma()) +
   scale_color_manual(values = c("darkorange", "purple", "cyan4")) +
   labs(x = "Bill length (mm)", y = "Body mass (g)", color = "Species",
-       title = 'OLS models <span style="color:#F012BE;"> with </span> and <span style="color:#0074D9;">without </span> zeros') +
+       title = 'OLS models <span style="color:#F012BE;">with</span> and <span style="color:#0074D9;">without</span> zeros') +
   theme_nice() +
   theme(legend.position = "bottom",
         plot.title = element_markdown())
@@ -1320,18 +1320,35 @@ tidy(model_mass_hurdle_log)
 
 
 
-We have results, but they're on the log scale so we have to think about the coefficients differently. According to the `bill_length_mm` coefficient, a one-millimeter increase in bill length is associated with a 2.1% increase in body mass. We can also look at the logit-scale hurdle process, though it's a little tricky since we can't just use `plogis()` on the coefficient and we can't use `emtrends()` to extract the slope. We can use the neat divide-by-four trick (see [Steven Miller's post here for more about that](http://post8000.svmiller.com/lab-scripts/logistic-regression-lab.html#The_%E2%80%9CDivide_by_4%E2%80%9D_Rule)) to get the *maximum* marginal effect for the coefficient:
+We have results, but they're on the log scale so we have to think about the coefficients differently. According to the `bill_length_mm` coefficient, a one-millimeter increase in bill length is associated with a 2.1% increase in body mass. 
+
+We can also look at the logit-scale hurdle process, though it's a little tricky since we can't just use `plogis()` on the coefficient. We can use `emtrends()` to extract the slope, though. Since we're on a logit scale, the actual slope depends on the value of flipper length depends on flipper length itself. We can feed `emtrends()` any flipper lengths we want—a range of possible flipper lengths; the average for the data; whatever—and get the corresponding slope or marginal effect. If we include `regrid = "response"` we'll see the results on the percentage point-scale
 
 
 ```r
-tidy(model_mass_hurdle_log) |> 
-  filter(term == "hu_flipper_length_mm") |> 
-  pull(estimate) / 4
-## b_hu_flipper_length_mm 
-##                -0.0388
+model_mass_hurdle_log |> 
+  emtrends(~ flipper_length_mm, var = "flipper_length_mm", 
+           dpar = "hu", regrid = "response",
+           # Show the effect for the mean and for a range
+           at = list(flipper_length_mm = c(mean(penguins$flipper_length_mm), 
+                                           seq(170, 230, 10))))
+##  flipper_length_mm flipper_length_mm.trend lower.HPD upper.HPD
+##                201                 -0.0032   -0.0049  -0.00144
+##                170                 -0.0292   -0.0364  -0.02038
+##                180                 -0.0352   -0.0532  -0.01646
+##                190                 -0.0144   -0.0211  -0.00798
+##                200                 -0.0036   -0.0056  -0.00184
+##                210                 -0.0008   -0.0018  -0.00017
+##                220                 -0.0002   -0.0006  -0.00001
+##                230                  0.0000   -0.0002   0.00000
+## 
+## Point estimate displayed: median 
+## HPD interval probability: 0.95
 ```
 
-The probability of seeing a zero thus seems to drop by -3.88 percentage points *at most* as flipper length decreases.
+
+
+The probability of seeing a zero decreases at different rates depending on existing flipper lengths. For short-flippered penguins, a one-mm change from 170 mm to 171 mm is associated with a -2.92 percentage point decrease in the probability of seeing a zero. For long-flippered penguins, a one-mm change from 220 mm to 221 mm is associated with a -0.02 percentage point decrease. For penguins with an average flipper length (200.97 mm), the change is -0.32 percentage points. These slopes are all visible in the `conditional_effects()` plot of the hurdle component of the model, which I'll show below.
 
 We can also check how well the model fits the data:
 
@@ -1614,6 +1631,6 @@ log_lik_hurdle_gaussian <- function(???) {
 }
 ```
 
-Once again, alas.
+Alas.
 
-Despite this, for now the custom hurdle gaussian model works well for most other things.
+Despite this, for now the custom hurdle Gaussian model works well for most other things.

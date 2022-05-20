@@ -39,7 +39,7 @@ editor_options:
     - [Super quick crash course in differential calculus (it's not scary, I promise!)](#super-quick-crash-course-in-differential-calculus-its-not-scary-i-promise)
     - [Marginal things in economics](#marginal-things-in-economics)
 - [What about marginal things in statistics?](#what-about-marginal-things-in-statistics)
-- [Regression, sliders, switches, and mixing boards](#regression-sliders-switches-and-mixing-boards)
+    - [Regression, sliders, switches, and mixing boards](#regression-sliders-switches-and-mixing-boards)
 - [What are marginal effects?](#what-are-marginal-effects)
 - [Slopes and marginal effects](#slopes-and-marginal-effects)
 - [**marginaleffects**'s and **emmeans**'s philosophies of averaging](#marginaleffectss-and-emmeanss-philosophies-of-averaging)
@@ -324,7 +324,7 @@ And here's an animation of what the slope looks like across a whole range of `\(
   <source src="video/parabola_slope.mp4" type="video/mp4">
 </video>
 
-*(For the sake of space, I didn't include the code for this here, but you can see how I made this animation with [gganimate](https://gganimate.com/) at the R Markdown file for this post at GitHub.)*
+*(For the sake of space, I didn't include the code for this here, but you can see how I made this animation with [gganimate](https://gganimate.com/) at [the R Markdown file for this post at GitHub](https://github.com/andrewheiss/ath-hugo/blob/main/content/blog/2022-05-20_marginalia/index.Rmarkdown#L317).)*
 
 ### Marginal things in economics
 
@@ -410,7 +410,7 @@ This relationship between total utility and marginal utility is even more appare
   <source src="video/cookie_mfx.mp4" type="video/mp4">
 </video>
 
-*(Again, I omitted the code for this here, but you can see it at GitHub.)*
+*(Again, I omitted the code for this here, but [you can see it at GitHub](https://github.com/andrewheiss/ath-hugo/blob/main/content/blog/2022-05-20_marginalia/index.Rmarkdown#L397).)*
 
 
 ## What about marginal things in statistics?

@@ -349,7 +349,7 @@ parabola_slope_anim <- animate(
   <source src="video/parabola_slope.mp4" type="video/mp4">
 </video>
 
-*(For the sake of space, I didn't include the code for this here, but you can see how I made this animation with [gganimate](https://gganimate.com/) at the R Markdown file for this post at GitHub.)*
+*(For the sake of space, I didn't include the code for this here, but you can see how I made this animation with [gganimate](https://gganimate.com/) at [the R Markdown file for this post at GitHub](https://github.com/andrewheiss/ath-hugo/blob/main/content/blog/2022-05-20_marginalia/index.Rmarkdown#L317).)*
 
 ### Marginal things in economics
 
@@ -490,7 +490,7 @@ cookie_mfx_anim <- animate(
   <source src="video/cookie_mfx.mp4" type="video/mp4">
 </video>
 
-*(Again, I omitted the code for this here, but you can see it at GitHub.)*
+*(Again, I omitted the code for this here, but [you can see it at GitHub](https://github.com/andrewheiss/ath-hugo/blob/main/content/blog/2022-05-20_marginalia/index.Rmarkdown#L397).)*
 
 
 ## What about marginal things in statistics?

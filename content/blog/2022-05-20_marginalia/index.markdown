@@ -56,7 +56,7 @@ editor_options:
 
 ---
 
-I'm a huge fan of doing research and analysis in public. I try to make [my research public and freely accessible](https://www.andrewheiss.com/research/), but ever since watching [David Robinson's "The unreasonable effectiveness of public work" keynote from rstudio::conf 2019](https://www.rstudio.com/resources/rstudioconf-2019/the-unreasonable-effectiveness-of-public-work/), I've tried to make my research *process* as open and accessible too.
+I'm a huge fan of doing research and analysis in public. I try to make [my research public and freely accessible](https://www.andrewheiss.com/research/), but ever since watching [David Robinson's "The unreasonable effectiveness of public work" keynote from rstudio::conf 2019](https://www.rstudio.com/resources/rstudioconf-2019/the-unreasonable-effectiveness-of-public-work/), I've tried to make my research *process* open and accessible too.
 
 According to David, researchers typically view their work like this:
 
@@ -88,7 +88,7 @@ And then I didn't.
 
 So here I am, 7 months later, publicly figuring out the differences between regression coefficients, regression predictions, [**marginaleffects**](https://vincentarelbundock.github.io/marginaleffects/), [**emmeans**](https://cran.r-project.org/web/packages/emmeans/index.html), marginal slopes, average marginal effects, marginal effects at the mean, and all these other "marginal" things that researchers and data scientists use.
 
-This guide is highly didactic and slowly builds up the concept of marginal effects as slopes and partial derivatives. The tl;dr section at the end has a useful summary of everything here, with a table showing all the different approaches to marginal effects with corresponding **marginaleffects** and **emmeans** code, as well as some diagrams outlining the two packages' different approaches to averaging. Hopefully it's useful—it is for me!
+This guide is highly didactic and slowly builds up the concept of marginal effects as slopes and partial derivatives. [The tl;dr section at the end](#tldr-overall-summary-of-all-these-marginal-effects-approaches) has a useful summary of everything here, with a table showing all the different approaches to marginal effects with corresponding **marginaleffects** and **emmeans** code, as well as some diagrams outlining the two packages' different approaches to averaging. Hopefully it's useful—it is for me!
 
 Let's get started by looking at some lines and slopes (after loading a bunch of packages and creating some useful little functions).
 
@@ -1920,6 +1920,6 @@ Both kinds of averaging approaches are pretty widespread. The [**tidymodels** ec
 
 The idea of average marginal effects (AMEs)—calculating averages *after* plugging values into models—is incredibly popular in the social sciences. **marginaleffects**, its predecessor [**margins**](https://github.com/leeper/margins), and [its Stata counterpart **margins**](https://www.stata.com/features/overview/marginal-analysis/) are all used in research in political science, public policy, economics, and other fields. 
 
-I'm sure there are super smart people in the world who know when AMEs or MEMs are most appropriate, and people who have even better and robust ways to account for the typicalness and/or uncertainty of the original data ([see here for an averaging approach using a Bayesian bootstrap](https://arelbundock.com/bayesian_bootstrap.html), for instance), but I'm not one of those super smart people.
+I'm sure there are super smart people in the world who know when AMEs or MEMs are most appropriate ([like this article here!](https://doi.org/10.1111/j.1540-5907.2012.00602.x)), and people who have even better and robust ways to account for the typicalness and/or uncertainty of the original data ([see here for an averaging approach using a Bayesian bootstrap](https://arelbundock.com/bayesian_bootstrap.html), for instance), but I'm not one of those super smart people.
 
 

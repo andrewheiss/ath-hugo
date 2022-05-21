@@ -762,7 +762,7 @@ ggplot(corruption, aes(x = civil_liberties, y = public_sector_corruption)) +
 
 Doing the calculus by hand here is tedious though, especially once we start working with even more covariates in a model. Plus we don't have any information about uncertainty, like standard errors and confidence intervals. There are official mathy ways to figure those out by hand, but who even wants to do that. Fortunately there are two different packages that let us find marginal slopes automatically, with important differences in their procedures, which we'll explore in detail below. But before looking at their differences, let's first see how they work.
 
-First, we can use the `marginaleffects()` function from **marginaleffects** to see the slope (the `dydx` column here) at various levels of civil liberties. We'll look at the mechanics of this function in more detail in the next session—for now we'll just plug in our three values of civil liberties and see what happens. We'll also set the `eps` argument: behind the scenes, `marginaleffects()` doesn't actually do the by-hand calculus of piecing together first derivatives—instead, it calculates the fitted value of corruption when civil liberties is a value, calculates the fitted value of corruption when civil liberties is that same value plus a tiny bit more, and then subtracts them. The `eps` value controls that tiny amount. In this case, it'll calculate the predictions for `civil_liberties = 25` and `civil_liberties = 25.001` and then find the slope of the tiny tangent line between those two points. It's a neat little mathy trick to avoid calculus.
+First, we can use the `marginaleffects()` function from **marginaleffects** to see the slope (the `dydx` column here) at various levels of civil liberties. We'll look at the mechanics of this function in more detail in the next section—for now we'll just plug in our three values of civil liberties and see what happens. We'll also set the `eps` argument: behind the scenes, `marginaleffects()` doesn't actually do the by-hand calculus of piecing together first derivatives—instead, it calculates the fitted value of corruption when civil liberties is a value, calculates the fitted value of corruption when civil liberties is that same value plus a tiny bit more, and then subtracts them. The `eps` value controls that tiny amount. In this case, it'll calculate the predictions for `civil_liberties = 25` and `civil_liberties = 25.001` and then find the slope of the tiny tangent line between those two points. It's a neat little mathy trick to avoid calculus.
 
 
 ```r
@@ -858,7 +858,7 @@ This kind of plot is useful since it shows precisely how the effect changes acro
 
 ## **marginaleffects**'s and **emmeans**'s philosophies of averaging
 
-Finding marginal effects for lines like `\(y = 2x - 1\)` and `\(y = -0.5x^2 + 5x + 5\)` with calculus is fairly easy since there's no uncertainty involved. Finding marginal effects for fitted lines from a regression model, on the other hand, is more complicated because uncertainty abounds. The estimated partial slopes all have standard errors and measures of statistical significance attached to them. The slope of civil liberties at −0.55, but it could be higher and it could be lower. Could it even possibly be zero? Maybe! (But most likely not; the p-value that we saw above is less than 0.001, so there's only a sliver of a chance of seeing a slope like −0.55 in a world where it is actually 0ish).
+Finding marginal effects for lines like `\(y = 2x - 1\)` and `\(y = -0.5x^2 + 5x + 5\)` with calculus is fairly easy since there's no uncertainty involved. Finding marginal effects for fitted lines from a regression model, on the other hand, is more complicated because uncertainty abounds. The estimated partial slopes all have standard errors and measures of statistical significance attached to them. The slope of civil liberties at 55 is −0.55, but it could be higher and it could be lower. Could it even possibly be zero? Maybe! (But most likely not; the p-value that we saw above is less than 0.001, so there's only a sliver of a chance of seeing a slope like −0.55 in a world where it is actually 0ish).
 
 We deal with the uncertainty of these marginal effects by taking averages, which is why we talk about "average marginal effects" when interpreting these effects. So far, `marginaleffects::marginaleffects()` and `emmeans::emtrends()` have given identical results. But behind the scenes, these packages take two different approaches to calculating these marginal averages. The difference is very subtle, but incredibly important.
 
@@ -984,7 +984,7 @@ model_sq |>
 ## Prediction type:  response
 ```
 
-The disadvantage of this approach is that no actual country has a `civil_liberties` score of exactly 70.16. If we had other covariates in the model, no country would have exactly the average of every variable. The marginal effect is thus calculated based on a nonexistent, hypothetical country that might not possibly exist in real life.
+The disadvantage of this approach is that no actual country has a `civil_liberties` score of exactly 70.16. If we had other covariates in the model, no country would have exactly the average of every variable. The marginal effect is thus calculated based on a hypothetical country that might not possibly exist in real life.
 
 
 ## Where this subtle difference really matters
@@ -1223,7 +1223,7 @@ The choice of marginal effect averaging thus matters a lot!
 
 To make life even more exciting, we're not limited to just average marginal effects (AMEs) or marginal effects at the mean (MEMs). Additionally, if we think back to the slider/switch/mixing board analogy, all we've really done so far with our logistic regression model is move one slider (`public_sector_corruption`) up and down. What happens if we move other switches and sliders at the same time? (i.e. the marginal effect of corruption at specific values of corruption, or across different regions, or at different levels of GDP per capita and polyarchy)
 
-We can use both `marginaleffects()` and `emtrends()`/`emmeans()` to play the our model's full mixing board. We'll continue to use the logistic regression model as an example since it's sensitive to the order of averaging.
+We can use both `marginaleffects()` and `emtrends()`/`emmeans()` to play with our model's full mixing board. We'll continue to use the logistic regression model as an example since it's sensitive to the order of averaging.
 
 
 ### Group average marginal effects

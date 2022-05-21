@@ -919,7 +919,9 @@ The main advantage of doing this is that each `dydx` prediction uses values that
 
 ### Marginal effects at the mean (the default in **emmeans**)
 
-A different approach for this averaging is to calculate the *marginal effect at the mean*, or MEM. This is what the **emmeans** package does by default (though it calls it "estimated marginal means", or EMM, hence the name ***emm*eans**). To do this, we follow a slightly different process of averaging:
+A different approach for this averaging is to calculate the *marginal effect at the mean*, or MEM. This is what the **emmeans** package does by default. (The **emmeans** package actually calculates two average things: "marginal effects at the means" (MEM), or average *slopes* using `emtrends()`, and "estimated marginal means" (EMM), or average *predictions* using `emmeans()`. It's named after the second of these, hence the name ***emm*eans**). 
+
+To do this, we follow a slightly different process of averaging:
 
 <img src="images/flow-mem@3x.png" width="100%" style="display: block; margin: auto;" />
 

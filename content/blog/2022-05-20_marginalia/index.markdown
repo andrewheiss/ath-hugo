@@ -33,6 +33,16 @@ editor_options:
 }
 </style>
 
+<div class="alert alert-info">
+<strong>Note:</strong> You can download PDF, SVG, and PNG versions of the marginal effects digrams in this guide, as well as the original Adobe Illustrator file, here:
+
+- [PDFs, SVGs, and PNGs](http://files.andrewheiss.com/marginal-effects-diagrams/marginal-effects-output.zip)
+- [Illustrator .ai file](http://files.andrewheiss.com/marginal-effects-diagrams/marginal-effects.ai)
+
+Do whatever you want with them! They're licensed under [Creative Commons Attribution-ShareAlike (BY-SA 4.0)](http://creativecommons.org/licenses/by-sa/4.0/).
+</div>
+
+
 ## Contents <!-- omit in toc -->
 
 - [What does "marginal" even mean in the first place?](#what-does-%22marginal%22-even-mean-in-the-first-place)
@@ -1909,6 +1919,15 @@ To remember all these differences, here's a table summarizing all their differen
 </table>
 
 And here's an image with all five of the diagrams at the same time:
+
+<div class="alert alert-info">
+<strong>Note:</strong> You can download PDF, SVG, and PNG versions of the marginal effects digrams in this guide, as well as the original Adobe Illustrator file, here:
+
+- [PDFs, SVGs, and PNGs](http://files.andrewheiss.com/marginal-effects-diagrams/marginal-effects-output.zip)
+- [Illustrator .ai file](http://files.andrewheiss.com/marginal-effects-diagrams/marginal-effects.ai)
+
+Do whatever you want with them! They're licensed under [Creative Commons Attribution-ShareAlike (BY-SA 4.0)](http://creativecommons.org/licenses/by-sa/4.0/).
+</div>
 
 <img src="images/flow-everything@3x.png" width="100%" style="display: block; margin: auto;" />
 

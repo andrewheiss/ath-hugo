@@ -34,7 +34,7 @@ editor_options:
 </style>
 
 <div class="alert alert-info">
-<strong>Note:</strong> You can download PDF, SVG, and PNG versions of the marginal effects digrams in this guide, as well as the original Adobe Illustrator file, here:
+<strong>Note:</strong> You can download PDF, SVG, and PNG versions of the marginal effects diagrams in this guide, as well as the original Adobe Illustrator file, here:
 
 - [PDFs, SVGs, and PNGs](http://files.andrewheiss.com/marginal-effects-diagrams/marginal-effects-output.zip)
 - [Illustrator .ai file](http://files.andrewheiss.com/marginal-effects-diagrams/marginal-effects.ai)
@@ -1921,7 +1921,7 @@ To remember all these differences, here's a table summarizing all their differen
 And here's an image with all five of the diagrams at the same time:
 
 <div class="alert alert-info">
-<strong>Note:</strong> You can download PDF, SVG, and PNG versions of the marginal effects digrams in this guide, as well as the original Adobe Illustrator file, here:
+<strong>Note:</strong> You can download PDF, SVG, and PNG versions of the marginal effects diagrams in this guide, as well as the original Adobe Illustrator file, here:
 
 - [PDFs, SVGs, and PNGs](http://files.andrewheiss.com/marginal-effects-diagrams/marginal-effects-output.zip)
 - [Illustrator .ai file](http://files.andrewheiss.com/marginal-effects-diagrams/marginal-effects.ai)

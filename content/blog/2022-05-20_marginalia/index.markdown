@@ -227,8 +227,8 @@ $$
 `\begin{aligned}
 y &= 2x - 1 \\
 &= 2x^1 - 1 \\
-&= (1 \times 2) x^0 \\
-\frac{dy}{dx} &=  2
+\frac{dy}{dx}&= (1 \times 2) x^0 \\
+&=  2
 \end{aligned}`
 $$
 
@@ -287,8 +287,8 @@ If we apply the power rule to the parabola formula we can find the exact slope:
 $$
 `\begin{aligned}
 y &= -0.5x^2 + 5x^1 + 5 \\
-&= (2 \times -0.5) x + (1 \times 5) x^0 \\
-\frac{dy}{dx} &= -x + 5
+\frac{dy}{dx} &= (2 \times -0.5) x + (1 \times 5) x^0 \\
+&= -x + 5
 \end{aligned}`
 $$
 
@@ -375,8 +375,8 @@ Power rule time! <small>(or type [`derivative -0.5x^2 + 5x`](https://www.wolfram
 $$
 `\begin{aligned}
 u &= -0.5x^2 + 5x \\
-&= (2 \times -0.5) x^1 + 5x^0 \\
-\frac{du}{dx} &= -x + 5 
+\frac{du}{dx} &= (2 \times -0.5) x^1 + 5x^0 \\
+&= -x + 5 
 \end{aligned}`
 $$
 

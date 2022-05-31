@@ -490,8 +490,8 @@
       "RemoteRepo": "brms",
       "RemoteUsername": "paul-buerkner",
       "RemoteRef": "HEAD",
-      "RemoteSha": "5148c41d5ec3952ef738e8c6061834041b5f58c3",
-      "Hash": "d5fab3c3e91f98c5d0d865adff69a65a",
+      "RemoteSha": "279ee88d3d7eba639ecbf635a90c05415a9dcbfd",
+      "Hash": "4791cdb7e3e858949baf9f0d67f6de1d",
       "Requirements": [
         "Matrix",
         "Rcpp",

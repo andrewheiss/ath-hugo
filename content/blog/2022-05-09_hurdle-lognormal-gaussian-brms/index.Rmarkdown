@@ -44,7 +44,8 @@ options(digits = 3, width = 300)
     - [**emmeans** with hurdle models](#emmeans-with-hurdle-models)
       - [**Non-zero `mu` part only**](#non-zero-mu-part-only)
       - [**Zero `hu` part only**](#zero-hu-part-only)
-      - [Marginal effects for both parts of the model simultaneously](#marginal-effects-for-both-parts-of-the-model-simultaneously)
+      - [Both parts of the model simultaneously](#both-parts-of-the-model-simultaneously)
+      - [All three types of predictions at the same time](#all-three-types-of-predictions-at-the-same-time)
     - [Predictions with hurdle models](#predictions-with-hurdle-models)
   - [4. Hurdle lognormal model with fancy multilevel things](#4-hurdle-lognormal-model-with-fancy-multilevel-things)
 - [Normally distributed outcomes with zeros](#normally-distributed-outcomes-with-zeros)
@@ -601,11 +602,11 @@ Doing the complicated `plogis(intercept + coefficient) - plogis(intercept)` to c
 Instead, we can calculate marginal effects automatically using a couple different methods:
 
 1. **brms**'s `conditonal_effects()` will plot predicted values of specific coefficients while holding all other variables constant, and it converts the results to their original scales. It automatically creates a plot, which is nice, but extracting the data out of the object is a little tricky and convoluted.
-2. Packages like **emmeans** or **marginaleffects** can calculate marginal effects and predicted values on their original scales too. For more details, [see my blog post on beta regression](https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/#2-fractional-logistic-regression), or the documentation for **emmeans** or **marginaleffects**.
+2. Packages like **emmeans** or **marginaleffects** can calculate marginal effects and predicted values on their original scales too. For more details, [see my blog post on beta regression](https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/#2-fractional-logistic-regression), or the documentation for **emmeans** or **marginaleffects**. Also see [this mega detailed guide here](https://www.andrewheiss.com/blog/2022/05/20/marginalia/) for more about marginal effects.
 
 #### `brms::conditional_effects()` with hurdle models
 
-Since we're working with a mixture model, the syntax for dealing with conditional and marginal effects is a little different, as the `lifeExp` variable exists in both the non-zero and the zero processes of the model. We can specify which version of `lifeExp` we want to work with using the `dpar` argument (**d**istributional **par**ameter) in `conditional_effects()`. By default, `conditional_effects()` will return the marginal/conditional means of the non-zero process, or `mu`. If we want the 0/not 0 hurdle part, we can specify `dpar = "hu`". The `conditional_effects()` function helpfully converts the predicted values into their original scales: when showing predicted life expectancy, it unlogs the values; when showing predicted proportion of zeros, it unlogits the values.
+Since we're working with a mixture model, the syntax for dealing with conditional/marginal effects is a little different, as the `lifeExp` variable exists in both the non-zero and the zero processes of the model. We can specify which version of `lifeExp` we want to work with using the `dpar` argument (**d**istributional **par**ameter) in `conditional_effects()`. By default, `conditional_effects()` will return the marginal/conditional means of the combined process using both the non-zero part `mu` and the zero part `hu`. If we want to see the 0/not 0 hurdle part, we can specify `dpar = "hu`". The `conditional_effects()` function helpfully converts the predicted values into their original scales: when showing predicted life expectancy, it unlogs the values; when showing predicted proportion of zeros, it unlogits the values.
 
 We can see both processes of the model simultaneously—at low levels of life expectancy, the probability of reporting no GDP per capita is fairly high, and the predicted level of GDP per capita is really low. As life expectancy increases, the probability of seeing a 0 drops and predicted wealth increases.
 
@@ -623,7 +624,7 @@ plot_cond_gdp1 <- plot(conditional_effects(model_gdp_hurdle_life), plot = FALSE)
   geom_line(size = 1, color = clrs[1]) +
   scale_y_continuous(labels = label_dollar(scale_cut = cut_short_scale())) +
   labs(x = "Life expectancy", y = "Predicted GDP per capita",
-       subtitle = "Regular part of the model (dpar = \"mu\")") +
+       subtitle = "Combined parts of the model (\"mu\" and \"hu\")") +
   theme_nice()
 
 plot_cond_gdp2 <- plot(conditional_effects(model_gdp_hurdle_life, dpar = "hu"), plot = FALSE)[[1]]$data |> 
@@ -645,75 +646,54 @@ plot_cond_gdp2 <- plot(conditional_effects(model_gdp_hurdle_life, dpar = "hu"), 
 
 #### **emmeans** with hurdle models
 
-While `conditional_effects()` is great for a quick marginal effects plot like this, it doesn't help with determining the exact slope of the line at each point on the original scale. We know from the model results that a one-year increase in life expectancy is associated with a `r label_percent(accuracy = 0.1)(m_gdp_hurdle_life$life_exp$estimate)` increase in GDP per capita, and that's apparent in the curviness of the conditional effects plot. But if we want to know the original-scale slope at 60 years, for instance (e.g. an increase in life expectancy from 60 to 61 years is associated with a \$X increase in GDP per capita), that's trickier. It's even trickier when working with the hurdle part of the model. Moving from 60 to 61 years decreases the probability of seeing a 0 by… some percentage point amount… but without doing a bunch of `plogis()` math, it's not obvious how to get that value. Fortunately `emmeans::emtrends()` makes this easy. Like `brms::conditional_effects()`, by default, functions from **emmeans** like `emmeans()` and `emtrends()` will return the marginal means of the non-zero process, or the `mu`. We can specify `dpar = "hu"` to get the logit part.
+While `conditional_effects()` is great for a quick marginal effects plot like this, we can't see just the `mu` part of the model in isolation. More importantly, plots alone don't help with determining the exact slope of the line at each point on the original scale. We know from the model results that a one-year increase in life expectancy is associated with a `r label_percent(accuracy = 0.1)(m_gdp_hurdle_life$life_exp$estimate)` increase in GDP per capita, and that's apparent in the curviness of the conditional effects plot. But if we want to know the original-scale slope at 60 years, for instance (e.g. an increase in life expectancy from 60 to 61 years is associated with a \$X increase in GDP per capita), that's trickier. It's even trickier when working with the hurdle part of the model. Moving from 60 to 61 years decreases the probability of seeing a 0 by… some percentage point amount… but without doing a bunch of `plogis()` math, it's not obvious how to get that value. Fortunately `emmeans::emtrends()` makes this easy. Like `brms::conditional_effects()`, by default, functions from **emmeans** like `emmeans()` and `emtrends()` will return the marginal means of the combined non-zero and zero/not-zero process, or both `mu` and `hu`. We can specify `dpar = "mu"` to get just the `mu` part (both logged and unlogged) and `dpar = "hu"` to get the logit part (both as logits and probabilities).
 
 ##### Non-zero `mu` part only
 
-```{r emtrends-gdp-mu, message=FALSE}
-# This will return the coefficient for lifeExp for the non-zero part. 
-model_gdp_hurdle_life |> 
-  emtrends(~ lifeExp, var = "lifeExp", dpar = "mu")
-```
+We can feed the model a bunch of possible different life expectancy values to see how steep the slope of the non-zero part is at each value. Because there are no interaction terms or random effects or anything fancy, this log-scale slope will be the same at every possible value of life expectancy—GDP per capita increases by `r label_percent(accuracy = 0.1)(m_gdp_hurdle_life$life_exp$estimate)` for each one-year increase in life expectancy.
 
-We can specify a bunch of possible different life expectancy values to see how steep the slope is at each value. Because there are no interaction terms or random effects or anything fancy, this log-scale slope will be the same at every possible value of life expectancy—GDP per capita increases by `r label_percent(accuracy = 0.1)(m_gdp_hurdle_life$life_exp$estimate)` for each one-year increase in life expectancy.
-
-```{r emtrends-gdp-mu-range}
+```{r emtrends-gdp-mu-range, message=FALSE}
 model_gdp_hurdle_life |> 
   emtrends(~ lifeExp, var = "lifeExp", dpar = "mu",
            at = list(lifeExp = seq(30, 80, 10)))
 ```
 
 ```{r extract-emtrends-gdp-mu-range, include=FALSE}
-eps <- 0.001
-
-mfx_gdp_hurdle_life <- emmeans(model_gdp_hurdle_life, ~ lifeExp, dpar = "mu",
-                               at = list(lifeExp = c(seq(30, 80, 10), seq(30, 80, 10) + eps))) |> 
-  update(tran = "log") |> 
-  regrid(transform = "response") |> 
-  add_grouping("lifeExp_levels", "lifeExp", c(seq(30, 80, 10), seq(30, 80, 10))) |> 
-  contrast("revpairwise", by = "lifeExp_levels", type = "response") |> 
-  contrast(list(1/eps), by = "lifeExp_levels") |> 
-  update(by = NULL) |> 
+mfx_gdp_hurdle_life <- model_gdp_hurdle_life |> 
+  emtrends(~ lifeExp, var = "lifeExp", dpar = "mu", 
+           regrid = "response", tran = "log", type = "response",
+           at = list(lifeExp = seq(30, 80, 10))) |> 
   as_tibble() |> 
-  mutate(lifeExp = as.numeric(lifeExp_levels)) |> 
   mutate(years = xfun::numbers_to_words(lifeExp)) |> 
   split(~ years)
 ```
 
 If we want to interpret more concrete numbers (i.e. dollars instead of percents), we should back-transform these slopes to the original dollar scale. This is a little tricky, though, because GDP per capita was logged before going into the model. If we try including `regrid = "response"` to have `emtrends()` back-transform the result, it won't change anything: 
 
-```{r emtrends-gdp-mu-range-response}
+```{r emtrends-gdp-mu-range-response-not-work}
 model_gdp_hurdle_life |> 
   emtrends(~ lifeExp, var = "lifeExp", dpar = "mu", regrid = "response",
            at = list(lifeExp = seq(30, 80, 10)))
 ```
 
-Behind the scenes, `emtrends()` calculates the numeric derivative (or instantaneous slope) by adding a tiny amount to each of the given levels of `lifeExp` (i.e. `lifeExp = 30` and `lifeExp = 30.001`) and then calculates the slope of the line that goes through each of those predicted points. In order to back-transform the slopes, we need to transform the predicted values *before* calculating the instantaneous slopes. The current version of **emmeans** doesn't seem to support this with `emtrends()` (though [there was an issue for supporting it in `emmeans()`](https://github.com/paul-buerkner/brms/issues/1360)), which means we need to calculate these numeric derivatives ourselves. This code is complex and does some fancy comparisons and manipulations behind the scenes, but it works! (Huge thanks to [Mattan Ben-Shachar](https://github.com/andrewheiss/ath-hugo/commit/70197c7389c87b46db6cd61fc1ef8ce7b5c94616#commitcomment-74350632) for figuring this out!):
+Behind the scenes, `emtrends()` calculates the numeric derivative (or instantaneous slope) by adding a tiny amount to each of the given levels of `lifeExp` (i.e. `lifeExp = 30` and `lifeExp = 30.001`) and then calculates the slope of the line that goes through each of those predicted points. In order to back-transform the slopes, we need to transform the predicted values *before* calculating the instantaneous slopes. To get this ordering right, we need to include a couple extra arguments: `tran = "log"` to trick `emtrends()` into thinking that it's working with logged values and `type = "response"` to tell `emtrends()` to unlog the estimates after calculating the slopes. (This only works with the development version of **brms** installed on or after May 31, 2022; ***huge*** thanks to [Mattan Ben-Shachar](https://sites.google.com/view/mattansb) for [originally pointing this out](https://github.com/andrewheiss/ath-hugo/commit/70197c7389c87b46db6cd61fc1ef8ce7b5c94616#commitcomment-74350632) and for [opening an issue and getting it fixed](https://github.com/paul-buerkner/brms/issues/1360) at both **brms** and **emmeans**!)
 
-```{r emmeans-fake-emtrends}
-# Define the tiny bit of extra lifeExp for the numeric derivative
-eps <- 0.001
-
-# Find predicted values for the mu part for 30, 30.001, etc.
-emmeans(model_gdp_hurdle_life, ~ lifeExp, dpar = "mu",
-        at = list(lifeExp = c(seq(30, 80, 10), seq(30, 80, 10) + eps))) |> 
-  # Make emmeans think it's working with logged values
-  update(tran = "log") |> 
-  # Have emmeans work with response values
-  regrid(transform = "response") |> 
-  # Find the slope between 30 and 30.001, 40 and 40.001, and so on
-  add_grouping("lifeExp_levels", "lifeExp", c(seq(30, 80, 10), seq(30, 80, 10))) |> 
-  contrast("revpairwise", by = "lifeExp_levels", type = "response") |> 
-  contrast(list(1/eps), by = "lifeExp_levels") |> 
-  update(by = NULL)
+```{r emtrends-gdp-mu-range-response}
+model_gdp_hurdle_life |> 
+  emtrends(~ lifeExp, var = "lifeExp", dpar = "mu", 
+           regrid = "response", tran = "log", type = "response",
+           at = list(lifeExp = seq(30, 80, 10)))
 ```
 
-Phew, that was a lot. Notice how they're no longer the same at each level—that's because in the non-logged world, this trend is curved. These represent the instantaneous slopes at each of these values of life expectancy in just the `mu` part of the model. At 60 years, a one-year increase in life expectancy is associated with a `r dollar_format(prefix = "\\\\$", accuracy = 1)(mfx_gdp_hurdle_life$sixty$estimate)` increase in GDP per capita; at 70, it's associated with a `r dollar_format(prefix = "\\\\$", accuracy = 1)(mfx_gdp_hurdle_life$seventy$estimate)` increase. 
+Notice how they're no longer the same at each level—that's because in the non-logged world, this trend is curved. These represent the instantaneous slopes at each of these values of life expectancy in just the `mu` part of the model. At 60 years, a one-year increase in life expectancy is associated with a `r dollar_format(prefix = "\\\\$", accuracy = 1)(mfx_gdp_hurdle_life$sixty$lifeExp.trend)` increase in GDP per capita; at 70, it's associated with a `r dollar_format(prefix = "\\\\$", accuracy = 1)(mfx_gdp_hurdle_life$seventy$lifeExp.trend)` increase. 
 
-Alternatively, we can use the **marginaleffects** package to get the instantaneous `mu`-part slopes as well, and the code is less convoluted ([there's a vignette for it all here](https://vincentarelbundock.github.io/marginaleffects/articles/transformation.html#back-transforming-lognormal-hurdle-models)). The process is the same—we add a tiny amount and find the numeric derivative:
+Alternatively, we can use the **marginaleffects** package to get the instantaneous `mu`-part slopes as well, though the is a little bit more involved ([there's a vignette for it all here](https://vincentarelbundock.github.io/marginaleffects/articles/transformation.html#back-transforming-lognormal-hurdle-models)). In this case, we need to add the tiny amount to each of the levels of `lifeExp` ourselves and then find the numeric derivative:
 
 ```{r mfx-mu-only, warning=FALSE, message=FALSE}
 library(marginaleffects)
+
+# Define the tiny bit of extra lifeExp for the numeric derivative
+eps <- 0.001
 
 model_gdp_hurdle_life |> comparisons(
   dpar = "mu",
@@ -728,17 +708,12 @@ model_gdp_hurdle_life |> comparisons(
 For fun, we can plot the values of these slopes across a range of marginal effects. Importantly, the y-axis here is *not* the predicted value of GDP per capita—it's the slope of life expectancy, or the first derivative of the <span style="color:`r clrs[1]`;">■&nbsp;red</span> line we made earlier with `conditional_effects()`.
 
 ```{r plot-emtrends-mfx-gdp}
-emmeans(model_gdp_hurdle_life, ~ lifeExp, dpar = "mu",
-                     at = list(lifeExp = c(seq(30, 80, 1), seq(30, 80, 1) + eps))) |> 
-  update(tran = "log") |> 
-  regrid(transform = "response") |> 
-  add_grouping("lifeExp_levels", "lifeExp", c(seq(30, 80, 1), seq(30, 80, 1))) |> 
-  contrast("revpairwise", by = "lifeExp_levels", type = "response") |> 
-  contrast(list(1/eps), by = "lifeExp_levels") |> 
-  update(by = NULL) |> 
+model_gdp_hurdle_life |> 
+  emtrends(~ lifeExp, var = "lifeExp", dpar = "mu", 
+           regrid = "response", tran = "log", type = "response",
+           at = list(lifeExp = seq(30, 80, 1))) |> 
   gather_emmeans_draws() |> 
-  mutate(lifeExp_levels = as.numeric(lifeExp_levels)) |> 
-  ggplot(aes(x = lifeExp_levels, y = .value)) +
+  ggplot(aes(x = lifeExp, y = .value)) +
   stat_lineribbon(size = 1, color = clrs[1]) +
   scale_fill_manual(values = colorspace::lighten(clrs[1], c(0.95, 0.7, 0.4))) +
   scale_y_continuous(labels = label_dollar()) +
@@ -761,7 +736,7 @@ model_gdp_hurdle_life |>
            at = list(lifeExp = seq(30, 80, 10)))
 ```
 
-Converting these slopes into proportions or percentage points is a little different. We did the back-transformation with the regular `mu` part of the model by including `epred = TRUE`, but if we do that here, it will return the transformed slope for the non-zero model, not the hurdle model. (Which makes sense—the point of the `epred` argument is that it computes predictions of the posterior distribution's mean, so it ignores `dpar`.) Instead, we can tell `emtrends()` to transform the results using the `regrid = "response"` argument:
+We can convert these slopes into proportions or percentage points by including the `regrid = "response"` argument. Note that we don't need to also include `tran = "log"` and `type = "response"` like we did for the `mu` part—that's because we're not working with an outcome that's on a strange pre-logged scale like `gdpPercap` is in the `mu` part. Here `emtrends()` knows that there's a difference between the link (logit) and the response (percentage point) scales and it can switch between them easily.
 
 ```{r emtrends-gdp-hu-response}
 # Percentage-point-scale slopes
@@ -783,6 +758,8 @@ The slope of the hurdle part is fairly steep and negative at low levels of life 
 
 Beyond `emtrends()`, we can use `emmeans()` to calculate predicted values of GDP per capita while holding all other variables constant. This is exactly what we did with `conditional_effects()` earlier—this just makes it easier to deal with the actual data itself instead of extracting the data from the ggplot object that `conditional_effects()` creates.
 
+As we did with `emtrends()`, when dealing with the non-zero `mu` part we have to include all three extra `regrid`, `tran`, and `type` arguments to trick `emmeans()` into working with the pre-logged GDP values:
+
 ```{r emmeans-gdp-mu}
 # Predicted GDP per capita, logged
 model_gdp_hurdle_life |> 
@@ -796,7 +773,7 @@ model_gdp_hurdle_life |>
           at = list(lifeExp = seq(30, 80, 10)))
 ```
 
-When dealing with the hurdled part, we can convert the resulting logit-scale predictions to percentage points with `regrid = "response"`, just like we did with `emtrends()`:
+When dealing with the hurdled part, we can convert the resulting logit-scale predictions to percentage points with just `regrid = "response"`, again like we did with `emtrends()`:
 
 ```{r emmeans-gdp-hu}
 # Predicted proportion of zeros, logits
@@ -810,7 +787,7 @@ model_gdp_hurdle_life |>
           at = list(lifeExp = seq(30, 80, 10)))
 ```
 
-We can plot the results of `emmeans()` and recreate the plots that we get from `conditional_effects()`. I do this all the time in my regular research—I like being able to customize the plot fully rather than having to manipulate and readjust the pre-made `conditional_effects()` plot.
+We can plot the results of `emmeans()` and create plots like the ones we made with `conditional_effects()`. I do this all the time in my regular research—I like being able to customize the plot fully rather than having to manipulate and readjust the pre-made `conditional_effects()` plot.
 
 ```{r plot-emmeans-mfx-gdp, fig.width=6, fig.height=6}
 plot_emmeans1 <- model_gdp_hurdle_life |> 
@@ -850,9 +827,9 @@ plot_emmeans2 <- model_gdp_hurdle_life |>
                                 plot.subtitle = element_text(family = "Jost")))
 ```
 
-##### Marginal effects for both parts of the model simultaneously
+##### Both parts of the model simultaneously
 
-So far we've looked at the `mu` and `hu` parts individually, but part of the magic of these models is that we can work with both processes simultaneously. For this, we can calculate the expected value from the model, incorporating both parts simultaneously. In mathy terms, for this lognormal hurdle model, this is:
+So far we've looked at the `mu` and `hu` parts individually, but part of the magic of these models is that we can work with both processes simultaneously. When we ran `conditional_effects(model_gdp_hurdle_life)` without any `dpar` arguments, we saw predictions for both parts at the same time, but so far with `emmeans()` and `emtrends()`, we haven't seen any of these combined values. To do this, we can calculate the expected value from the model and incorporate both parts simultaneously. In mathy terms, for this lognormal hurdle model, this is:
 
 $$\operatorname{E}[Y] = (1-\texttt{hu}) \times e^{\texttt{mu} + (\texttt{sigma}^2)/2}$$
 
@@ -874,7 +851,7 @@ model_gdp_hurdle_life |>
           at = list(lifeExp = seq(30, 80, 10)))
 ```
 
-And we can plot these combined predictions too:
+And we can plot these combined predictions too. *This* is identical to `conditional_effects()`.
 
 ```{r plot-epred-gdp}
 model_gdp_hurdle_life |> 
@@ -892,6 +869,33 @@ model_gdp_hurdle_life |>
   theme_nice() +
   theme(legend.position = "bottom")
 ```
+
+##### All three types of predictions at the same time
+
+For fun, we can plot the combined predictions, the `mu`-only predictions, and the `hu`-only predictions at the same time to see how they differ:
+
+```{r plot-emmeans-mfx-gdp-all-epred-too, fig.width=6, fig.height=9}
+plot_emmeans0 <- model_gdp_hurdle_life |> 
+  emmeans(~ lifeExp, var = "lifeExp", epred = TRUE,
+          at = list(lifeExp = seq(30, 80, 1))) |> 
+  gather_emmeans_draws() |> 
+  ggplot(aes(x = lifeExp, y = .value)) +
+  stat_lineribbon(size = 1, color = clrs[4]) +
+  scale_fill_manual(values = colorspace::lighten(clrs[4], c(0.95, 0.7, 0.4))) +
+  scale_y_continuous(labels = label_dollar()) +
+  labs(x = "Life expectancy", y = "Predicted GDP per capita",
+       subtitle = "Expected values from mu and hu parts (epred = TRUE)",
+       fill = "Credible interval") +
+  theme_nice() +
+  theme(legend.position = "bottom")
+
+(plot_emmeans0 / plot_emmeans1 / plot_emmeans2) +
+  plot_annotation(title = "Conditional effect of life expectancy on GDP per capita",
+                  theme = theme(plot.title = element_text(family = "Jost", face = "bold"),
+                                plot.subtitle = element_text(family = "Jost")))
+```
+
+The combined expected values produce larger predictions (with \$10,000 at 70 years, for instance) than the `mu` part alone (with \$7,500ish at 70 years). In real life, it's probably best to work with predictions that incorporate both parts of the model, since that's the whole point of doing this combined mixture model in the first place (otherwise we could just fit two separate models ourselves), but it's super neat that we can still work with the predictions and slopes for the `mu` and `hu` parts separately.
 
 
 #### Predictions with hurdle models
@@ -1383,7 +1387,7 @@ plot_penguins_emmeans0 <- model_mass_hurdle_log |>
   scale_fill_manual(values = colorspace::lighten("cyan4", c(0.95, 0.7, 0.4))) +
   scale_y_continuous(labels = label_comma()) +
   labs(x = "Bill length (mm)", y = "Predicted body mass (g)",
-       subtitle = "Expected values (both mu and hu)",
+       subtitle = "Expected values from mu and hu parts (epred = TRUE)",
        fill = "Credible interval") +
   theme_nice() +
   theme(legend.position = "bottom")
@@ -1429,6 +1433,7 @@ plot_penguins_emmeans2 <- model_mass_hurdle_log |>
 That trend in predicted body mass looks surprisingly linear even though we modeled it with a log-based family! In general it shows that body mass increases by `r percent_format(accuracy = 0.1)(m_mass_hurdle_log$bill_length_mm$estimate)` for each millimeter increase in bill length. Since we used a log-based family, the actual slope on the original scale will be different across the whole range of bill length. `emtrends()` lets us see this:
 
 ```{r emtrends-mass-bill-epred}
+# Slopes for the combined mu and hu parts of the model
 model_mass_hurdle_log |> 
   emtrends(~ bill_length_mm, var = "bill_length_mm",
            at = list(bill_length_mm = seq(30, 60, 10)),
@@ -1563,7 +1568,7 @@ plot(conditional_effects(model_mass_hurdle_gaussian, effects = "bill_length_mm")
   scale_y_continuous(labels = label_comma()) +
   labs(x = "Bill length (mm)", y = "Predicted body mass (g)",
        title = "Conditional effects of bill length on body mass, hurdle Gaussian model",
-       subtitle = "Regular part of the model (dpar = \"mu\")") +
+       subtitle = "Combined mu and hu parts of the model") +
   theme_nice()
 ```
 
@@ -1583,7 +1588,7 @@ mfx_mass_hurdle_gaussian <- model_mass_hurdle_gaussian |>
   as_tibble()
 ```
 
-**Importantly** that slope (`r mfx_mass_hurdle_gaussian$bill_length_mm.trend`) is different from what we found when looking at the model results with `tidy()` (`r m_mass_hurdle_gaussian$bill_length_mm$est`). That's because `emmeans()` and `emtrends()` take the zero process into account (I THINK/HOPE!! That might not be true and the difference could just be because of variation in posterior samples).
+**Importantly** that slope (`r mfx_mass_hurdle_gaussian$bill_length_mm.trend`) is different from what we found when looking at the model results with `tidy()` (`r m_mass_hurdle_gaussian$bill_length_mm$est`). That's because `emmeans()` and `emtrends()` take the zero process into account by calculating the expected value (`epred = TRUE`).
 
 We can confirm that there are predicted zeros. For penguins with a shorter bill like 30 mm, the overall distribution of predicted body mass is centered around 3,000ish grams, while those with longer bills (60 mm) are predicted to be clustered around 6,000 grams. Flipper length determines the distribution of zeros (since that's the effect we built in; remember that we made it so that penguins with a flipper length of less than 190 mm have a 30% chance of being zero). The model picks this up. If we set flipper length to 189 mm (*just* under the cutoff), the model predicts a big proportion of zeros; if we set it to 210, it predicts a small proportion of zeros. 
 

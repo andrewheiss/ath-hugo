@@ -1,3 +1,8 @@
+<!-- Omit code from word count and reading time -->
+<!-- https://discourse.gohugo.io/t/count-word-function-customized-to-exclude-code/34380/2 -->
+{{ $wordCount := replaceRE `(?s)<div class="highlight">.*?</div>` "" .Content | countwords }}
+{{ $readingTime := int (div (float $wordCount) 213 | math.Ceil) }}
+
 <section>
     <article class="content-single">
         <header class="post-header">
@@ -14,7 +19,8 @@
                 </div>
                 <div class="reading-time pure-u-1-2">
                     <i class="far fa-clock" aria-hidden="true"></i>
-                    {{ i18n "reading_time" .ReadingTime }}
+                    <!-- {{ i18n "reading_time" .ReadingTime }} -->
+                    {{ i18n "reading_time" $readingTime }}
                 </div>
             </div>
         </header>

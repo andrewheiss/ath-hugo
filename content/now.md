@@ -1,12 +1,12 @@
 ---
 title: What I'm doing now
-date: 2022-05-25
+date: 2022-05-30
 slug: now
 description: Andrew Heiss is working on a bunch of exciting and groundbreaking projects
 math: true
 ---
 
-As of May 25, 2022, I'm spending all my time on these things:
+As of May 30, 2022, I'm spending all my time on these things:
 
 * Staying at home pretty much 24/7 because of the COVID-19 pandemic
 * Raising 6 kids (14.5, 12, 9.5, 7, 4.5, and 6 months) and trying to stay sane ([family blog](http://www.heissatopia.com/))

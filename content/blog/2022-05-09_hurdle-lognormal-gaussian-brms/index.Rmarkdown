@@ -575,11 +575,13 @@ m_gdp_hurdle_life
 #### Extracting and interpreting coefficients from a hurdle model
 
 <div class="alert alert-info">
-<strong>Note:</strong> After writing this guide, [I wrote another detailed guide about the exact differences between average marginal effects, marginal effects at the mean, and a bunch of other marginal-related things](https://www.andrewheiss.com/blog/2022/05/20/marginalia/), comparing **emmeans** with **marginaleffects**, two packages that take different approaches to calculating marginal effects from regression models. In the rest of this guide, I'm pretty inexact about the nuances between marginal effects and the output of `emtrends()`, which technically returns marginal effects at the mean and *not* average marginal effects. So keep that caveat in mind throughout. 
+<strong>Important note!</strong>
+
+After writing this guide, [I wrote another detailed guide about the exact differences between average marginal effects, marginal effects at the mean, and a bunch of other marginal-related things](https://www.andrewheiss.com/blog/2022/05/20/marginalia/), comparing **emmeans** with **marginaleffects**, two packages that take different approaches to calculating marginal effects from regression models. In the rest of this guide, I'm pretty inexact about the nuances between marginal effects and the output of `emtrends()`, which technically returns marginal effects at the mean and *not* average marginal effects. So keep that caveat in mind throughout. 
 
 You can extract non-hurdled effects, hurdled effects, and expected values from these models using either **emmeans** or **marginaleffects**. I use **emmeans** throughout the rest of this guide; [see this vignette for an example](https://vincentarelbundock.github.io/marginaleffects/articles/transformation.html#back-transforming-lognormal-hurdle-models) with **marginaleffects**.
-</div>
 
+</div>
 
 In this model, the non-hurdled coefficients are the same as before—a one-year increase in life expectancy is still associated with a `r label_percent(accuracy = 0.1)(m_gdp_hurdle_life$life_exp$estimate)` increase in GDP per capita, on average. But now we have a new term, `hu_lifeExp`, which shows the effect of life expectancy in the hurdling process. Since this is on the logit scale, we can combine it with the hurdle intercept and transform the coefficient into percentage points (see [Steven Miller's lab script here](http://post8000.svmiller.com/lab-scripts/logistic-regression-lab.html) for more on this process, or [this section on fractional logistic regression](https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/#2-fractional-logistic-regression)):
 

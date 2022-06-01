@@ -687,21 +687,15 @@ model_gdp_hurdle_life |>
 
 Notice how they're no longer the same at each level—that's because in the non-logged world, this trend is curved. These represent the instantaneous slopes at each of these values of life expectancy in just the `mu` part of the model. At 60 years, a one-year increase in life expectancy is associated with a `r dollar_format(prefix = "\\\\$", accuracy = 1)(mfx_gdp_hurdle_life$sixty$lifeExp.trend)` increase in GDP per capita; at 70, it's associated with a `r dollar_format(prefix = "\\\\$", accuracy = 1)(mfx_gdp_hurdle_life$seventy$lifeExp.trend)` increase. 
 
-Alternatively, we can use the **marginaleffects** package to get the instantaneous `mu`-part slopes as well, though the is a little bit more involved ([there's a vignette for it all here](https://vincentarelbundock.github.io/marginaleffects/articles/transformation.html#back-transforming-lognormal-hurdle-models)). In this case, we need to add the tiny amount to each of the levels of `lifeExp` ourselves and then find the numeric derivative:
+Alternatively, we can use the **marginaleffects** package to get the instantaneous `mu`-part slopes as well. Here we just need to tell it to exponentiate the predicted values for each level of life expectancy before calculating the numeric derivative using the `transform_pre = "expdydx"` argument. (This also only works with the development version of **marginaleffects** installed on or after May 31, 2022.)
 
 ```{r mfx-mu-only, warning=FALSE, message=FALSE}
 library(marginaleffects)
 
-# Define the tiny bit of extra lifeExp for the numeric derivative
-eps <- 0.001
-
 model_gdp_hurdle_life |> comparisons(
-  dpar = "mu",
-  variables = list(lifeExp = eps),
   newdata = datagrid(lifeExp = seq(30, 80, 10)),
-  # Rescale the elements of the slope
-  # (exp(30.001) - exp(30)) / exp(0.001)
-  transform_pre = function(hi, lo) ((exp(hi) - exp(lo)) / exp(eps)) / eps
+  dpar = "mu", 
+  transform_pre = "expdydx"
 )
 ```
 

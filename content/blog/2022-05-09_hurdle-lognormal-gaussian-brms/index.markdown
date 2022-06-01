@@ -705,30 +705,24 @@ model_gdp_hurdle_life |>
 
 Notice how they're no longer the same at each level—that's because in the non-logged world, this trend is curved. These represent the instantaneous slopes at each of these values of life expectancy in just the `mu` part of the model. At 60 years, a one-year increase in life expectancy is associated with a \\$281 increase in GDP per capita; at 70, it's associated with a \\$617 increase. 
 
-Alternatively, we can use the **marginaleffects** package to get the instantaneous `mu`-part slopes as well, though the is a little bit more involved ([there's a vignette for it all here](https://vincentarelbundock.github.io/marginaleffects/articles/transformation.html#back-transforming-lognormal-hurdle-models)). In this case, we need to add the tiny amount to each of the levels of `lifeExp` ourselves and then find the numeric derivative:
+Alternatively, we can use the **marginaleffects** package to get the instantaneous `mu`-part slopes as well. Here we just need to tell it to exponentiate the predicted values for each level of life expectancy before calculating the numeric derivative using the `transform_pre = "expdydx"` argument. (This also only works with the development version of **marginaleffects** installed on or after May 31, 2022.)
 
 
 ```r
 library(marginaleffects)
 
-# Define the tiny bit of extra lifeExp for the numeric derivative
-eps <- 0.001
-
 model_gdp_hurdle_life |> comparisons(
-  dpar = "mu",
-  variables = list(lifeExp = eps),
   newdata = datagrid(lifeExp = seq(30, 80, 10)),
-  # Rescale the elements of the slope
-  # (exp(30.001) - exp(30)) / exp(0.001)
-  transform_pre = function(hi, lo) ((exp(hi) - exp(lo)) / exp(eps)) / eps
+  dpar = "mu", 
+  transform_pre = "expdydx"
 )
-##   rowid     type               group    term       contrast comparison conf.low conf.high lifeExp
-## 1     1 response main_marginaleffect lifeExp (x + 0.001), x       26.6     25.0      28.4      30
-## 2     2 response main_marginaleffect lifeExp (x + 0.001), x       58.4     55.9      61.0      40
-## 3     3 response main_marginaleffect lifeExp (x + 0.001), x      128.0    123.4     132.8      50
-## 4     4 response main_marginaleffect lifeExp (x + 0.001), x      280.5    266.9     295.4      60
-## 5     5 response main_marginaleffect lifeExp (x + 0.001), x      614.5    572.2     663.6      70
-## 6     6 response main_marginaleffect lifeExp (x + 0.001), x     1347.5   1221.3    1497.6      80
+##   rowid     type    term   contrast comparison conf.low conf.high eps_tmp lifeExp
+## 1     1 response lifeExp exp(dY/dX)       26.7       25      28.4   1e-04      30
+## 2     2 response lifeExp exp(dY/dX)       58.4       56      61.1   1e-04      40
+## 3     3 response lifeExp exp(dY/dX)      128.1      124     133.0   1e-04      50
+## 4     4 response lifeExp exp(dY/dX)      280.7      267     295.6   1e-04      60
+## 5     5 response lifeExp exp(dY/dX)      615.1      573     664.2   1e-04      70
+## 6     6 response lifeExp exp(dY/dX)     1348.7     1222    1499.0   1e-04      80
 ```
 
 For fun, we can plot the values of these slopes across a range of marginal effects. Importantly, the y-axis here is *not* the predicted value of GDP per capita—it's the slope of life expectancy, or the first derivative of the <span style="color:#a00e00;">■&nbsp;red</span> line we made earlier with `conditional_effects()`.

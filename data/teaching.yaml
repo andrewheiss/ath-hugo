@@ -24,6 +24,26 @@ all_courses:
     - name: Spring 2022
       url: https://nonprofitsp22.classes.andrewheiss.com/
 
+  - title: Data Visualization with R
+    description: "Use R, ggplot2, and the principles of graphic design to create beautiful and truthful visualizations of data"
+    university: Georgia State University
+    number: PMAP 8921
+    url: https://datavizs22.classes.andrewheiss.com/
+    logo: datavizm20.png
+    semester:
+    - name: Summer 2022 (asynchronous online)
+      url: https://datavizs22.classes.andrewheiss.com/
+
+  - title: Microeconomics for Public Policy
+    description: "Learn how to understand, speak, and do economics in the public sector"
+    university: Georgia State University
+    number: PMAP 8141
+    url: https://econs22.classes.andrewheiss.com/
+    logo: econw19.png
+    semester:
+    - name: Summer 2022 (asynchronous online)
+      url: https://econs21.classes.andrewheiss.com/ 
+
 - academic_year: "2020–21 academic year"
   courses:
   - title: Program Evaluation for Public Service
@@ -62,7 +82,7 @@ all_courses:
     - name: Fall 2020 (asynchronous online)
       url: https://econf20.classes.andrewheiss.com/
 
-- academic_year: "Georgia State University (2019–now)"
+- academic_year: "Georgia State University (2019–20 academic year)"
   courses:
   - title: Data Visualization with R
     description: "Use R, ggplot2, and the principles of graphic design to create beautiful and truthful visualizations of data"

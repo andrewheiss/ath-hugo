@@ -154,7 +154,7 @@ adjustmentSets(mosquito_dag)
 We'll do that with inverse probability weighting. First we'll use the health and income confounders to predict the treatment, or net use, and then we'll generate propensity scores. We'll then use those propensity scores to generate inverse probability weights following this formula:
 
 $$
-\frac{\text{Treatment}}{\text{Propensity}} - \frac{1 - \text{Treatment}}{1 - \text{Propensity}}
+\frac{\text{Treatment}}{\text{Propensity}} + \frac{1 - \text{Treatment}}{1 - \text{Propensity}}
 $$
 
 This formula will calculate weights for the average treatment effect (ATE). [Lucy D'Agostino McGowan has formulas for a bunch of different IPWs](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/#how-do-we-incorporate-a-propensity-score-in-a-weight), including the average treatment on the treated (ATT), average treatment among the controls (ATC), and other effects.
@@ -342,7 +342,7 @@ adjustmentSets(grant_dag)
 Here's where the math gets tricky. When we worked with a binary treatment, we calculated the propensity score for each observation and then used this formula to generate inverse probability weights:
 
 $$
-\frac{\text{Treatment}}{\text{Propensity}} - \frac{1 - \text{Treatment}}{1 - \text{Propensity}}
+\frac{\text{Treatment}}{\text{Propensity}} + \frac{1 - \text{Treatment}}{1 - \text{Propensity}}
 $$
 
 We can't do that with continuous treatment variables, though, since we don't really have propensity scores. Instead, we use this hairy-but-not-too-scary formula (from @NaimiMoodieAuger:2014; [ungated version here](http://www.jayskaufman.com/uploads/3/0/8/9/30891283/naimi_constructing_ipw_for_continuous_exposures_epidemiology_2014.pdf); also [see this for another R example](https://meghapsimatrix.com/post/continuous-r-rmarkdown/)):
@@ -359,7 +359,7 @@ Phew. That's a lot of math, but it's not too bad if we take it apart:
 - The numerator $f_X (X; \mu_1, \sigma^2_1)$ refers to the probability distribution of just the treatment variable (technically you could just use 1 as the numerator, but that can lead to unstable weights—using the probability distribution of the treatment helps stabilize the weights)
 - The denominator $f_{X | C} (X | C = c; \mu_2, \sigma^2_2)$ refers to the probability distribution of the treatment variable explained by the confounders
 
-(Fun fact: I'm like 85% sure that the $\frac{\text{Treatment}}{\text{Propensity}} - \frac{1 - \text{Treatment}}{1 - \text{Propensity}}$ formula is just an algebraically rearranged and simplified version of this fancier equation)
+(Fun fact: I'm like 85% sure that the $\frac{\text{Treatment}}{\text{Propensity}} + \frac{1 - \text{Treatment}}{1 - \text{Propensity}}$ formula is just an algebraically rearranged and simplified version of this fancier equation)
 
 We can calculate each element of this fraction and then generate the inverse probability weights. Here's how to do that with R:
 

@@ -24,7 +24,7 @@ DAGs are also incredibly helpful for doing causal inference with observational d
 
 However, those examples assume that the treatment is binary. This is fine—lots of social programs *are* binary (used program/didn’t use program), and the math for creating inverse probability weights with binary treatment variables is fairly straightforward. However, treatment variables are also often *not* binary, especially outside of program evaluation.
 
-In my own research, I’m working on a couple projects right now where the “treatment” is a count of anti-NGO legal restrictions in a country. I want to be able to use DAGs and inverse probability weighting to adjust for confounders, but I can’t use the IPW stuff I’ve been teaching because that variable isn’t binary! This research project gets even more complicated because it involves time-series cross-sectional (TSCS) data with both time-varying and time-invarying confounders, which opens up a whole other can of worms that I’ll figure out soon following [Blackwell and Glynn](#ref-BlackwellGlynn:2018) ([2018](#ref-BlackwellGlynn:2018)).
+In my own research, I’m working on a couple projects right now where the “treatment” is a count of anti-NGO legal restrictions in a country. I want to be able to use DAGs and inverse probability weighting to adjust for confounders, but I can’t use the IPW stuff I’ve been teaching because that variable isn’t binary! This research project gets even more complicated because it involves time-series cross-sectional (TSCS) data with both time-varying and time-invarying confounders, which opens up a whole other can of worms that I’ll figure out soon following Blackwell and Glynn ([2018](#ref-BlackwellGlynn:2018)).
 
 So I had to teach myself how to do IPW with continuous variables. This post shows how to calculate IPWs for both binary and continuous treatments, both manually and with a couple different R packages ([**ipw**](https://cran.r-project.org/package=ipw) and [**WeightIt**](https://github.com/ngreifer/WeightIt)).
 
@@ -73,9 +73,11 @@ mosquito_dag <- dagify(mal ~ net + inc + hlth,
 ggdag_status(mosquito_dag) +
   guides(color = FALSE) +
   theme_dag()
+## Warning: `guides(<scale> = FALSE)` is deprecated. Please use `guides(<scale> = "none")`
+## instead.
 ```
 
-<img src="{{< relref "blog/2020-12-01_ipw-binary-continuous/index.markdown" >}}index_files/figure-html/dag-binary-1.png" width="75%" style="display: block; margin: auto;" />
+<img src="{{< blogdown/postref >}}index_files/figure-html/dag-binary-1.png" width="75%" style="display: block; margin: auto;" />
 
 We’ll measure these nodes like so:
 
@@ -127,7 +129,7 @@ net_data <- tibble(
             malaria_risk_base, malaria_effect))
 
 head(net_data)
-## # A tibble: 6 x 5
+## # A tibble: 6 × 5
 ##      id income health   net malaria_risk
 ##   <int>  <dbl>  <dbl> <int>        <dbl>
 ## 1     1   409.   63.1     0         45.1
@@ -146,10 +148,10 @@ If we just look at the effect of nets on malaria risk without any statistical ad
 # Wrong correlation-is-not-causation effect
 model_net_naive <- lm(malaria_risk ~ net, data = net_data)
 tidy(model_net_naive)
-## # A tibble: 2 x 5
+## # A tibble: 2 × 5
 ##   term        estimate std.error statistic   p.value
 ##   <chr>          <dbl>     <dbl>     <dbl>     <dbl>
-## 1 (Intercept)     41.9     0.413     102.  0.       
+## 1 (Intercept)     41.9     0.413     102.  0        
 ## 2 net            -13.6     0.572     -23.7 2.90e-101
 ```
 
@@ -163,7 +165,7 @@ adjustmentSets(mosquito_dag)
 We’ll do that with inverse probability weighting. First we’ll use the health and income confounders to predict the treatment, or net use, and then we’ll generate propensity scores. We’ll then use those propensity scores to generate inverse probability weights following this formula:
 
 $$
-\frac{\text{Treatment}}{\text{Propensity}} - \frac{1 - \text{Treatment}}{1 - \text{Propensity}}
+\frac{\text{Treatment}}{\text{Propensity}} + \frac{1 - \text{Treatment}}{1 - \text{Propensity}}
 $$
 
 This formula will calculate weights for the average treatment effect (ATE). [Lucy D’Agostino McGowan has formulas for a bunch of different IPWs](https://livefreeordichotomize.com/2019/01/17/understanding-propensity-score-weighting/#how-do-we-incorporate-a-propensity-score-in-a-weight), including the average treatment on the treated (ATT), average treatment among the controls (ATC), and other effects.
@@ -185,7 +187,7 @@ net_data_ipw <- augment_columns(model_predict_net, net_data,
 net_data_ipw %>% 
   select(id, income, health, net, malaria_risk, propensity, ipw) %>% 
   head()
-## # A tibble: 6 x 7
+## # A tibble: 6 × 7
 ##      id income health   net malaria_risk propensity   ipw
 ##   <int>  <dbl>  <dbl> <int>        <dbl>      <dbl> <dbl>
 ## 1     1   409.   63.1     0         45.1      0.380  1.61
@@ -201,10 +203,10 @@ Finally we’ll use those weights in a regression model to find the ATE. After a
 ``` r
 model_net_ipw <- lm(malaria_risk ~ net, data = net_data_ipw, weights = ipw)
 tidy(model_net_ipw)
-## # A tibble: 2 x 5
+## # A tibble: 2 × 5
 ##   term        estimate std.error statistic  p.value
 ##   <chr>          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)     40.4     0.409      98.8 0.      
+## 1 (Intercept)     40.4     0.409      98.8 0       
 ## 2 net            -10.5     0.578     -18.3 1.83e-65
 ```
 
@@ -240,10 +242,10 @@ net_data_ipwpoint <- net_data %>%
 model_net_ipwpoint <- lm(malaria_risk ~ net, 
                          data = net_data_ipwpoint, weights = ipw)
 tidy(model_net_ipwpoint)
-## # A tibble: 2 x 5
+## # A tibble: 2 × 5
 ##   term        estimate std.error statistic  p.value
 ##   <chr>          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)     40.4     0.409      98.8 0.      
+## 1 (Intercept)     40.4     0.409      98.8 0       
 ## 2 net            -10.5     0.578     -18.3 1.83e-65
 ```
 
@@ -282,10 +284,10 @@ net_data_weightit <- net_data %>%
 model_net_weightit <- lm(malaria_risk ~ net, 
                          data = net_data_weightit, weights = ipw)
 tidy(model_net_weightit)
-## # A tibble: 2 x 5
+## # A tibble: 2 × 5
 ##   term        estimate std.error statistic  p.value
 ##   <chr>          <dbl>     <dbl>     <dbl>    <dbl>
-## 1 (Intercept)     40.4     0.409      98.8 0.      
+## 1 (Intercept)     40.4     0.409      98.8 0       
 ## 2 net            -10.5     0.578     -18.3 1.83e-65
 ```
 
@@ -311,9 +313,11 @@ grant_dag <- dagify(mal ~ grant + inc + hlth,
 ggdag_status(grant_dag) +
   guides(color = FALSE) +
   theme_dag()
+## Warning: `guides(<scale> = FALSE)` is deprecated. Please use `guides(<scale> = "none")`
+## instead.
 ```
 
-<img src="{{< relref "blog/2020-12-01_ipw-binary-continuous/index.markdown" >}}index_files/figure-html/dag-continuous-1.png" width="75%" style="display: block; margin: auto;" />
+<img src="{{< blogdown/postref >}}index_files/figure-html/dag-continuous-1.png" width="75%" style="display: block; margin: auto;" />
 
 We’ll measure these nodes like so:
 
@@ -364,7 +368,7 @@ grant_data <- tibble(
             malaria_risk_base, malaria_effect))
 
 head(grant_data)
-## # A tibble: 6 x 5
+## # A tibble: 6 × 5
 ##      id income health grant malaria_risk
 ##   <int>  <dbl>  <dbl> <dbl>        <dbl>
 ## 1     1   409.   70.2    27         26.3
@@ -383,7 +387,7 @@ If we just look at the effect of grants on malaria risk without any adjustment, 
 # Wrong correlation-is-not-causation effect
 model_grant_naive <- lm(malaria_risk ~ grant, data = grant_data)
 tidy(model_grant_naive)
-## # A tibble: 2 x 5
+## # A tibble: 2 × 5
 ##   term        estimate std.error statistic   p.value
 ##   <chr>          <dbl>     <dbl>     <dbl>     <dbl>
 ## 1 (Intercept)   44.2      1.35       32.8  2.56e-178
@@ -400,10 +404,10 @@ adjustmentSets(grant_dag)
 Here’s where the math gets tricky. When we worked with a binary treatment, we calculated the propensity score for each observation and then used this formula to generate inverse probability weights:
 
 $$
-\frac{\text{Treatment}}{\text{Propensity}} - \frac{1 - \text{Treatment}}{1 - \text{Propensity}}
+\frac{\text{Treatment}}{\text{Propensity}} + \frac{1 - \text{Treatment}}{1 - \text{Propensity}}
 $$
 
-We can’t do that with continuous treatment variables, though, since we don’t really have propensity scores. Instead, we use this hairy-but-not-too-scary formula (from [Naimi et al.](#ref-NaimiMoodieAuger:2014) ([2014](#ref-NaimiMoodieAuger:2014)); [ungated version here](http://www.jayskaufman.com/uploads/3/0/8/9/30891283/naimi_constructing_ipw_for_continuous_exposures_epidemiology_2014.pdf); also [see this for another R example](https://meghapsimatrix.com/post/continuous-r-rmarkdown/)):
+We can’t do that with continuous treatment variables, though, since we don’t really have propensity scores. Instead, we use this hairy-but-not-too-scary formula (from Naimi et al. ([2014](#ref-NaimiMoodieAuger:2014)); [ungated version here](http://www.jayskaufman.com/uploads/3/0/8/9/30891283/naimi_constructing_ipw_for_continuous_exposures_epidemiology_2014.pdf); also [see this for another R example](https://meghapsimatrix.com/post/continuous-r-rmarkdown/)):
 
 $$
 \text{IPW} = \frac{f_X (X; \mu_1, \sigma^2_1)}{f_{X | C} (X | C = c; \mu_2, \sigma^2_2)}
@@ -417,7 +421,7 @@ Phew. That’s a lot of math, but it’s not too bad if we take it apart:
 -   The numerator `\(f_X (X; \mu_1, \sigma^2_1)\)` refers to the probability distribution of just the treatment variable (technically you could just use 1 as the numerator, but that can lead to unstable weights—using the probability distribution of the treatment helps stabilize the weights)
 -   The denominator `\(f_{X | C} (X | C = c; \mu_2, \sigma^2_2)\)` refers to the probability distribution of the treatment variable explained by the confounders
 
-(Fun fact: I’m like 85% sure that the `\(\frac{\text{Treatment}}{\text{Propensity}} - \frac{1 - \text{Treatment}}{1 - \text{Propensity}}\)` formula is just an algebraically rearranged and simplified version of this fancier equation)
+(Fun fact: I’m like 85% sure that the `\(\frac{\text{Treatment}}{\text{Propensity}} + \frac{1 - \text{Treatment}}{1 - \text{Propensity}}\)` formula is just an algebraically rearranged and simplified version of this fancier equation)
 
 We can calculate each element of this fraction and then generate the inverse probability weights. Here’s how to do that with R:
 
@@ -445,7 +449,7 @@ grant_data_ipw <- grant_data %>%
   mutate(ipw = num / den)
 
 head(grant_data_ipw)
-## # A tibble: 6 x 6
+## # A tibble: 6 × 6
 ##      id income health grant malaria_risk   ipw
 ##   <int>  <dbl>  <dbl> <dbl>        <dbl> <dbl>
 ## 1     1   409.   70.2    27         26.3 0.288
@@ -461,7 +465,7 @@ Now we can use the weights to find the ATE just like we did with the binary trea
 ``` r
 model_grant_ipw <- lm(malaria_risk ~ grant, data = grant_data_ipw, weights = ipw)
 tidy(model_grant_ipw)
-## # A tibble: 2 x 5
+## # A tibble: 2 × 5
 ##   term        estimate std.error statistic   p.value
 ##   <chr>          <dbl>     <dbl>     <dbl>     <dbl>
 ## 1 (Intercept)    58.4     1.79        32.6 1.95e-176
@@ -499,7 +503,7 @@ grant_data_ipwpoint <- grant_data %>%
 model_grant_ipwpoint <- lm(malaria_risk ~ grant, 
                            data = grant_data_ipwpoint, weights = ipw)
 tidy(model_grant_ipwpoint)
-## # A tibble: 2 x 5
+## # A tibble: 2 × 5
 ##   term        estimate std.error statistic   p.value
 ##   <chr>          <dbl>     <dbl>     <dbl>     <dbl>
 ## 1 (Intercept)    58.4     1.79        32.6 1.95e-176
@@ -553,7 +557,7 @@ grant_data_weightit <- grant_data %>%
 model_grant_weightit <- lm(malaria_risk ~ grant, 
                            data = grant_data_weightit, weights = ipw)
 tidy(model_grant_weightit)
-## # A tibble: 2 x 5
+## # A tibble: 2 × 5
 ##   term        estimate std.error statistic   p.value
 ##   <chr>          <dbl>     <dbl>     <dbl>     <dbl>
 ## 1 (Intercept)    58.4     1.79        32.6 1.95e-176

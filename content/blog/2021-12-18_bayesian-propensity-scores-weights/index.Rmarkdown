@@ -82,7 +82,7 @@ One way to adjust for confounders is to use inverse probability weighting. In sh
 3. Convert those propensity scores into *inverse probability of treatment weights* (IPTW) using this formula:
 
     $$
-    \frac{\text{Treatment}}{\text{Propensity}} - \frac{1 - \text{Treatment}}{1 - \text{Propensity}}
+    \frac{\text{Treatment}}{\text{Propensity}} + \frac{1 - \text{Treatment}}{1 - \text{Propensity}}
     $$
 
 4. Create a model that estimates the effect of treatment on outcome, weighted by the IPTWs (often called an *outcome model* or *analysis stage*). The coefficient for the treatment variable is the average treatment effect (ATE).

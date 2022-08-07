@@ -1,6 +1,28 @@
 all_courses:
-- academic_year: "2021–22 academic year"
+- academic_year: "2022–23 academic year"
   current: true
+  courses:
+  - title: Program Evaluation for Public Service
+    description: "Combine research design, causal inference, and econometric tools to measure the effects of social programs"
+    university: Georgia State University
+    number: PMAP 8521
+    url: https://evalf22.classes.andrewheiss.com/
+    logo: evalsp20.png
+    semester:
+    - name: Fall 2022
+      url: https://evalf22.classes.andrewheiss.com/
+
+  - title: Introduction to Nonprofits
+    description: "Discover what nonprofit organizations are, how they work, and how they can improve communities (and the world!)"
+    university: Georgia State University
+    number: PMAP 3210
+    url: https://nonprofitsp22.classes.andrewheiss.com/
+    logo: nonprofitsp22.png
+    semester:
+    - name: Fall 2022
+      url: https://nonprofitf22.classes.andrewheiss.com/
+
+- academic_year: "2021–22 academic year"
   courses:
   - title: Program Evaluation for Public Service
     description: "Combine research design, causal inference, and econometric tools to measure the effects of social programs"
@@ -42,7 +64,7 @@ all_courses:
     logo: econw19.png
     semester:
     - name: Summer 2022 (asynchronous online)
-      url: https://econs21.classes.andrewheiss.com/ 
+      url: https://econs21.classes.andrewheiss.com/
 
 - academic_year: "2020–21 academic year"
   courses:

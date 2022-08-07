@@ -1,17 +1,17 @@
 ---
 title: What I'm doing now
-date: 2022-07-06
+date: 2022-08-06
 slug: now
 description: Andrew Heiss is working on a bunch of exciting and groundbreaking projects
 math: true
 ---
 
-As of July 6, 2022, I'm spending all my time on these things:
+As of August 6, 2022, I'm spending all my time on these things:
 
 * Staying at home pretty much 24/7 because of the COVID-19 pandemic
-* Raising 6 kids (14.5, 12, 9.5, 7, 4.5, and 7 months) and trying to stay sane ([family blog](http://www.heissatopia.com/))
+* Raising 6 kids (15, 12.5, 10, 7, 4.5, and 8 months) and trying to stay sane ([family blog](http://www.heissatopia.com/))
 * Living in Atlanta and working as an assistant professor in the [Department of Public Management and Policy](https://aysps.gsu.edu/public-management-policy/) at the [Andrew Young School of Policy Studies](https://aysps.gsu.edu/) at [Georgia State University](https://www.gsu.edu/)
-* Teaching [data visualization](https://datavizs21.classes.andrewheiss.com/), [program evaluation](https://evalsp22.classes.andrewheiss.com/), [nonprofit management](https://nonprofitsp22.classes.andrewheiss.com), and [microeconomics](https://econsp21.classes.andrewheiss.com/) at the [Andrew Young School of Policy Studies](https://aysps.gsu.edu/) at [Georgia State University](https://www.gsu.edu/)
+* Teaching [data visualization](https://datavizs21.classes.andrewheiss.com/), [program evaluation](https://evalf22.classes.andrewheiss.com/), [nonprofit management](https://nonprofitsp22.classes.andrewheiss.com), and [microeconomics](https://econs22.classes.andrewheiss.com/) at the [Andrew Young School of Policy Studies](https://aysps.gsu.edu/) at [Georgia State University](https://www.gsu.edu/)
 * Working as a part time data science mentor for [RStudio Academy](https://www.rstudio.com/academy)
 * Converting my dissertation into multiple articles and sending them out to journals + continuing [my research on authoritarianism and international NGOs](https://www.ingoresearch.org/)
 * Working on several articles on NGO restrictions with [Suparna Chaudhry](http://www.suparnachaudhry.com/) and [Marc Dotson](https://marriottschool.byu.edu/directory/details?id=50683)

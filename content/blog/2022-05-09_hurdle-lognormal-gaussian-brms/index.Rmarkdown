@@ -86,19 +86,17 @@ Here's what I assume you know:
 - You're familiar with [**brms**](https://paul-buerkner.github.io/brms/) for running Bayesian regression models. See [the vignettes here](https://paul-buerkner.github.io/brms/articles/index.html), examples like [this](https://www.rensvandeschoot.com/tutorials/brms-started/), or [resources like these](https://evalsp22.classes.andrewheiss.com/resource/bayes/#resources) for an introduction. You can also see [this guide on beta regression](/blog/2021/11/08/beta-regression-guide/) or [this guide on average marginal effects](/blog/2021/11/10/ame-bayes-re-guide/) for more examples. 
 - You're somewhat familiar with multilevel models. [See this guide on using multilevel models with panel data](/blog/2021/12/01/multilevel-models-panel-data-guide/) for an extended example and a ton of extra resources. 
 
-I use **brms** and Bayesian models throughout, since **brms** has built-in support for hurdled lognormal models (and can be extended to support other hurdled models). If you prefer frequentism, you can use [`pscl::hurdle()`](https://cran.r-project.org/web/packages/pscl/index.html) for frequentist hurdle models ([see this post](https://www.rdatagen.net/post/a-hurdle-model-for-covid-19-infections-in-nursing-homes-sample-size-considerations/) or [this post](https://data.library.virginia.edu/getting-started-with-hurdle-models/) for fully worked out examples), and lognormal regression can be done frequentistly with base R's `glm()` function:
-
-```{r example-lognormal-freq, eval=FALSE}
-glm(y ~ x, data = whatever, family = gaussian(link = "log"))
-```
-
-Or if you log the outcome yourself, you can use base R's `lm()` function;
+I use **brms** and Bayesian models throughout, since **brms** has built-in support for hurdled lognormal models (and can be extended to support other hurdled models). If you prefer frequentism, you can use [`pscl::hurdle()`](https://cran.r-project.org/web/packages/pscl/index.html) for frequentist hurdle models ([see this post](https://www.rdatagen.net/post/a-hurdle-model-for-covid-19-infections-in-nursing-homes-sample-size-considerations/) or [this post](https://data.library.virginia.edu/getting-started-with-hurdle-models/) for fully worked out examples), and lognormal regression can be done frequentistly with base R's `lm()` function after logging the outcome:
 
 ```{r example-log-freq, eval=FALSE}
+# Pre-log the outcome:
 whatever <- whatever |> 
   mutate(y_logged = log(y))
 
 lm(y_logged ~ x, data = whatever)
+
+# Log the outcome in the regression itself:
+lm(log(y) ~ x, data = whatever)
 ```
 
 Let's get started by loading all the libraries we'll need (and creating some couple helper functions):

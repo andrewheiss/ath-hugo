@@ -208,14 +208,15 @@ penguins_avg_flipper <- penguins |>
   summarize(flipper_length_mm = mean(flipper_length_mm))
 
 # Extract different types of posteriors
-normal_predicted <- model_normal |> 
-  predicted_draws(newdata = penguins_avg_flipper)
+normal_linpred <- model_normal |> 
+  linpred_draws(newdata = penguins_avg_flipper)
 
 normal_epred <- model_normal |> 
   epred_draws(newdata = penguins_avg_flipper)
 
-normal_linpred <- model_normal |> 
-  linpred_draws(newdata = penguins_avg_flipper)
+normal_predicted <- model_normal |> 
+  predicted_draws(newdata = penguins_avg_flipper,
+                  seed = 12345)  # So that the manual results with rnorm() are the same later
 ```
 
 These each show the posterior distribution of penguin weight, and each corresponds to a different part of the formal mathematical model with. We can explore these nuances if we look at these distributions' means, medians, standard deviations, and overall shapes:
@@ -289,7 +290,8 @@ To understand why, let's explore the math going on behind the scenes in these fu
 ```{r make-linpred-manual}
 linpred_manual <- model_normal |> 
   spread_draws(b_Intercept, b_flipper_length_mm) |> 
-  mutate(mu = b_Intercept + (b_flipper_length_mm * 201))
+  mutate(mu = b_Intercept + 
+           (b_flipper_length_mm * penguins_avg_flipper$flipper_length_mm))
 linpred_manual
 ```
 
@@ -315,16 +317,20 @@ Importantly, the distribution of the $\mu$ part of the model here does *not* inc
 The results from `posterior_predict()`, on the other hand, correspond to the $y$ part of the model. Officially, they are draws from a random normal distribution using *both* the estimated $\mu$ and the estimated $\sigma$. These results contain the full uncertainty of the posterior distribution of penguin weight. To help with the intuition, we can do the same thing by hand when plugging in a 201 mm flipper length:
 
 ```{r make-posterior-predict-manual}
+set.seed(12345)  # To get the same results as posterior_predict() from earlier
+
 postpred_manual <- model_normal |> 
   spread_draws(b_Intercept, b_flipper_length_mm, sigma) |> 
-  mutate(mu = b_Intercept + (b_flipper_length_mm * 201),  # This is posterior_linpred()
+  mutate(mu = b_Intercept + 
+           (b_flipper_length_mm * 
+              penguins_avg_flipper$flipper_length_mm),  # This is posterior_linpred()
          y_new = rnorm(n(), mean = mu, sd = sigma))  # This is posterior_predict()
 
 postpred_manual |> 
   select(.draw:y_new)
 ```
 
-That `y_new` column here is the $y$ part of the model and should have a lot more uncertainty than the `mu` column, which is just the $\mu$ part of the model. Notably, the `y_new` column is the same as what we get when using `posterior predict()` (with only minor differences because of randomness). We'll plot the two distributions to confirm:
+That `y_new` column here is the $y$ part of the model and should have a lot more uncertainty than the `mu` column, which is just the $\mu$ part of the model. Notably, the `y_new` column is the same as what we get when using `posterior predict()`. We'll plot the two distributions to confirm:
 
 ```{r plot-postpred-manual, fig.width=9.5, fig.height=3, out.width="100%"}
 p3_manual <- postpred_manual |> 
@@ -349,8 +355,10 @@ Once again, a quick illustration can help. As before, we'll manually plug a flip
 
 ```{r epred-manual}
 epred_manual <- model_normal |> 
-  spread_draws(b_Intercept, b_flipper_length_mm, sigma) |>
-  mutate(mu = b_Intercept + (b_flipper_length_mm * 201),  # This is posterior_linpred()
+  spread_draws(b_Intercept, b_flipper_length_mm, sigma) |> 
+  mutate(mu = b_Intercept + 
+           (b_flipper_length_mm * 
+              penguins_avg_flipper$flipper_length_mm),  # This is posterior_linpred()
          y_new = rnorm(n(), mean = mu, sd = sigma))  # This is posterior_predict()
 
 # This is posterior_epred()
@@ -428,8 +436,7 @@ knitr::include_graphics("images/normal@3x.png")
 
 ## Generalized linear models with link transformations
 
-Generalized linear models (e.g., logistic, probit, ordered logistic, exponential, Poisson, negative binomial, etc.) use special link functions (e.g. logit, log, etc.) to transform the outcome variable 
-into a scale that is more amenable to linear regression.
+Generalized linear models (e.g., logistic, probit, ordered logistic, exponential, Poisson, negative binomial, etc.) use special link functions (e.g. logit, log, etc.) to transform the likelihood of an outcome into a scale that is more amenable to linear regression.
 
 Estimates from these models can be used in their transformed scales (e.g., log odds in logistic regression) or can be back-transformed into their original scale (e.g., probabilities in logistic regression).
 

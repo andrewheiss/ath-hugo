@@ -218,14 +218,15 @@ penguins_avg_flipper <- penguins |>
   summarize(flipper_length_mm = mean(flipper_length_mm))
 
 # Extract different types of posteriors
-normal_predicted <- model_normal |> 
-  predicted_draws(newdata = penguins_avg_flipper)
+normal_linpred <- model_normal |> 
+  linpred_draws(newdata = penguins_avg_flipper)
 
 normal_epred <- model_normal |> 
   epred_draws(newdata = penguins_avg_flipper)
 
-normal_linpred <- model_normal |> 
-  linpred_draws(newdata = penguins_avg_flipper)
+normal_predicted <- model_normal |> 
+  predicted_draws(newdata = penguins_avg_flipper,
+                  seed = 12345)  # So that the manual results with rnorm() are the same later
 ```
 
 These each show the posterior distribution of penguin weight, and each corresponds to a different part of the formal mathematical model with. We can explore these nuances if we look at these distributions' means, medians, standard deviations, and overall shapes:
@@ -283,9 +284,9 @@ tribble(
   <tr>
    <td style="text-align:left;"> <code>posterior_predict()</code> </td>
    <td style="text-align:left;"> Random draws from posterior \(\operatorname{Normal}(\mu_i, \sigma)\) </td>
-   <td style="text-align:right;"> 4212 </td>
-   <td style="text-align:right;"> 399.7 </td>
-   <td style="text-align:right;"> 4213 </td>
+   <td style="text-align:right;"> 4207 </td>
+   <td style="text-align:right;"> 386.7 </td>
+   <td style="text-align:right;"> 4209 </td>
   </tr>
 </tbody>
 </table>
@@ -336,21 +337,22 @@ To understand why, let's explore the math going on behind the scenes in these fu
 ```r
 linpred_manual <- model_normal |> 
   spread_draws(b_Intercept, b_flipper_length_mm) |> 
-  mutate(mu = b_Intercept + (b_flipper_length_mm * 201))
+  mutate(mu = b_Intercept + 
+           (b_flipper_length_mm * penguins_avg_flipper$flipper_length_mm))
 linpred_manual
 ## # A tibble: 4,000 × 6
 ##    .chain .iteration .draw b_Intercept b_flipper_length_mm    mu
 ##     <int>      <int> <int>       <dbl>               <dbl> <dbl>
-##  1      1          1     1      -6152.                51.5 4206.
-##  2      1          2     2      -5872                 50.2 4223.
-##  3      1          3     3      -6263.                52.1 4204.
-##  4      1          4     4      -6066.                51.1 4214.
-##  5      1          5     5      -5740.                49.4 4193.
-##  6      1          6     6      -5678.                49.2 4215.
-##  7      1          7     7      -6107.                51.1 4162.
-##  8      1          8     8      -5422.                48.0 4236.
-##  9      1          9     9      -6303.                52.1 4178.
-## 10      1         10    10      -6193.                51.6 4186.
+##  1      1          1     1      -6152.                51.5 4204.
+##  2      1          2     2      -5872                 50.2 4221.
+##  3      1          3     3      -6263.                52.1 4202.
+##  4      1          4     4      -6066.                51.1 4213.
+##  5      1          5     5      -5740.                49.4 4191.
+##  6      1          6     6      -5678.                49.2 4213.
+##  7      1          7     7      -6107.                51.1 4160.
+##  8      1          8     8      -5422.                48.0 4235.
+##  9      1          9     9      -6303.                52.1 4177.
+## 10      1         10    10      -6193.                51.6 4184.
 ## # … with 3,990 more rows
 ```
 
@@ -380,9 +382,13 @@ The results from `posterior_predict()`, on the other hand, correspond to the `\(
 
 
 ```r
+set.seed(12345)  # To get the same results as posterior_predict() from earlier
+
 postpred_manual <- model_normal |> 
   spread_draws(b_Intercept, b_flipper_length_mm, sigma) |> 
-  mutate(mu = b_Intercept + (b_flipper_length_mm * 201),  # This is posterior_linpred()
+  mutate(mu = b_Intercept + 
+           (b_flipper_length_mm * 
+              penguins_avg_flipper$flipper_length_mm),  # This is posterior_linpred()
          y_new = rnorm(n(), mean = mu, sd = sigma))  # This is posterior_predict()
 
 postpred_manual |> 
@@ -390,20 +396,20 @@ postpred_manual |>
 ## # A tibble: 4,000 × 6
 ##    .draw b_Intercept b_flipper_length_mm sigma    mu y_new
 ##    <int>       <dbl>               <dbl> <dbl> <dbl> <dbl>
-##  1     1      -6152.                51.5  384. 4206. 4372.
-##  2     2      -5872                 50.2  401. 4223. 4168.
-##  3     3      -6263.                52.1  390. 4204. 4248.
-##  4     4      -6066.                51.1  409. 4214. 5019.
-##  5     5      -5740.                49.4  362. 4193. 3883.
-##  6     6      -5678.                49.2  393. 4215. 4731.
-##  7     7      -6107.                51.1  417. 4162. 4687.
-##  8     8      -5422.                48.0  351. 4236. 4062.
-##  9     9      -6303.                52.1  426. 4178. 3951.
-## 10    10      -6193.                51.6  426. 4186. 3771.
+##  1     1      -6152.                51.5  384. 4204. 4429.
+##  2     2      -5872                 50.2  401. 4221. 4506.
+##  3     3      -6263.                52.1  390. 4202. 4159.
+##  4     4      -6066.                51.1  409. 4213. 4027.
+##  5     5      -5740.                49.4  362. 4191. 4411.
+##  6     6      -5678.                49.2  393. 4213. 3499.
+##  7     7      -6107.                51.1  417. 4160. 4423.
+##  8     8      -5422.                48.0  351. 4235. 4138.
+##  9     9      -6303.                52.1  426. 4177. 4055.
+## 10    10      -6193.                51.6  426. 4184. 3793.
 ## # … with 3,990 more rows
 ```
 
-That `y_new` column here is the `\(y\)` part of the model and should have a lot more uncertainty than the `mu` column, which is just the `\(\mu\)` part of the model. Notably, the `y_new` column is the same as what we get when using `posterior predict()` (with only minor differences because of randomness). We'll plot the two distributions to confirm:
+That `y_new` column here is the `\(y\)` part of the model and should have a lot more uncertainty than the `mu` column, which is just the `\(\mu\)` part of the model. Notably, the `y_new` column is the same as what we get when using `posterior predict()`. We'll plot the two distributions to confirm:
 
 
 ```r
@@ -432,8 +438,10 @@ Once again, a quick illustration can help. As before, we'll manually plug a flip
 
 ```r
 epred_manual <- model_normal |> 
-  spread_draws(b_Intercept, b_flipper_length_mm, sigma) |>
-  mutate(mu = b_Intercept + (b_flipper_length_mm * 201),  # This is posterior_linpred()
+  spread_draws(b_Intercept, b_flipper_length_mm, sigma) |> 
+  mutate(mu = b_Intercept + 
+           (b_flipper_length_mm * 
+              penguins_avg_flipper$flipper_length_mm),  # This is posterior_linpred()
          y_new = rnorm(n(), mean = mu, sd = sigma))  # This is posterior_predict()
 
 # This is posterior_epred()
@@ -442,7 +450,7 @@ epred_manual |>
 ## # A tibble: 1 × 1
 ##   epred
 ##   <dbl>
-## 1 4211.
+## 1 4202.
 
 # It's essentially the same as the actual posterior_epred()
 normal_epred |> 
@@ -517,8 +525,7 @@ Phew. There are a lot of moving parts here with different types of posteriors an
 
 ## Generalized linear models with link transformations
 
-Generalized linear models (e.g., logistic, probit, ordered logistic, exponential, Poisson, negative binomial, etc.) use special link functions (e.g. logit, log, etc.) to transform the outcome variable 
-into a scale that is more amenable to linear regression.
+Generalized linear models (e.g., logistic, probit, ordered logistic, exponential, Poisson, negative binomial, etc.) use special link functions (e.g. logit, log, etc.) to transform the likelihood of an outcome into a scale that is more amenable to linear regression.
 
 Estimates from these models can be used in their transformed scales (e.g., log odds in logistic regression) or can be back-transformed into their original scale (e.g., probabilities in logistic regression).
 

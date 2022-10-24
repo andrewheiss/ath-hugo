@@ -207,44 +207,50 @@ broom.mixed::tidy(model_normal) |>
 
 That table shows just the posterior means for each of these parameters, but these are technically all complete distributions. In this post we're not interested in these actual values—we're concerned with the outcome, or penguin weight here. (But you can see [this post](https://www.andrewheiss.com/blog/2022/05/20/marginalia/) or [this post](https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/) or [this post](https://www.andrewheiss.com/blog/2022/05/09/hurdle-lognormal-gaussian-brms/) or [this documentation](https://mjskay.github.io/tidybayes/articles/tidy-brms.html) for more about working with these coefficients and calculating marginal effects)
 
-Going back to the formal model, so far we've looked at `\(\alpha\)`, `\(\beta\)`, and `\(\sigma\)`, but what about `\(\mu\)` and the overall posterior distribution of the outcome `\(y\)` (or `\(\operatorname{Normal}(\mu_i, \sigma)\)`)? This is where life gets a little trickier (and why this guide exists in the first place). Both `\(\mu\)` and the posterior for `\(y\)` represent penguin body mass, but conceptually they're different things. We'll extract these different distributions with three different **brms** functions: `posterior_predict()`, `posterior_epred()`, and `posterior_linpred()` (the code uses `predicted_draws()`, `epred_draws()`, and `linpred_draws()`; these are **tidybayes**'s wrappers for the corresponding **brms** functions)
+Going back to the formal model, so far we've looked at `\(\alpha\)`, `\(\beta\)`, and `\(\sigma\)`, but what about `\(\mu\)` and the overall posterior distribution of the outcome `\(y\)` (or `\(\operatorname{Normal}(\mu_i, \sigma)\)`)? This is where life gets a little trickier (and why this guide exists in the first place!). Both `\(\mu\)` and the posterior for `\(y\)` represent penguin body mass, but conceptually they're different things. We'll extract these different distributions with three different **brms** functions: `posterior_predict()`, `posterior_epred()`, and `posterior_linpred()` (the code uses `predicted_draws()`, `epred_draws()`, and `linpred_draws()`; these are **tidybayes**'s wrappers for the corresponding **brms** functions). 
+
+Note the `newdata` argument here. We have to feed a data frame of values to plug into to make these different posterior predictions. We could feed the original dataset with `newdata = penguins`, which would plug each row of the data into the model and generate 4000 posterior draws for it. Given that there are 333 rows in penguins data, using `newdata = penguins` would give us 333 × 4,000 = 1,332,000 rows. That's a ton of data, and looking at it all together like that isn't super useful unless we look at predictions across a range of possible predictors. We'll do that later in this section and see the posterior predictions of weights across a range of flipper lengths. But here we're just interested in the prediction of the outcome based on a single value of flipper lengths. We'll use the average (200.967 mm), but it could easily be the median or whatever arbitrary number we want.
 
 
 ```r
+# Make a little dataset of just the average flipper length
+penguins_avg_flipper <- penguins |> 
+  summarize(flipper_length_mm = mean(flipper_length_mm))
+
 # Extract different types of posteriors
 normal_predicted <- model_normal |> 
-  predicted_draws(newdata = penguins)
+  predicted_draws(newdata = penguins_avg_flipper)
 
 normal_epred <- model_normal |> 
-  epred_draws(newdata = penguins)
+  epred_draws(newdata = penguins_avg_flipper)
 
 normal_linpred <- model_normal |> 
-  linpred_draws(newdata = penguins)
+  linpred_draws(newdata = penguins_avg_flipper)
 ```
 
 These each show the posterior distribution of penguin weight, and each corresponds to a different part of the formal mathematical model with. We can explore these nuances if we look at these distributions' means, medians, standard deviations, and overall shapes:
 
 
 ```r
-summary_normal_predicted <- normal_predicted |> 
+summary_normal_linpred <- normal_linpred |> 
   ungroup() |> 
-  summarize(across(.prediction, lst(mean, sd, median), .names = "{.fn}"))
+  summarize(across(.linpred, lst(mean, sd, median), .names = "{.fn}"))
 
 summary_normal_epred <- normal_epred |> 
   ungroup() |> 
   summarize(across(.epred, lst(mean, sd, median), .names = "{.fn}"))
 
-summary_normal_linpred <- normal_linpred |> 
+summary_normal_predicted <- normal_predicted |> 
   ungroup() |> 
-  summarize(across(.linpred, lst(mean, sd, median), .names = "{.fn}"))
+  summarize(across(.prediction, lst(mean, sd, median), .names = "{.fn}"))
 
 tribble(
   ~Function, ~`Model element`,
-  "<code>posterior_predict()</code>", "Random draws from posterior \\(\\operatorname{Normal}(\\mu_i, \\sigma)\\)",
+  "<code>posterior_linpred()</code>", "\\(\\mu\\) in the model",
   "<code>posterior_epred()</code>", "\\(\\operatorname{E(y)}\\) and \\(\\mu\\) in the model",
-  "<code>posterior_linpred()</code>", "\\(\\mu\\) in the model"
+  "<code>posterior_predict()</code>", "Random draws from posterior \\(\\operatorname{Normal}(\\mu_i, \\sigma)\\)"
 ) |> 
-  bind_cols(bind_rows(summary_normal_predicted, summary_normal_epred, summary_normal_linpred)) |> 
+  bind_cols(bind_rows(summary_normal_linpred, summary_normal_epred, summary_normal_predicted)) |> 
   kbl(escape = FALSE) |> 
   kable_styling(htmltable_class = "pure-table pure-table-horizontal")
 ```
@@ -261,58 +267,58 @@ tribble(
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:left;"> <code>posterior_predict()</code> </td>
-   <td style="text-align:left;"> Random draws from posterior \(\operatorname{Normal}(\mu_i, \sigma)\) </td>
+   <td style="text-align:left;"> <code>posterior_linpred()</code> </td>
+   <td style="text-align:left;"> \(\mu\) in the model </td>
    <td style="text-align:right;"> 4206 </td>
-   <td style="text-align:right;"> 806 </td>
-   <td style="text-align:right;"> 4121 </td>
+   <td style="text-align:right;"> 21.8 </td>
+   <td style="text-align:right;"> 4207 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> <code>posterior_epred()</code> </td>
    <td style="text-align:left;"> \(\operatorname{E(y)}\) and \(\mu\) in the model </td>
    <td style="text-align:right;"> 4206 </td>
-   <td style="text-align:right;"> 703 </td>
-   <td style="text-align:right;"> 4011 </td>
+   <td style="text-align:right;"> 21.8 </td>
+   <td style="text-align:right;"> 4207 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> <code>posterior_linpred()</code> </td>
-   <td style="text-align:left;"> \(\mu\) in the model </td>
-   <td style="text-align:right;"> 4206 </td>
-   <td style="text-align:right;"> 703 </td>
-   <td style="text-align:right;"> 4011 </td>
+   <td style="text-align:left;"> <code>posterior_predict()</code> </td>
+   <td style="text-align:left;"> Random draws from posterior \(\operatorname{Normal}(\mu_i, \sigma)\) </td>
+   <td style="text-align:right;"> 4212 </td>
+   <td style="text-align:right;"> 399.7 </td>
+   <td style="text-align:right;"> 4213 </td>
   </tr>
 </tbody>
 </table>
 
 
 ```r
-p1 <- ggplot(normal_predicted, aes(x = .prediction)) +
-  stat_halfeye(fill = clrs[1]) +
+p1 <- ggplot(normal_linpred, aes(x = .linpred)) +
+  stat_halfeye(fill = clrs[3]) +
   scale_x_continuous(labels = label_comma()) +
-  coord_cartesian(xlim = c(2000, 7000)) +
+  coord_cartesian(xlim = c(4100, 4300)) +
   labs(x = "Body mass (g)", y = NULL,
-       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Normal(*µ*, *σ*)</span>",
-       subtitle = "posterior_predict()") +
-  theme_pred_dist()
+       title = "**Linear predictor** <span style='font-size: 14px;'>*µ* in the model</span>",
+       subtitle = "posterior_linpred(..., tibble(flipper_length_mm = 201))") +
+  theme_pred_dist() +
+  theme(plot.title = element_markdown())
 
 p2 <- ggplot(normal_epred, aes(x = .epred)) +
   stat_halfeye(fill = clrs[2]) +
   scale_x_continuous(labels = label_comma()) +
-  coord_cartesian(xlim = c(2000, 7000)) +
+  coord_cartesian(xlim = c(4100, 4300)) +
   labs(x = "Body mass (g)", y = NULL,
        title = "**Expectation of the posterior** <span style='font-size: 14px;'>E[*y*] and *µ* in the model</span>",
-       subtitle = "posterior_epred()") +
+       subtitle = "posterior_epred(..., tibble(flipper_length_mm = 201))") +
   theme_pred_dist()
 
-p3 <- ggplot(normal_linpred, aes(x = .linpred)) +
-  stat_halfeye(fill = clrs[3]) +
+p3 <- ggplot(normal_predicted, aes(x = .prediction)) +
+  stat_halfeye(fill = clrs[1]) +
   scale_x_continuous(labels = label_comma()) +
-  coord_cartesian(xlim = c(2000, 7000)) +
+  coord_cartesian(xlim = c(2900, 5500)) +
   labs(x = "Body mass (g)", y = NULL,
-       title = "**Linear predictor** <span style='font-size: 14px;'>*µ* in the model</span>",
-       subtitle = "posterior_linpred()") +
-  theme_pred_dist() +
-  theme(plot.title = element_markdown())
+       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Normal(*µ*, *σ*)</span>",
+       subtitle = "posterior_predict(..., tibble(flipper_length_mm = 201))") +
+  theme_pred_dist()
 
 (p1 / plot_spacer() / p2 / plot_spacer() / p3) +
   plot_layout(heights = c(0.3, 0.05, 0.3, 0.05, 0.3))
@@ -322,65 +328,133 @@ p3 <- ggplot(normal_linpred, aes(x = .linpred)) +
 
 
 
-The results from `posterior_predict()` are draws from a random normal distribution using *both* the estimated `\(\mu\)` and the estimated `\(\sigma\)`. These results contain the full uncertainty of the posterior distribution of penguin weight.
+The most obvious difference between these different posterior predictions is the range of predictions. For `posterior_linpred()` and `posterior_epred()`, the standard error is tiny and the range of plausible predicted values is really narrow. For `posterior_predict()`, the standard error is substantially bigger, and the corresponding range of predicted values is huge. 
 
-The results from `posterior_epred()` and `posterior_linpred()` have the same mean as the full posterior, but they have a smaller standard deviation. That's because these correspond to the `\(\mu\)` part of the model—they're the average penguin weight as predicted by the linear model (hence `linpred`; **lin**ear **pred**ictor), but they don't incorporate information about `\(\sigma\)`. 
+To understand why, let's explore the math going on behind the scenes in these functions. Both `posterior_linpred()` and `posterior_epred()` correspond to the `\(\mu\)` part of the model. They're the average penguin weight as predicted by the linear model (hence `linpred`; **lin**ear **pred**ictor). We can see this if we plug a 201 mm flipper length into each row of the posterior and calculate `mu` by hand with `\(\beta_0 + (\beta_1 \times 201)\)`:
+
+
+```r
+linpred_manual <- model_normal |> 
+  spread_draws(b_Intercept, b_flipper_length_mm) |> 
+  mutate(mu = b_Intercept + (b_flipper_length_mm * 201))
+linpred_manual
+## # A tibble: 4,000 × 6
+##    .chain .iteration .draw b_Intercept b_flipper_length_mm    mu
+##     <int>      <int> <int>       <dbl>               <dbl> <dbl>
+##  1      1          1     1      -6152.                51.5 4206.
+##  2      1          2     2      -5872                 50.2 4223.
+##  3      1          3     3      -6263.                52.1 4204.
+##  4      1          4     4      -6066.                51.1 4214.
+##  5      1          5     5      -5740.                49.4 4193.
+##  6      1          6     6      -5678.                49.2 4215.
+##  7      1          7     7      -6107.                51.1 4162.
+##  8      1          8     8      -5422.                48.0 4236.
+##  9      1          9     9      -6303.                52.1 4178.
+## 10      1         10    10      -6193.                51.6 4186.
+## # … with 3,990 more rows
+```
+
+That `mu` column is identical to what we calculate with `posterior_linpred()`. Just to confirm, we can plot the two distributions:
+
+
+```r
+p1_manual <- linpred_manual |> 
+  ggplot(aes(x = mu)) + 
+  stat_halfeye(fill = colorspace::lighten(clrs[3], 0.5)) +
+  scale_x_continuous(labels = label_comma()) +
+  coord_cartesian(xlim = c(4100, 4300)) +
+  labs(x = "Body mass (g)", y = NULL,
+       title = "**Linear predictor** <span style='font-size: 14px;'>*µ* in the model</span>",
+       subtitle = "b_Intercept + (b_flipper_length_mm * 201)") +
+  theme_pred_dist() +
+  theme(plot.title = element_markdown())
+
+p1_manual | p1
+```
+
+<img src="{{< blogdown/postref >}}index_files/figure-html/plot-linpred-manual-1.png" width="100%" style="display: block; margin: auto;" />
+
+Importantly, the distribution of the `\(\mu\)` part of the model here does *not* incorporate information about `\(\sigma\)`. That's why the distribution is so narrow.
+
+The results from `posterior_predict()`, on the other hand, correspond to the `\(y\)` part of the model. Officially, they are draws from a random normal distribution using *both* the estimated `\(\mu\)` and the estimated `\(\sigma\)`. These results contain the full uncertainty of the posterior distribution of penguin weight. To help with the intuition, we can do the same thing by hand when plugging in a 201 mm flipper length:
+
+
+```r
+postpred_manual <- model_normal |> 
+  spread_draws(b_Intercept, b_flipper_length_mm, sigma) |> 
+  mutate(mu = b_Intercept + (b_flipper_length_mm * 201),  # This is posterior_linpred()
+         y_new = rnorm(n(), mean = mu, sd = sigma))  # This is posterior_predict()
+
+postpred_manual |> 
+  select(.draw:y_new)
+## # A tibble: 4,000 × 6
+##    .draw b_Intercept b_flipper_length_mm sigma    mu y_new
+##    <int>       <dbl>               <dbl> <dbl> <dbl> <dbl>
+##  1     1      -6152.                51.5  384. 4206. 4372.
+##  2     2      -5872                 50.2  401. 4223. 4168.
+##  3     3      -6263.                52.1  390. 4204. 4248.
+##  4     4      -6066.                51.1  409. 4214. 5019.
+##  5     5      -5740.                49.4  362. 4193. 3883.
+##  6     6      -5678.                49.2  393. 4215. 4731.
+##  7     7      -6107.                51.1  417. 4162. 4687.
+##  8     8      -5422.                48.0  351. 4236. 4062.
+##  9     9      -6303.                52.1  426. 4178. 3951.
+## 10    10      -6193.                51.6  426. 4186. 3771.
+## # … with 3,990 more rows
+```
+
+That `y_new` column here is the `\(y\)` part of the model and should have a lot more uncertainty than the `mu` column, which is just the `\(\mu\)` part of the model. Notably, the `y_new` column is the same as what we get when using `posterior predict()` (with only minor differences because of randomness). We'll plot the two distributions to confirm:
+
+
+```r
+p3_manual <- postpred_manual |> 
+  ggplot(aes(x = y_new)) + 
+  stat_halfeye(fill = colorspace::lighten(clrs[1], 0.5)) +
+  scale_x_continuous(labels = label_comma()) +
+  coord_cartesian(xlim = c(2900, 5500)) +
+  labs(x = "Body mass (g)", y = NULL,
+       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Normal(*µ*, *σ*)</span>",
+       subtitle = "rnorm(b_Intercept + (b_flipper_length_mm * 201), sigma)") +
+  theme_pred_dist() +
+  theme(plot.title = element_markdown())
+
+p3_manual | p3
+```
+
+<img src="{{< blogdown/postref >}}index_files/figure-html/plot-postpred-manual-1.png" width="100%" style="display: block; margin: auto;" />
+
+The results from `posterior_predict()` and `posterior_linpred()` have the same mean, but the full posterior predictions that incorporate the estimated `\(\sigma\)` have a much wider range of plausible values. 
 
 The results from `posterior_epred()` are a little strange to understand, and in the case of normal/Gaussian regression (and many other types of regression models!), they're identical to the linear predictor (`posterior_linpred()`). These are the posterior draws of the expected value or mean of the the posterior distribution, or `\(E(y_i)\)` in the model. Behind the scenes, this is calculated by taking the average of each row's posterior distribution and then taking the average of *that*. 
 
-A quick illustration can help. Our `model_normal` model contains 4,000 MCMC samples for each estimated parameter. Earlier, we plugged the original penguins data into the model to generate posterior predictions with `predicted_draws()`:
+Once again, a quick illustration can help. As before, we'll manually plug a flipper length of 201 mm into the posterior estimates of the intercept and slope to calculate the `\(\mu\)` part of the model. We'll then use that `\(\mu\)` along with the estimated `\(\sigma\)` to in `rnorm()` to generate the posterior predictive distribution, or the `\(y\)` part of the model. Finally, we'll take the average of the `y_new` posterior predictive distribution to get the expectation of the posterior predictive distribution, or `epred`. It's the same as what we get when using `posterior_epred()`; the only differences are because of randomness.
 
 
 ```r
-normal_predicted <- model_normal |> 
-  predicted_draws(newdata = penguins)
-```
+epred_manual <- model_normal |> 
+  spread_draws(b_Intercept, b_flipper_length_mm, sigma) |>
+  mutate(mu = b_Intercept + (b_flipper_length_mm * 201),  # This is posterior_linpred()
+         y_new = rnorm(n(), mean = mu, sd = sigma))  # This is posterior_predict()
 
-This generated 4,000 predicted penguin weights for each row in the dataset:
+# This is posterior_epred()
+epred_manual |> 
+  summarize(epred = mean(y_new))
+## # A tibble: 1 × 1
+##   epred
+##   <dbl>
+## 1 4211.
 
-
-```r
-normal_predicted |> 
-  ungroup() |> 
-  count(.row) |> 
-  head()
-## # A tibble: 6 × 2
-##    .row     n
-##   <int> <int>
-## 1     1  4000
-## 2     2  4000
-## 3     3  4000
-## 4     4  4000
-## 5     5  4000
-## 6     6  4000
-```
-
-To calculate the expected value of the posterior predictive distribution, we can calculate the average posterior penguin weight for each of those rows and then calculate the average of those averages. This provides values that are basically identical to what we find when using `posterior_epred()`:
-
-
-```r
-# Average of posterior averages
-normal_predicted |> 
-  group_by(.row) |> 
-  summarize(avg = mean(.prediction)) |> 
-  ungroup() |> 
-  summarize(across(avg, lst(mean, sd, median), .names = "{.fn}"))
-## # A tibble: 1 × 3
-##    mean    sd median
-##   <dbl> <dbl>  <dbl>
-## 1 4206.  703.  4009.
-
-# Do the same thing with posterior_epred()
+# It's essentially the same as the actual posterior_epred()
 normal_epred |> 
-  ungroup() |> 
-  summarize(across(.epred, lst(mean, sd, median), .names = "{.fn}"))
-## # A tibble: 1 × 3
-##    mean    sd median
-##   <dbl> <dbl>  <dbl>
-## 1 4206.  703.  4011.
+  ungroup() |>
+  summarize(epred = mean(.epred))
+## # A tibble: 1 × 1
+##   epred
+##   <dbl>
+## 1 4206.
 ```
 
-For mathy reasons, in Gaussian regression, this `\(\operatorname{E(y)}\)` happens to be identical to the linear predictor `\(\mu\)`, so the results from `posterior_linpred()` and `posterior_epred()` are identical. And—fun fact—the **brms** code for `posterior_epred()` for Gaussian models doesn't recalculate the average of averages. [It just returns the linear predictor](https://github.com/paul-buerkner/brms/blob/28f778d7933f95422dda8f9a9f4333b975261120/R/posterior_epred.R#L341) `\(\mu\)`.
+For mathy reasons, in Gaussian regression, this `\(\operatorname{E(y)}\)` happens to be identical to the linear predictor `\(\mu\)`, so the results from `posterior_linpred()` and `posterior_epred()` are identical. And—fun fact—the **brms** code for `posterior_epred()` for Gaussian models doesn't recalculate the average of the posterior. [It just returns the linear predictor](https://github.com/paul-buerkner/brms/blob/28f778d7933f95422dda8f9a9f4333b975261120/R/posterior_epred.R#L341) `\(\mu\)`.
 
 We can also look at these different types of posterior predictions across a range of possible flipper lengths. There's a lot more uncertainty in the full posterior, since it incorporates the uncertainty of both `\(\mu\)` and `\(\sigma\)`, while the uncertainty of the linear predictor/expected value of the posterior is much more narrow (and equivalent in this case):
 
@@ -388,16 +462,16 @@ We can also look at these different types of posterior predictions across a rang
 ```r
 p1 <- penguins |> 
   data_grid(flipper_length_mm = seq_range(flipper_length_mm, n = 100)) |> 
-  add_predicted_draws(model_normal, ndraws = 100) |> 
+  add_linpred_draws(model_normal, ndraws = 100) |> 
   ggplot(aes(x = flipper_length_mm)) +
-  stat_lineribbon(aes(y = .prediction), .width = 0.95,
-                  alpha = 0.5, color = clrs[1], fill = clrs[1]) +
+  stat_lineribbon(aes(y = .linpred), .width = 0.95,
+                  alpha = 0.5, color = clrs[3], fill = clrs[3]) +
   geom_point(data = penguins, aes(y = body_mass_g), size = 1, alpha = 0.7) +
   scale_y_continuous(labels = label_comma()) +
   coord_cartesian(ylim = c(2000, 6000)) +
   labs(x = "Flipper length (mm)", y = "Body mass (g)",
-       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Normal(*µ*, *σ*)</span>",
-       subtitle = "posterior_predict()") +
+       title = "**Linear predictor** <span style='font-size: 14px;'>*µ* in the model</span>",
+       subtitle = "posterior_linpred()") +
   theme_pred_range()
 
 p2 <- penguins |> 
@@ -416,16 +490,16 @@ p2 <- penguins |>
 
 p3 <- penguins |> 
   data_grid(flipper_length_mm = seq_range(flipper_length_mm, n = 100)) |> 
-  add_linpred_draws(model_normal, ndraws = 100) |> 
+  add_predicted_draws(model_normal, ndraws = 100) |> 
   ggplot(aes(x = flipper_length_mm)) +
-  stat_lineribbon(aes(y = .linpred), .width = 0.95,
-                  alpha = 0.5, color = clrs[3], fill = clrs[3]) +
+  stat_lineribbon(aes(y = .prediction), .width = 0.95,
+                  alpha = 0.5, color = clrs[1], fill = clrs[1]) +
   geom_point(data = penguins, aes(y = body_mass_g), size = 1, alpha = 0.7) +
   scale_y_continuous(labels = label_comma()) +
   coord_cartesian(ylim = c(2000, 6000)) +
   labs(x = "Flipper length (mm)", y = "Body mass (g)",
-       title = "**Linear predictor** <span style='font-size: 14px;'>*µ* in the model</span>",
-       subtitle = "posterior_linpred()") +
+       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Normal(*µ*, *σ*)</span>",
+       subtitle = "posterior_predict()") +
   theme_pred_range()
 
 (p1 / plot_spacer() / p2 / plot_spacer() / p3) +
@@ -482,8 +556,8 @@ This plot shows the relationship between the two scales. Probabilities range fro
 
 
 ```r
-tibble(x = seq(-8, 8, by = 0.1)) %>% 
-  mutate(y = plogis(x)) %>% 
+tibble(x = seq(-8, 8, by = 0.1)) |> 
+  mutate(y = plogis(x)) |> 
   ggplot(aes(x = x, y = y)) +
   geom_line(size = 1, color = clrs[4]) +
   labs(x = "Logit scale", y = "Probability scale") +
@@ -524,44 +598,48 @@ model_logit <- brm(
 
 We could look at these coefficients and interpret their marginal effects, but here we're more interested in the distribution of the outcome, not the coefficients (see [here](https://www.andrewheiss.com/blog/2022/05/20/marginalia/#where-this-subtle-difference-really-matters) or [here](http://post8000.svmiller.com/lab-scripts/logistic-regression-lab.html) or [here](https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/#2-fractional-logistic-regression) for examples of how to interpret logistic regression coefficients).
 
-Let's again extract these different posterior distributions with the three main **brms** functions: `posterior_predict()`, `posterior_epred()`, and `posterior_linpred()`
+Let's again extract these different posterior distributions with the three main **brms** functions: `posterior_linpred()`, `posterior_epred()`, and `posterior_predict()`. We'll look at the posterior distribution when `bill_length_mm` is its average value, or 43.993:
 
 
 ```r
+# Make a little dataset of just the average bill length
+penguins_avg_bill <- penguins |> 
+  summarize(bill_length_mm = mean(bill_length_mm))
+
 # Extract different types of posteriors
-logit_predicted <- model_logit |> 
-  predicted_draws(newdata = penguins)
+logit_linpred <- model_logit |> 
+  linpred_draws(newdata = penguins_avg_bill)
 
 logit_epred <- model_logit |> 
-  epred_draws(newdata = penguins)
+  epred_draws(newdata = penguins_avg_bill)
 
-logit_linpred <- model_logit |> 
-  linpred_draws(newdata = penguins)
+logit_predicted <- model_logit |> 
+  predicted_draws(newdata = penguins_avg_bill)
 ```
 
 These each show the posterior distribution of being a Gentoo, but unlike the Gaussian posteriors we looked at earlier, each of these is measured completely differently now!
 
 
 ```r
-summary_logit_predicted <- logit_predicted |> 
+summary_logit_linpred <- logit_linpred |> 
   ungroup() |> 
-  summarize(across(.prediction, lst(mean), .names = "{.fn}"))
+  summarize(across(.linpred, lst(mean, sd, median), .names = "{.fn}"))
 
 summary_logit_epred <- logit_epred |> 
   ungroup() |> 
   summarize(across(.epred, lst(mean, sd, median), .names = "{.fn}"))
 
-summary_logit_linpred <- logit_linpred |> 
+summary_logit_predicted <- logit_predicted |> 
   ungroup() |> 
-  summarize(across(.linpred, lst(mean, sd, median), .names = "{.fn}"))
+  summarize(across(.prediction, lst(mean), .names = "{.fn}"))
 
 tribble(
   ~Function, ~`Model element`, ~Values,
-  "<code>posterior_predict()</code>", "Random draws from posterior \\(\\operatorname{Binomial}(1, \\pi)\\)", "0s and 1s",
-  "<code>posterior_epred()</code>", "\\(\\operatorname{E(y)}\\) and \\(\\pi\\) in the model", "Probabilities",
-  "<code>posterior_linpred()</code>", "\\(\\operatorname{logit}(\\pi)\\) in the model", "Logits or log odds"
+  "<code>posterior_linpred()</code>", "\\(\\operatorname{logit}(\\pi)\\) in the model", "Logits or log odds",
+  "<code>posterior_linpred(transform = TRUE)</code> or <code>posterior_epred()</code>", "\\(\\operatorname{E(y)}\\) and \\(\\pi\\) in the model", "Probabilities",
+  "<code>posterior_predict()</code>", "Random draws from posterior \\(\\operatorname{Binomial}(1, \\pi)\\)", "0s and 1s"
 ) |> 
-  bind_cols(bind_rows(summary_logit_predicted, summary_logit_epred, summary_logit_linpred)) |> 
+  bind_cols(bind_rows(summary_logit_linpred, summary_logit_epred, summary_logit_predicted)) |> 
   kbl(escape = FALSE) |> 
   kable_styling(htmltable_class = "pure-table pure-table-horizontal")
 ```
@@ -579,63 +657,65 @@ tribble(
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:left;"> <code>posterior_predict()</code> </td>
-   <td style="text-align:left;"> Random draws from posterior \(\operatorname{Binomial}(1, \pi)\) </td>
-   <td style="text-align:left;"> 0s and 1s </td>
-   <td style="text-align:right;"> 0.358 </td>
-   <td style="text-align:right;">  </td>
-   <td style="text-align:right;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> <code>posterior_epred()</code> </td>
-   <td style="text-align:left;"> \(\operatorname{E(y)}\) and \(\pi\) in the model </td>
-   <td style="text-align:left;"> Probabilities </td>
-   <td style="text-align:right;"> 0.357 </td>
-   <td style="text-align:right;"> 0.24 </td>
-   <td style="text-align:right;"> 0.334 </td>
-  </tr>
-  <tr>
    <td style="text-align:left;"> <code>posterior_linpred()</code> </td>
    <td style="text-align:left;"> \(\operatorname{logit}(\pi)\) in the model </td>
    <td style="text-align:left;"> Logits or log odds </td>
    <td style="text-align:right;"> -0.799 </td>
-   <td style="text-align:right;"> 1.30 </td>
-   <td style="text-align:right;"> -0.692 </td>
+   <td style="text-align:right;"> 0.143 </td>
+   <td style="text-align:right;"> -0.795 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> <code>posterior_linpred(transform = TRUE)</code> or <code>posterior_epred()</code> </td>
+   <td style="text-align:left;"> \(\operatorname{E(y)}\) and \(\pi\) in the model </td>
+   <td style="text-align:left;"> Probabilities </td>
+   <td style="text-align:right;"> 0.311 </td>
+   <td style="text-align:right;"> 0.030 </td>
+   <td style="text-align:right;"> 0.311 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> <code>posterior_predict()</code> </td>
+   <td style="text-align:left;"> Random draws from posterior \(\operatorname{Binomial}(1, \pi)\) </td>
+   <td style="text-align:left;"> 0s and 1s </td>
+   <td style="text-align:right;"> 0.306 </td>
+   <td style="text-align:right;">  </td>
+   <td style="text-align:right;">  </td>
   </tr>
 </tbody>
 </table>
 
 
 ```r
-p1 <- penguins |> 
-  add_predicted_draws(model_logit) |> 
-  group_by(.draw) |> 
-  summarize(prop_gentoo = mean(.prediction == 1)) |> 
-  ggplot(aes(x = prop_gentoo)) +
-  geom_histogram(binwidth = 0.01, color = "white", boundary = 0, fill = clrs[1], size = 0.25) +
-  scale_x_continuous(labels = label_percent()) +
-  coord_cartesian(xlim = c(0, 1)) +
-  labs(x = "Probability of being a Gentoo", y = NULL,
-       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Binomial(1, *π*)</span>",
-       subtitle = "posterior_predict()") +
+p1 <- ggplot(logit_linpred, aes(x = .linpred)) +
+  stat_halfeye(fill = clrs[3]) +
+  coord_cartesian(xlim = c(-1.5, -0.2)) +
+  labs(x = "Logit-transformed probability of being a Gentoo", y = NULL,
+       title = "**Linear predictor** <span style='font-size: 14px;'>logit(*π*) in the model</span>",
+       subtitle = "posterior_linpred(..., tibble(bill_length_mm = 44))") +
   theme_pred_dist()
 
 p2 <- ggplot(logit_epred, aes(x = .epred)) +
   stat_halfeye(fill = clrs[2]) +
   scale_x_continuous(labels = label_percent()) +
-  coord_cartesian(xlim = c(0, 1)) +
+  coord_cartesian(xlim = c(0.2, 0.45)) +
   labs(x = "Probability of being a Gentoo", y = NULL,
        title = "**Expectation of the posterior** <span style='font-size: 14px;'>E[*y*] and *π* in the model</span>",
-       subtitle = "posterior_epred()") +
+       subtitle = "posterior_epred(..., tibble(bill_length_mm = 44))") +
   theme_pred_dist()
 
-p3 <- ggplot(logit_linpred, aes(x = .linpred)) +
-  stat_halfeye(fill = clrs[3]) +
-  coord_cartesian(xlim = c(-5, 5)) +
-  labs(x = "Logit-transformed probability of being a Gentoo", y = NULL,
-       title = "**Linear predictor** <span style='font-size: 14px;'>logit(*π*) in the model</span>",
-       subtitle = "posterior_linpred()") +
-  theme_pred_dist()
+p3 <- logit_predicted |> 
+  count(is_gentoo = .prediction) |> 
+  mutate(prop = n / sum(n),
+         prop_nice = label_percent(accuracy = 0.1)(prop)) |> 
+  ggplot(aes(x = factor(is_gentoo), y = n)) +
+  geom_col(fill = clrs[1]) +
+  geom_text(aes(label = prop_nice), nudge_y = -300, color = "white", size = 3) +
+  scale_x_discrete(labels = c("Not Gentoo (0)", "Gentoo (1)")) +
+  scale_y_continuous(labels = label_comma()) +
+  labs(x = "Prediction of being a Gentoo", y = NULL,
+       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Binomial(1, *π*)</span>",
+       subtitle = "posterior_predict(..., tibble(bill_length_mm = 44))") +
+  theme_pred_range() +
+  theme(panel.grid.major.x = element_blank())
 
 (p1 / plot_spacer() / p2 / plot_spacer() / p3) +
   plot_layout(heights = c(0.3, 0.05, 0.3, 0.05, 0.3))
@@ -645,17 +725,17 @@ p3 <- ggplot(logit_linpred, aes(x = .linpred)) +
 
 
 
-The results from `posterior_predict()` are draws from a random binomial distribution using the estimated `\(\pi\)`, and they consist of only 0s and 1s (not Gentoo and Gentoo). In the plot above, I show this as a histogram of the proportions of 1s in each posterior draw. 
-
 Unlike the Gaussian/normal regression from earlier, the results from `posterior_epred()` and `posterior_linpred()` are not identical here. They still both correspond to the `\(\pi\)` part of the model, but on different scales. `posterior_epred()` provides results on the probability scale, un-logiting and back-transforming the results from `posterior_linpred()` (which provides results on the logit scale). 
 
 Again, *technically*, `posterior_epred()` isn't just the back-transformed linear predictor (if you want that, you can use `posterior_linpred(..., transform = TRUE)`). More formally, `posterior_epred()` returns the expected values of the posterior, or `\(\operatorname{E(y)}\)`, or the average of the posterior's averages. But as with Gaussian regression, for mathy reasons this average-of-averages happens to be the same as the back-transformed `\(\pi\)`, so `\(E(y) = \operatorname{inverse logit}(\pi)\)`.
 
+The results from `posterior_predict()` are draws from a random binomial distribution using the estimated `\(\pi\)`, and they consist of only 0s and 1s (not Gentoo and Gentoo).
+
 Showing these posterior predictions across a range of bill lengths also helps with the intuition here and illustrates the different scales and values that these posterior functions return:
 
-- `posterior_predict()` returns 0s and 1s, plotted here as points at bill lengths of 35, 45, and 55 mm
-- `posterior_epred()` returns the value of `\(\pi\)` on the probability scale (technically it's returning `\(\operatorname{E(y)}\)`, but in practice those are identical here)
 - `posterior_linpred()` returns the value of `\(\pi\)` on the logit scale
+- `posterior_epred()` returns the value of `\(\pi\)` on the probability scale (technically it's returning `\(\operatorname{E(y)}\)`, but in practice those are identical here)
+- `posterior_predict()` returns 0s and 1s, plotted here as points at bill lengths of 35, 45, and 55 mm
 
 
 ```r
@@ -667,18 +747,17 @@ pred_logit_gentoo_summary <- pred_logit_gentoo |>
   summarize(prop = mean(.prediction),
             prop_nice = paste0(label_percent(accuracy = 0.1)(prop), "\nGentoos"))
 
-p1 <- ggplot(pred_logit_gentoo, aes(x = factor(bill_length_mm), y = .prediction)) +
-  geom_point(position = position_jitter(width = 0.2, height = 0.1, seed = 1234),
-             size = 0.75, alpha = 0.3, color = clrs[1]) +
-  geom_text(data = pred_logit_gentoo_summary, aes(y = 0.5, label = prop_nice), size = 3) +  
-  scale_y_continuous(breaks = c(0, 1), labels = c("Not\nGentoo", "Gentoo")) +
-  labs(x = "Bill length (mm)", y = "Prediction of\nbeing a Gentoo",
-       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Binomial(1, *π*)</span>",
-       subtitle = "posterior_predict()") +
-  theme_pred_range() +
-  theme(panel.grid.major.x = element_blank(),
-        panel.grid.major.y = element_blank(),
-        axis.text.y = element_text(angle = 90, hjust = 0.5))
+p1 <- penguins |> 
+  data_grid(bill_length_mm = seq_range(bill_length_mm, n = 100)) |> 
+  add_linpred_draws(model_logit, ndraws = 100) |> 
+  ggplot(aes(x = bill_length_mm)) +
+  stat_lineribbon(aes(y = .linpred), .width = 0.95,
+                  alpha = 0.5, color = clrs[3], fill = clrs[3]) +
+  coord_cartesian(xlim = c(30, 60)) +
+  labs(x = "Bill length (mm)", y = "Logit-transformed\nprobability of being a Gentoo",
+       title = "**Linear predictor posterior** <span style='font-size: 14px;'>logit(*π*) in the model</span>",
+       subtitle = "posterior_linpred()") +
+  theme_pred_range()
 
 p2 <- penguins |> 
   data_grid(bill_length_mm = seq_range(bill_length_mm, n = 100)) |> 
@@ -696,17 +775,18 @@ p2 <- penguins |>
        subtitle = "posterior_epred()") +
   theme_pred_range()
 
-p3 <- penguins |> 
-  data_grid(bill_length_mm = seq_range(bill_length_mm, n = 100)) |> 
-  add_linpred_draws(model_logit, ndraws = 100) |> 
-  ggplot(aes(x = bill_length_mm)) +
-  stat_lineribbon(aes(y = .linpred), .width = 0.95,
-                  alpha = 0.5, color = clrs[3], fill = clrs[3]) +
-  coord_cartesian(xlim = c(30, 60)) +
-  labs(x = "Bill length (mm)", y = "Logit-transformed\nprobability of being a Gentoo",
-       title = "**Linear predictor posterior** <span style='font-size: 14px;'>logit(*π*) in the model</span>",
-       subtitle = "posterior_linpred()") +
-  theme_pred_range()
+p3 <- ggplot(pred_logit_gentoo, aes(x = factor(bill_length_mm), y = .prediction)) +
+  geom_point(position = position_jitter(width = 0.2, height = 0.1, seed = 1234),
+             size = 0.75, alpha = 0.3, color = clrs[1]) +
+  geom_text(data = pred_logit_gentoo_summary, aes(y = 0.5, label = prop_nice), size = 3) +  
+  scale_y_continuous(breaks = c(0, 1), labels = c("Not\nGentoo", "Gentoo")) +
+  labs(x = "Bill length (mm)", y = "Prediction of\nbeing a Gentoo",
+       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Binomial(1, *π*)</span>",
+       subtitle = "posterior_predict()") +
+  theme_pred_range() +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_text(angle = 90, hjust = 0.5))
 
 (p1 / plot_spacer() / p2 / plot_spacer() / p3) +
   plot_layout(heights = c(0.3, 0.05, 0.3, 0.05, 0.3))
@@ -722,7 +802,7 @@ There are a lot more moving parts here than with Gaussian regression, with diffe
 
 ## Distributional models with link transformations
 
-Regression models often focus solely on the location parameter of the model (e.g., `\(\mu\)` in `\(\operatorname{Normal}(\mu, \sigma)\)`; `\(\pi\)` in `\(\operatorname{Binomial}(n, \pi)\)`). However, it is also possible to specify separate predictors for the scale or shape parameters of models (e.g., `\(\sigma\)` in `\(\operatorname{Normal}(\mu, \sigma)\)`, `\(\phi\)` in `\(\operatorname{Beta}(\mu, \phi)\)`). In the world of **brms**, these are called [distribtuional models](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html).
+Regression models often focus solely on the location parameter of the model (e.g., `\(\mu\)` in `\(\operatorname{Normal}(\mu, \sigma)\)`; `\(\pi\)` in `\(\operatorname{Binomial}(n, \pi)\)`). However, it is also possible to specify separate predictors for the scale or shape parameters of models (e.g., `\(\sigma\)` in `\(\operatorname{Normal}(\mu, \sigma)\)`, `\(\phi\)` in `\(\operatorname{Beta}(\mu, \phi)\)`). In the world of **brms**, these are called [distributional models](https://cran.r-project.org/web/packages/brms/vignettes/brms_distreg.html).
 
 More complex models can use a collection of distributional parameters. [Zero-inflated beta models](https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/#4-zero-inflated-beta-regression-bayesian-style) estimate a mean `\(\mu\)`, precision `\(\phi\)`, and a zero-inflated parameter `zi`, while [hurdle lognormal models](https://www.andrewheiss.com/blog/2022/05/09/hurdle-lognormal-gaussian-brms/) estimate a mean `\(\mu\)`, scale `\(\sigma\)`, and a hurdle parameter `hu`. Even plain old Gaussian models become distributional models when a set of predictors is specified for `\(\sigma\)` (e.g. `brm(y ~ x1 + x2, sigma ~ x2 + x3)`).
 
@@ -785,43 +865,40 @@ model_beta <- brm(
 ## Start sampling
 ```
 
-Again, we don't care about the coefficients or marginal effects here—see [this guide](https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/) for more about how to work with those. Let's instead extract these different posterior distributions of bill ratios with the three main **brms** functions: `posterior_predict()`, `posterior_epred()`, and `posterior_linpred()`.
+Again, we don't care about the coefficients or marginal effects here—see [this guide](https://www.andrewheiss.com/blog/2021/11/08/beta-regression-guide/) for more about how to work with those. Let's instead extract these different posterior distributions of bill ratios with the three main **brms** functions: `posterior_linpred()`, `posterior_epred()`, and `posterior_predict()`. And once again, we'll use a single value flipper length (the average, 200.967 mm) to explore these distributions.
 
 
 ```r
+# Make a little dataset of just the average flipper length
+penguins_avg_flipper <- penguins |> 
+  summarize(flipper_length_mm = mean(flipper_length_mm))
+
 # Extract different types of posteriors
-beta_predicted <- model_beta |> 
-  predicted_draws(newdata = penguins)
-
-beta_epred <- model_beta |> 
-  epred_draws(newdata = penguins)
-
-beta_epred_phi <- model_beta |> 
-  epred_draws(newdata = penguins, dpar = "phi")
-
 beta_linpred <- model_beta |> 
-  linpred_draws(newdata = penguins)
+  linpred_draws(newdata = penguins_avg_flipper)
 
 beta_linpred_phi <- model_beta |> 
-  linpred_draws(newdata = penguins, dpar = "phi")
+  linpred_draws(newdata = penguins_avg_flipper, dpar = "phi")
+
+beta_linpred_trans <- model_beta |> 
+  linpred_draws(newdata = penguins_avg_flipper, transform = TRUE)
+
+beta_linpred_phi_trans <- model_beta |> 
+  linpred_draws(newdata = penguins_avg_flipper, dpar = "phi", transform = TRUE)
+
+beta_epred <- model_beta |> 
+  epred_draws(newdata = penguins_avg_flipper)
+
+beta_predicted <- model_beta |> 
+  predicted_draws(newdata = penguins_avg_flipper)
 ```
 
-Notice the addition of two new posteriors here: `epred_draws(..., dpar = "phi")` and `linpred_draws(..., dpar = "phi")`. These give us the posterior distributions of the precision ($\phi$) distributional parameter, measured on different scales.
+Notice the addition of two new posteriors here: `linpred_draws(..., dpar = "phi")` and `linpred_draws(..., dpar = "phi", transform = TRUE)`. These give us the posterior distributions of the precision ($\phi$) distributional parameter, measured on different scales.
+
+Importantly, [for weird historical reasons](https://twitter.com/mjskay/status/1574489463497314304), it is possible to use `posterior_epred(..., dpar = "phi")` to get the unlogged `\(\phi\)` parameter. However, conceptually this is wrong. An `epred` is the expected value, or average, of the posterior predictive distribution, or `\(y\)`. It is *not* the expected value of the `\(\phi\)` part of the model. **brms** (or **tidybayes**) happily spits out the unlogged posterior distribution of `\(\phi\)` when you use `posterior_epred(..., dpar = "phi")`, but it's technically not an `epred` despite its name. [To keep the terminology consistent](https://twitter.com/mjskay/status/1574489124429520896), it's best to use `posterior_linpred()` when working with distributional parameters, using either `transform = FALSE` or `transform = TRUE` for the logged or the unlogged scale.
 
 
 ```r
-summary_beta_predicted <- beta_predicted |> 
-  ungroup() |> 
-  summarize(across(.prediction, lst(mean, sd, median), .names = "{.fn}"))
-
-summary_beta_epred <- beta_epred |> 
-  ungroup() |> 
-  summarize(across(.epred, lst(mean, sd, median), .names = "{.fn}"))
-
-summary_beta_epred_phi <- beta_epred_phi |> 
-  ungroup() |> 
-  summarize(across(phi, lst(mean, sd, median), .names = "{.fn}"))
-
 summary_beta_linpred <- beta_linpred |> 
   ungroup() |> 
   summarize(across(.linpred, lst(mean, sd, median), .names = "{.fn}"))
@@ -830,16 +907,29 @@ summary_beta_linpred_phi <- beta_linpred_phi |>
   ungroup() |> 
   summarize(across(phi, lst(mean, sd, median), .names = "{.fn}"))
 
+summary_beta_linpred_phi_trans <- beta_linpred_phi_trans |> 
+  ungroup() |> 
+  summarize(across(phi, lst(mean, sd, median), .names = "{.fn}"))
+
+summary_beta_epred <- beta_epred |> 
+  ungroup() |> 
+  summarize(across(.epred, lst(mean, sd, median), .names = "{.fn}"))
+
+summary_beta_predicted <- beta_predicted |> 
+  ungroup() |> 
+  summarize(across(.prediction, lst(mean, sd, median), .names = "{.fn}"))
+
 tribble(
   ~Function, ~`Model element`, ~Values,
-  "<code>posterior_predict()</code>", "Random draws from posterior \\(\\operatorname{Beta}(\\mu, \\phi)$", "Values between 0–1",
-  "<code>posterior_epred()</code>", "\\(\\operatorname{E(y)}\\) and \\(\\mu\\) in the model", "Probabilities",
-  '<code>posterior_epred(dpar = "phi")</code>', "\\(\\phi\\) in the model", "Unlogged precision values",
   "<code>posterior_linpred()</code>", "\\(\\operatorname{logit}(\\mu)\\) in the model", "Logits or log odds",
-  '<code>posterior_linpred(dpar = "phi")</code>', "\\(\\log(\\phi)\\) in the model", "Logged precision values"
+  "<code>posterior_linpred(transform = TRUE)</code> or <code>posterior_epred()</code>", "\\(\\operatorname{E(y)}\\) and \\(\\mu\\) in the model", "Probabilities",
+  '<code>posterior_linpred(dpar = "phi")</code>', "\\(\\log(\\phi)\\) in the model", "Logged precision values",
+  '<code>posterior_linpred(dpar = "phi", transform = TRUE)</code>', "\\(\\phi\\) in the model", "Unlogged precision values",
+  "<code>posterior_predict()</code>", "Random draws from posterior \\(\\operatorname{Beta}(\\mu, \\phi)\\)", "Values between 0–1"
 ) |> 
-  bind_cols(bind_rows(summary_beta_predicted, summary_beta_epred, summary_beta_linpred,
-                      summary_beta_epred_phi, summary_beta_linpred_phi)) |> 
+  bind_cols(bind_rows(summary_beta_linpred, summary_beta_epred, 
+                      summary_beta_linpred_phi, summary_beta_linpred_phi_trans,
+                      summary_beta_predicted)) |> 
   kbl(escape = FALSE) |> 
   kable_styling(htmltable_class = "pure-table pure-table-horizontal")
 ```
@@ -857,44 +947,44 @@ tribble(
  </thead>
 <tbody>
   <tr>
-   <td style="text-align:left;"> <code>posterior_predict()</code> </td>
-   <td style="text-align:left;"> Random draws from posterior \(\operatorname{Beta}(\mu, \phi)$ </td>
-   <td style="text-align:left;"> Values between 0–1 </td>
-   <td style="text-align:right;"> 0.397 </td>
-   <td style="text-align:right;"> 0.075 </td>
-   <td style="text-align:right;"> 0.393 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> <code>posterior_epred()</code> </td>
-   <td style="text-align:left;"> \(\operatorname{E(y)}\) and \(\mu\) in the model </td>
-   <td style="text-align:left;"> Probabilities </td>
-   <td style="text-align:right;"> 0.397 </td>
-   <td style="text-align:right;"> 0.057 </td>
-   <td style="text-align:right;"> 0.412 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> <code>posterior_epred(dpar = "phi")</code> </td>
-   <td style="text-align:left;"> \(\phi\) in the model </td>
-   <td style="text-align:left;"> Unlogged precision values </td>
-   <td style="text-align:right;"> -0.423 </td>
-   <td style="text-align:right;"> 0.243 </td>
-   <td style="text-align:right;"> -0.356 </td>
-  </tr>
-  <tr>
    <td style="text-align:left;"> <code>posterior_linpred()</code> </td>
    <td style="text-align:left;"> \(\operatorname{logit}(\mu)\) in the model </td>
    <td style="text-align:left;"> Logits or log odds </td>
-   <td style="text-align:right;"> 118.291 </td>
-   <td style="text-align:right;"> 56.355 </td>
-   <td style="text-align:right;"> 97.087 </td>
+   <td style="text-align:right;"> -0.423 </td>
+   <td style="text-align:right;"> 0.011 </td>
+   <td style="text-align:right;"> -0.423 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> <code>posterior_linpred(transform = TRUE)</code> or <code>posterior_epred()</code> </td>
+   <td style="text-align:left;"> \(\operatorname{E(y)}\) and \(\mu\) in the model </td>
+   <td style="text-align:left;"> Probabilities </td>
+   <td style="text-align:right;"> 0.396 </td>
+   <td style="text-align:right;"> 0.003 </td>
+   <td style="text-align:right;"> 0.396 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> <code>posterior_linpred(dpar = "phi")</code> </td>
    <td style="text-align:left;"> \(\log(\phi)\) in the model </td>
    <td style="text-align:left;"> Logged precision values </td>
    <td style="text-align:right;"> 4.674 </td>
-   <td style="text-align:right;"> 0.437 </td>
-   <td style="text-align:right;"> 4.576 </td>
+   <td style="text-align:right;"> 0.076 </td>
+   <td style="text-align:right;"> 4.675 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> <code>posterior_linpred(dpar = "phi", transform = TRUE)</code> </td>
+   <td style="text-align:left;"> \(\phi\) in the model </td>
+   <td style="text-align:left;"> Unlogged precision values </td>
+   <td style="text-align:right;"> 107.383 </td>
+   <td style="text-align:right;"> 8.119 </td>
+   <td style="text-align:right;"> 107.198 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> <code>posterior_predict()</code> </td>
+   <td style="text-align:left;"> Random draws from posterior \(\operatorname{Beta}(\mu, \phi)\) </td>
+   <td style="text-align:left;"> Values between 0–1 </td>
+   <td style="text-align:right;"> 0.395 </td>
+   <td style="text-align:right;"> 0.047 </td>
+   <td style="text-align:right;"> 0.395 </td>
   </tr>
 </tbody>
 </table>
@@ -903,51 +993,51 @@ Neat! We have a bunch of different pieces here, all measured differently. Let's 
 
 
 ```r
-p1 <- ggplot(beta_predicted, aes(x = .prediction)) +
-  stat_halfeye(fill = clrs[1]) +
-  coord_cartesian(xlim = c(0.1, 0.7)) +
-  labs(x = "Ratio of bill depth / bill length", y = NULL,
-       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Beta(*µ*, *φ*)</span>",
-       subtitle = "posterior_predict()") +
+p1 <- ggplot(beta_linpred, aes(x = .linpred)) +
+  stat_halfeye(fill = clrs[3]) +
+  labs(x = "Logit-scale ratio of bill depth / bill length", y = NULL,
+       title = "**Linear predictor** <span style='font-size: 14px;'>logit(*µ*) in the model</span>",
+       subtitle = "posterior_linpred(\n  ..., tibble(flipper_length_mm = 201))\n") +
   theme_pred_dist()
-  
+
+p1a <- ggplot(beta_linpred_phi, aes(x = phi)) +
+  stat_halfeye(fill = colorspace::lighten(clrs[3], 0.3)) +
+  labs(x = "Log-scale precision parameter", y = NULL,
+       title = "**Precision parameter** <span style='font-size: 14px;'>log(*φ*) in the model</span>",
+       subtitle = 'posterior_linpred(\n  ..., tibble(flipper_length_mm = 201),\n  dpar = "phi")') +
+  theme_pred_dist()
+
 p2 <- ggplot(beta_epred, aes(x = .epred)) +
   stat_halfeye(fill = clrs[2]) +
   labs(x = "Ratio of bill depth / bill length", y = NULL,
        title = "**Expectation of the posterior** <span style='font-size: 14px;'>E[*y*] or *µ* in the model</span>",
-       subtitle = "posterior_epred()") +
+       subtitle = "posterior_epred(\n  ..., tibble(flipper_length_mm = 201)) # or \nposterior_linpred(..., transform = TRUE)") +
   theme_pred_dist()
 
-p2a <- ggplot(beta_epred_phi, aes(x = phi)) +
+p2a <- ggplot(beta_linpred_phi_trans, aes(x = phi)) +
   stat_halfeye(fill = colorspace::lighten(clrs[2], 0.4)) +
   labs(x = "Precision parameter", y = NULL,
        title = "**Precision parameter** <span style='font-size: 14px;'>*φ* in the model</span>",
-       subtitle = 'posterior_epred(dpar = "phi")') +
+       subtitle = 'posterior_linpred(\n  ..., tibble(flipper_length_mm = 201),\n  dpar = "phi", transform = TRUE)\n') +
   theme_pred_dist()
 
-p3 <- ggplot(beta_linpred, aes(x = .linpred)) +
-  stat_halfeye(fill = clrs[3]) +
-  labs(x = "Logit-transformed ratio of bill depth / bill length", y = NULL,
-       title = "**Linear predictor** <span style='font-size: 14px;'>logit(*µ*) in the model</span>",
-       subtitle = "posterior_linpred()") +
-  theme_pred_dist()
-
-p3a <- ggplot(beta_linpred_phi, aes(x = phi)) +
-  stat_halfeye(fill = colorspace::lighten(clrs[3], 0.3)) +
-  labs(x = "Log-transformed precision parameter", y = NULL,
-       title = "**Precision parameter** <span style='font-size: 14px;'>log(*φ*) in the model</span>",
-       subtitle = 'posterior_linpred(dpar = "phi")') +
+p3 <- ggplot(beta_predicted, aes(x = .prediction)) +
+  stat_halfeye(fill = clrs[1]) +
+  coord_cartesian(xlim = c(0.2, 0.6)) +
+  labs(x = "Ratio of bill depth / bill length", y = NULL,
+       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Beta(*µ*, *φ*)</span>",
+       subtitle = "posterior_predict()") +
   theme_pred_dist()
 
 layout <- "
-AA
-BB
-CD
-EE
-FG
+AB
+CC
+DE
+FF
+GG
 "
 
-p1 + plot_spacer() + p2 + p2a + plot_spacer() + p3 + p3a +
+p1 + p1a + plot_spacer() + p2 + p2a + plot_spacer() + p3 +
   plot_layout(design = layout, heights = c(0.3, 0.05, 0.3, 0.05, 0.3))
 ```
 
@@ -955,35 +1045,47 @@ p1 + plot_spacer() + p2 + p2a + plot_spacer() + p3 + p3a +
 
 
 
-The results from `posterior_predict()` are draws from a random beta distribution using the estimated `\(\mu\)` and `\(\phi\)`, and they consist of values ranging between 0 and 1.
-
 As with logistic regression, the results from `posterior_epred()` and `posterior_linpred()` are not identical. They still both correspond to the `\(\mu\)` part of the model, but on different scales. `posterior_epred()` provides results on the probability or proportion scale, un-logiting and back-transforming the logit-scale results from `posterior_linpred()`.
 
 And once again, `posterior_epred()` isn't technically the back-transformed linear predictor (if you want that, you can use `posterior_linpred(..., transform = TRUE)`). Instead it shows the expected values of the posterior, or `\(\operatorname{E(y)}\)`, or the average of the posterior's averages. But just like Gaussian regression and logistic regression, this average-of-averages still happens to be the same as the back-transformed `\(\mu\)`, so `\(E(y) = \operatorname{inverse logit}(\mu)\)`.
 
-We can extract the `\(\phi\)` parameter by including the `dpar = "phi"` argument (or technically just `dpar = TRUE`, which returns all possible distributional parameters, which is helpful in cases with lots of them like zero-one-inflated beta regression). `posterior_epred(..., dpar = "phi")` provides `\(\phi\)` on the original precision scale (however that's measured), while `posterior_linpred(..., dpar = "phi")` returns a log-transformed version.
+We can extract the `\(\phi\)` parameter by including the `dpar = "phi"` argument (or technically just `dpar = TRUE`, which returns all possible distributional parameters, which is helpful in cases with lots of them like zero-one-inflated beta regression). `posterior_linpred(..., dpar = "phi", transform = TRUE)` provides `\(\phi\)` on the original precision scale (however that's measured), while `posterior_linpred(..., dpar = "phi")` returns a log-transformed version.
+
+And finally, the results from `posterior_predict()` are draws from a random beta distribution using the estimated `\(\mu\)` and `\(\phi\)`, and they consist of values ranging between 0 and 1.
 
 Showing the posterior predictions for these different parameters across a range of flipper lengths will help with the intuition and illustrate the different scales, values, and parameters that these posterior functions return:
 
-- `posterior_predict()` returns probabilities or proportions
-- `posterior_epred()` returns the value of `\(\mu\)` on the probability scale (technically it's returning `\(\operatorname{E(y)}\)`, but in practice those are identical here)
 - `posterior_linpred()` returns the value of `\(\mu\)` on the logit scale
-- `posterior_epred(..., dpar = "phi")` returns the value of `\(\phi\)` on its original scale
+- `posterior_epred()` returns the value of `\(\mu\)` on the probability scale (technically it's returning `\(\operatorname{E(y)}\)`, but in practice those are identical here)
 - `posterior_linpred(..., dpar = "phi")` returns the logged value of `\(\phi\)`
+- `posterior_linpred(..., dpar = "phi", transform = TRUE)` returns the value of `\(\phi\)` on its original scale
+- `posterior_predict()` returns probabilities or proportions
 
 
 ```r
 p1 <- penguins |> 
   data_grid(flipper_length_mm = seq_range(flipper_length_mm, n = 100)) |> 
-  add_predicted_draws(model_beta, ndraws = 500) |> 
+  add_linpred_draws(model_beta, ndraws = 100) |> 
   ggplot(aes(x = flipper_length_mm)) +
-  geom_point(data = penguins, aes(y = bill_ratio), size = 1, alpha = 0.7) +
-  stat_lineribbon(aes(y = .prediction), .width = 0.95,
-                  alpha = 0.5, color = clrs[1], fill = clrs[1]) +
+  geom_point(data = penguins, aes(y = qlogis(bill_ratio)), size = 1, alpha = 0.7) +
+  stat_lineribbon(aes(y = .linpred), .width = 0.95,
+                  alpha = 0.5, color = clrs[3], fill = clrs[3]) +
   coord_cartesian(xlim = c(170, 230)) +
-  labs(x = "Flipper length (mm)", y = "Ratio of\nbill depth / bill length",
-       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Beta(*µ*, *φ*)</span>",
-       subtitle = "posterior_predict()") +
+  labs(x = "Flipper length (mm)", y = "Logit-scale ratio of\nbill depth / bill length",
+       title = "**Linear predictor posterior** <span style='font-size: 14px;'>logit(*µ*) in the model</span>",
+       subtitle = "posterior_linpred()") +
+  theme_pred_range()
+
+p1a <- penguins |> 
+  data_grid(flipper_length_mm = seq_range(flipper_length_mm, n = 100)) |> 
+  add_linpred_draws(model_beta, ndraws = 100, dpar = "phi") |> 
+  ggplot(aes(x = flipper_length_mm)) +
+  stat_lineribbon(aes(y = phi), .width = 0.95, alpha = 0.5, 
+                  color = colorspace::lighten(clrs[3], 0.3), fill = colorspace::lighten(clrs[3], 0.3)) +
+  coord_cartesian(xlim = c(170, 230)) +
+  labs(x = "Flipper length (mm)", y = "Log-scale\nprecision parameter",
+       title = "**Precision parameter** <span style='font-size: 14px;'>log(*φ*) in the model</span>",
+       subtitle = 'posterior_linpred(dpar = "phi")') +
   theme_pred_range()
 
 p2 <- penguins |> 
@@ -996,7 +1098,7 @@ p2 <- penguins |>
   coord_cartesian(xlim = c(170, 230)) +
   labs(x = "Flipper length (mm)", y = "Ratio of\nbill depth / bill length",
        title = "**Expectation of the posterior** <span style='font-size: 14px;'>E[*y*] or *µ* in the model</span>",
-       subtitle = "posterior_epred()") +
+       subtitle = 'posterior_epred()\nposterior_linpred(transform = TRUE)') +
   theme_pred_range()
 
 p2a <- penguins |> 
@@ -1008,43 +1110,31 @@ p2a <- penguins |>
   coord_cartesian(xlim = c(170, 230)) +
   labs(x = "Flipper length (mm)", y = "Precision parameter",
        title = "**Precision parameter** <span style='font-size: 14px;'>*φ* in the model</span>",
-       subtitle = 'posterior_epred(dpar = "phi")') +
+       subtitle = 'posterior_linpred(dpar = "phi",\n                  transform = TRUE)') +
   theme_pred_range()
 
 p3 <- penguins |> 
   data_grid(flipper_length_mm = seq_range(flipper_length_mm, n = 100)) |> 
-  add_linpred_draws(model_beta, ndraws = 100) |> 
+  add_predicted_draws(model_beta, ndraws = 500) |> 
   ggplot(aes(x = flipper_length_mm)) +
-  geom_point(data = penguins, aes(y = qlogis(bill_ratio)), size = 1, alpha = 0.7) +
-  stat_lineribbon(aes(y = .linpred), .width = 0.95,
-                  alpha = 0.5, color = clrs[3], fill = clrs[3]) +
+  geom_point(data = penguins, aes(y = bill_ratio), size = 1, alpha = 0.7) +
+  stat_lineribbon(aes(y = .prediction), .width = 0.95,
+                  alpha = 0.5, color = clrs[1], fill = clrs[1]) +
   coord_cartesian(xlim = c(170, 230)) +
-  labs(x = "Flipper length (mm)", y = "Logit-transformed ratio of\nbill depth / bill length",
-       title = "**Linear predictor posterior** <span style='font-size: 14px;'>logit(*µ*) in the model</span>",
-       subtitle = "posterior_linpred()") +
-  theme_pred_range()
-
-p3a <- penguins |> 
-  data_grid(flipper_length_mm = seq_range(flipper_length_mm, n = 100)) |> 
-  add_linpred_draws(model_beta, ndraws = 100, dpar = "phi") |> 
-  ggplot(aes(x = flipper_length_mm)) +
-  stat_lineribbon(aes(y = phi), .width = 0.95, alpha = 0.5, 
-                  color = colorspace::lighten(clrs[3], 0.3), fill = colorspace::lighten(clrs[3], 0.3)) +
-  coord_cartesian(xlim = c(170, 230)) +
-  labs(x = "Flipper length (mm)", y = "Log-transformed\nprecision parameter",
-       title = "**Precision parameter** <span style='font-size: 14px;'>log(*φ*) in the model</span>",
-       subtitle = 'posterior_linpred(dpar = "phi")') +
+  labs(x = "Flipper length (mm)", y = "Ratio of\nbill depth / bill length",
+       title = "**Posterior predictions** <span style='font-size: 14px;'>Random draws from posterior Beta(*µ*, *φ*)</span>",
+       subtitle = "posterior_predict()") +
   theme_pred_range()
 
 layout <- "
-AA
-BB
-CD
-EE
-FG
+AB
+CC
+DE
+FF
+GG
 "
 
-p1 + plot_spacer() + p2 + p2a + plot_spacer() + p3 + p3a +
+p1 + p1a + plot_spacer() + p2 + p2a + plot_spacer() + p3 +
   plot_layout(design = layout, heights = c(0.3, 0.05, 0.3, 0.05, 0.3))
 ```
 
@@ -1067,7 +1157,7 @@ In practice we typically don't actually want to use these two parameters like th
 
 ```r
 mu <- summary_beta_epred$mean
-phi <- summary_beta_epred_phi$mean
+phi <- summary_beta_linpred_phi_trans$mean
 
 ggplot(penguins, aes(x = bill_ratio)) +
   geom_density(aes(fill = "Actual data"), color = NA) +
@@ -1099,7 +1189,7 @@ muphi_to_shapes <- function(mu, phi) {
 }
 
 beta_posteriors <- tibble(flipper_length_mm = c(180, 200, 220)) |> 
-  add_epred_draws(model_beta, ndraws = 500, dpar = TRUE) |> 
+  add_linpred_draws(model_beta, ndraws = 500, dpar = TRUE, transform = TRUE) |> 
   group_by(flipper_length_mm) |> 
   summarize(across(c(mu, phi), ~mean(.))) |> 
   ungroup() |> 
@@ -1114,9 +1204,9 @@ beta_posteriors
 ## # A tibble: 3 × 6
 ##   flipper_length_mm    mu   phi shape1 shape2 nice_label                
 ##               <dbl> <dbl> <dbl>  <dbl>  <dbl> <glue>                    
-## 1               180 0.485  58.0   28.2   29.9 Beta(µ = 0.485, φ = 58.05)
-## 2               200 0.400 105.    41.8   62.7 Beta(µ = 0.4, φ = 104.52) 
-## 3               220 0.320 191.    61.3  130.  Beta(µ = 0.32, φ = 191.19)
+## 1               180 0.485  57.7   28.0   29.7 Beta(µ = 0.485, φ = 57.66)
+## 2               200 0.400 105.    42.1   63.2 Beta(µ = 0.4, φ = 105.3)  
+## 3               220 0.320 196.    62.7  133.  Beta(µ = 0.32, φ = 195.7)
 
 penguins |> 
   data_grid(flipper_length_mm = seq_range(flipper_length_mm, n = 100)) |> 
@@ -1141,7 +1231,7 @@ penguins |>
 
 ## When `posterior_epred()` isn't just the back-transformed linear predictor
 
-In all the examples in this guide, the results from `posterior_epred()` have been identical to the back-transformed results from `posterior_linpred()` (or `posterior_linpred(..., transform = TRUE)` if you want). With logistic regression, `posterior_epred()` returned the probability-scale values of `\(\pi\)`; with beta regression, `posterior_epred()` returned the proportion/probability-scale values of `\(\mu\)`. This is the case for many model families in Stan and **brms**—for mathy reasons that go beyond my skills, the average of averages `\(\operatorname{E(y)}\)` is the same as the back-transformed linear predictor for lots of distributions.
+In all the examples in this guide, the results from `posterior_epred()` have been identical to the back-transformed results from `posterior_linpred()` (or `posterior_linpred(..., transform = TRUE)` if there are link functions). With logistic regression, `posterior_epred()` returned the probability-scale values of `\(\pi\)`; with beta regression, `posterior_epred()` returned the proportion/probability-scale values of `\(\mu\)`. This is the case for many model families in Stan and **brms**—for mathy reasons that go beyond my skills, the average of averages `\(\operatorname{E(y)}\)` is the same as the back-transformed linear predictor for lots of distributions.
 
 This isn't always the case though! In some families, like lognormal models, `posterior_epred()` and `posterior_linpred(..., transform = TRUE)` give *different* estimates. For lognormal models `\(\operatorname{E(y)}\)` isn't just one of the distribution's parameters—it's this:
 
@@ -1151,7 +1241,7 @@ $$
 
 I won't show any examples of that here—this guide is already too long—but [Matthew Kay has an example here](https://github.com/mjskay/uncertainty-examples/blob/master/linpred_epred.md) that shows the differences between expected posterior values and back-transformed linear posterior values.
 
-To see which kinds of families use fancier `epred`s, [look at the source for `brms::posterior_epred()` here](https://github.com/paul-buerkner/brms/blob/28f778d7933f95422dda8f9a9f4333b975261120/R/posterior_epred.R#L341). Most of the families just use the back-transformed `mu` (`prep$dpars$mu` in the code), but some have special values, like lognormal's `with(prep$dpars, exp(mu + sigma^2 / 2))`
+To see which kinds of families use fancier `epred`s, [look at the source for `brms::posterior_epred()` here](https://github.com/paul-buerkner/brms/blob/28f778d7933f95422dda8f9a9f4333b975261120/R/posterior_epred.R#L341). Most of the families just use the back-transformed `mu` (`prep\$dpars\$mu` in the code), but some have special values, like lognormal's `with(prep$dpars, exp(mu + sigma^2 / 2))`
 
 
 ## tl;dr: Diagrams and cheat sheets
@@ -1180,7 +1270,7 @@ Keeping track of which kinds of posterior predictions you're working with, on wh
 
 And here's an even more detailed summary cheat sheet as a printable PDF:
 
-[**(Download a PDF)**](images/posterior-predictions-cheat-sheet_v1-0.pdf) or [**(download original Adobe InDesign file)**](cheat-sheet_v1-0.zip)
+[**(Download a PDF)**](images/posterior-predictions-cheat-sheet_v2-0.pdf) or [**(download the original Adobe InDesign file)**](cheat-sheet_v2-0.zip)
 
 <style type="text/css">
 .embed-container {
@@ -1202,4 +1292,4 @@ And here's an even more detailed summary cheat sheet as a printable PDF:
 }
 </style>
 
-<div class="embed-container"><iframe src="images/posterior-predictions-cheat-sheet_v1-0.pdf" style="border: 0.5px"></iframe></div>
+<div class="embed-container"><iframe src="images/posterior-predictions-cheat-sheet_v2-0.pdf" style="border: 0.5px"></iframe></div>

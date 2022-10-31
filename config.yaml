@@ -62,17 +62,18 @@ params:
       name: Twitter
       url: https://twitter.com/andrewheiss
       weight: 2
+    - icon: fab fa-mastodon
+      name: Mastodon
+      url: https://fediscience.org/@andrew
+      rel: me
+      weight: 3
     - icon: fab fa-github
       name: GitHub
       url: https://github.com/andrewheiss
-      weight: 3
+      weight: 4
     - icon: fab fa-youtube
       name: YouTube
       url: https://www.youtube.com/andrewheiss
-      weight: 4
-    - icon: fab fa-stack-overflow
-      name: StackOverflow
-      url: https://stackoverflow.com/users/120898/andrew
       weight: 5
     - icon: fab fa-blogger
       name: Heissatopia (family blog)
